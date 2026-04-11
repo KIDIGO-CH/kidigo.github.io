@@ -1,104 +1,106 @@
-import Link from 'next/link'
-import { InstagramLogo, TiktokLogo, ArrowUpRight } from '@phosphor-icons/react/dist/ssr'
+'use client'
+
+import { motion } from 'framer-motion'
+import { InstagramLogo, TiktokLogo, ArrowUpRight } from '@phosphor-icons/react'
 
 export default function Footer() {
-  const year = new Date().getFullYear()
-
   return (
-    <footer className="border-t border-border px-4 md:px-8 py-12 mt-8">
-      <div className="max-w-[1400px] mx-auto">
-        <div className="grid grid-cols-2 md:grid-cols-[1fr_1fr_1fr_auto] gap-10">
-          {/* Brand */}
-          <div className="col-span-2 md:col-span-1">
-            <p className="text-2xl font-bold tracking-[-0.04em] uppercase text-text-primary mb-3">
-              Freez
-            </p>
-            <p className="text-text-muted text-sm leading-relaxed max-w-xs">
-              Streetwear capsule. Drops limités à 100 unités. Pas de restocks.
-            </p>
-          </div>
+    <footer className="border-t border-white/[0.05] pt-16 pb-10 px-6 md:px-10 max-w-[1600px] mx-auto">
 
-          {/* Navigation */}
-          <div>
-            <p className="text-[10px] font-mono tracking-widest uppercase text-text-muted mb-4">
-              Navigation
-            </p>
-            <ul className="flex flex-col gap-2.5">
-              {['Collection', 'À propos', 'Contact', 'FAQ'].map((item) => (
-                <li key={item}>
-                  <Link
-                    href={`/${item.toLowerCase().replace(' ', '-').replace('à-', '')}`}
-                    className="text-sm text-text-secondary hover:text-text-primary transition-colors duration-200"
-                  >
-                    {item}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+      {/* Giant FREEZ watermark */}
+      <motion.div
+        className="overflow-hidden mb-14 md:mb-20"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
+        <p
+          className="font-medium leading-none uppercase select-none text-white/[0.035]"
+          style={{ fontSize: 'clamp(4rem, 17vw, 19rem)' }}
+        >
+          FREEZ
+        </p>
+      </motion.div>
 
-          {/* Legal */}
-          <div>
-            <p className="text-[10px] font-mono tracking-widest uppercase text-text-muted mb-4">
-              Légal
-            </p>
-            <ul className="flex flex-col gap-2.5">
-              {[
-                { label: 'Mentions légales', href: '/mentions-legales' },
-                { label: 'Politique de confidentialité', href: '/confidentialite' },
-                { label: 'CGV', href: '/cgv' },
-              ].map((item) => (
-                <li key={item.label}>
-                  <Link
-                    href={item.href}
-                    className="text-sm text-text-secondary hover:text-text-primary transition-colors duration-200"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+      {/* Footer links grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-14">
+        <div>
+          <p className="text-[9px] tracking-[0.28em] text-text-muted uppercase mb-5">Navigation</p>
+          <ul className="flex flex-col gap-3">
+            {['Collection', 'Lookbook', 'À propos', 'Contact'].map((item) => (
+              <li key={item}>
+                <button className="text-[12px] text-text-secondary hover:text-text-primary transition-colors duration-200">
+                  {item}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-          {/* Social */}
-          <div>
-            <p className="text-[10px] font-mono tracking-widest uppercase text-text-muted mb-4">
-              Suivre
-            </p>
-            <div className="flex flex-col gap-3">
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary transition-colors duration-200"
-              >
-                <InstagramLogo size={16} weight="regular" />
-                Instagram
-                <ArrowUpRight size={12} className="text-text-muted" />
-              </a>
-              <a
-                href="https://tiktok.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary transition-colors duration-200"
-              >
-                <TiktokLogo size={16} weight="regular" />
-                TikTok
-                <ArrowUpRight size={12} className="text-text-muted" />
-              </a>
-            </div>
+        <div>
+          <p className="text-[9px] tracking-[0.28em] text-text-muted uppercase mb-5">Légal</p>
+          <ul className="flex flex-col gap-3">
+            {['Mentions légales', 'Confidentialité', 'CGV', 'FAQ'].map((item) => (
+              <li key={item}>
+                <button className="text-[12px] text-text-secondary hover:text-text-primary transition-colors duration-200">
+                  {item}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <p className="text-[9px] tracking-[0.28em] text-text-muted uppercase mb-5">Suivre</p>
+          <div className="flex flex-col gap-3">
+            <a
+              href="https://instagram.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-[12px] text-text-secondary hover:text-text-primary transition-colors duration-200"
+            >
+              <InstagramLogo size={14} />
+              Instagram
+              <ArrowUpRight size={11} className="text-text-muted" />
+            </a>
+            <a
+              href="https://tiktok.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-[12px] text-text-secondary hover:text-text-primary transition-colors duration-200"
+            >
+              <TiktokLogo size={14} />
+              TikTok
+              <ArrowUpRight size={11} className="text-text-muted" />
+            </a>
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-12 pt-8 border-t border-border">
-          <p className="text-xs font-mono text-text-muted">
-            © {year} Freez. Tous droits réservés.
-          </p>
-          <p className="text-xs font-mono text-text-muted">
-            REV-2024.4 — ICE AGE 01 — OPERATIONAL
-          </p>
+        <div>
+          <p className="text-[9px] tracking-[0.28em] text-text-muted uppercase mb-5">Newsletter</p>
+          <div className="flex border border-white/10 hover:border-white/20 transition-colors duration-300">
+            <input
+              type="email"
+              placeholder="Votre email"
+              className="flex-1 bg-transparent text-[11px] text-text-primary px-3 py-2.5 outline-none placeholder:text-text-muted"
+            />
+            <button className="px-3 py-2.5 text-text-secondary hover:text-text-primary transition-colors duration-200 border-l border-white/10">
+              <ArrowUpRight size={13} />
+            </button>
+          </div>
+          <p className="text-[10px] text-text-muted mt-2">Drops en avant-première.</p>
         </div>
+      </div>
+
+      {/* Bottom bar */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pt-8 border-t border-white/[0.05]">
+        <p className="text-[10px] tracking-[0.15em] text-text-muted uppercase">
+          © {new Date().getFullYear()} FREEZ. Tous droits réservés.
+        </p>
+        <p className="text-[10px] tracking-[0.15em] text-text-muted uppercase">
+          ICE AGE 02 — Édition limitée — Printemps-Été 2025
+        </p>
       </div>
     </footer>
   )

@@ -4,27 +4,20 @@ import { GeistMono } from 'geist/font/mono'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Freez — Streetwear Premium',
-  description: 'Collections capsule. Édition limitée. Jamais deux fois le même drop.',
+  title: 'FREEZ — ICE AGE 02',
+  description: 'Streetwear technique. Six pièces. Zéro compromis. Édition limitée.',
   openGraph: {
-    title: 'Freez — Streetwear Premium',
-    description: 'Collections capsule. Édition limitée. Jamais deux fois le même drop.',
+    title: 'FREEZ — ICE AGE 02',
+    description: 'Drop Printemps-Été 2025. Six pièces. Édition limitée.',
     type: 'website',
   },
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <body className="font-sans bg-canvas text-text-primary antialiased">
-        <div className="mesh-gradient" aria-hidden="true" />
-        <div className="relative z-10">
-          {children}
-        </div>
+        {children}
       </body>
     </html>
   )

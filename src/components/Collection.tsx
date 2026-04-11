@@ -1,102 +1,133 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useState, useMemo } from 'react'
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion'
+import { products, collection } from '@/lib/data'
 import ProductCard from './ProductCard'
-import { currentCollection } from '@/lib/data'
 
-type Filter = 'Tous' | 'Hauts' | 'Bas' | 'Vestes' | 'Accessoires'
-const FILTERS: Filter[] = ['Tous', 'Hauts', 'Bas', 'Vestes', 'Accessoires']
+type Category = 'Tous' | 'Hauts' | 'Bas' | 'Vestes' | 'Accessoires'
+const CATEGORIES: Category[] = ['Tous', 'Hauts', 'Bas', 'Vestes', 'Accessoires']
+
+// Bento layout: col-span sur 12 colonnes + ratio pour chaque produit dans l'ordre du tableau
+const BENTO: Record<string, { col: string; aspect: string }> = {
+  'frz-001': { col: 'md:col-span-7', aspect: '3/4' },   // Arctic Cargo — tall, gauche
+  'frz-002': { col: 'md:col-span-5', aspect: '3/4' },   // Subzero Hoodie — tall, droite
+  'frz-003': { col: 'md:col-span-4', aspect: '5/4' },   // Cold Wave Tee — court, gauche
+  'frz-004': { col: 'md:col-span-8', aspect: '5/4' },   // Frost Shell — court, droite
+  'frz-005': { col: 'md:col-span-5', aspect: '4/3' },   // Glacier Cap — court, gauche
+  'frz-006': { col: 'md:col-span-7', aspect: '4/3' },   // Permafrost Shorts — court, droite
+}
 
 export default function Collection() {
-  const [activeFilter, setActiveFilter] = useState<Filter>('Tous')
-  const sectionRef = useRef<HTMLDivElement>(null)
+  const [activeCategory, setActiveCategory] = useState<Category>('Tous')
 
-  const filtered = activeFilter === 'Tous'
-    ? currentCollection.products
-    : currentCollection.products.filter((p) => p.category === activeFilter)
-
-  // Reveal on scroll
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible')
-          }
-        })
-      },
-      { threshold: 0.1 }
-    )
-
-    const elements = sectionRef.current?.querySelectorAll('.reveal')
-    elements?.forEach((el) => observer.observe(el))
-
-    return () => observer.disconnect()
-  }, [])
+  const filtered = useMemo(
+    () =>
+      activeCategory === 'Tous'
+        ? products
+        : products.filter((p) => p.category === activeCategory),
+    [activeCategory]
+  )
 
   return (
-    <section id="collection" className="py-24 px-4 md:px-8" ref={sectionRef}>
-      <div className="max-w-[1400px] mx-auto">
-        {/* Header */}
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-8 items-end mb-12 reveal">
-          <div>
-            <p className="text-xs font-mono tracking-widest uppercase text-text-muted mb-3">
-              {currentCollection.season}
-            </p>
-            <h2 className="text-5xl md:text-7xl font-bold tracking-[-0.04em] uppercase">
-              {currentCollection.name}
+    <section id="collection" className="py-24 md:py-32 px-6 md:px-10 max-w-[1600px] mx-auto">
+
+      {/* Section header */}
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] items-end gap-8 mb-14">
+        <div>
+          <motion.p
+            className="text-[10px] tracking-[0.3em] text-text-secondary uppercase mb-5"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+          >
+            Collection
+          </motion.p>
+          <motion.div
+            className="flex items-baseline gap-4 overflow-hidden"
+            initial={{ y: 20, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ type: 'spring', stiffness: 80, damping: 20, delay: 0.05 }}
+          >
+            <h2
+              className="font-medium text-text-primary uppercase leading-none"
+              style={{ fontSize: 'clamp(2.2rem, 7vw, 8rem)' }}
+            >
+              {collection.name}
             </h2>
-          </div>
-          <p className="text-text-secondary max-w-xs leading-relaxed text-sm md:text-right">
-            {currentCollection.description}
-          </p>
+            <span
+              className="font-medium text-accent uppercase leading-none"
+              style={{ fontSize: 'clamp(2.2rem, 7vw, 8rem)' }}
+            >
+              {collection.number}
+            </span>
+          </motion.div>
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-2 mb-10 reveal" style={{ transitionDelay: '100ms' }}>
-          {FILTERS.map((filter) => (
+        <motion.div
+          className="flex flex-wrap items-center gap-2"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.15 }}
+        >
+          {CATEGORIES.map((cat) => (
             <button
-              key={filter}
-              onClick={() => setActiveFilter(filter)}
-              className={`
-                px-4 py-2 text-xs font-mono tracking-wide uppercase rounded-full
-                border transition-all duration-200
-                ${activeFilter === filter
-                  ? 'bg-accent border-accent text-white'
-                  : 'border-border text-text-secondary hover:border-border-strong hover:text-text-primary'
-                }
-              `}
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`text-[10px] tracking-[0.18em] uppercase px-4 py-2 border transition-all duration-300 ${
+                activeCategory === cat
+                  ? 'border-accent/50 text-accent bg-accent/[0.06]'
+                  : 'border-white/10 text-text-secondary hover:border-white/22 hover:text-text-primary'
+              }`}
             >
-              {filter}
+              {cat}
             </button>
           ))}
-        </div>
-
-        {/* Grid — asymétrique bento */}
-        {filtered.length === 0 ? (
-          /* Empty state */
-          <div className="flex flex-col items-center justify-center py-24 gap-4">
-            <div className="w-12 h-12 rounded-full border border-border flex items-center justify-center">
-              <span className="text-text-muted font-mono text-xs">0</span>
-            </div>
-            <p className="text-text-secondary text-sm">
-              Aucune pièce dans cette catégorie pour le moment.
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((product, index) => (
-              <div
-                key={product.id}
-                className="reveal"
-                style={{ transitionDelay: `${index * 60}ms` }}
-              >
-                <ProductCard product={product} index={index} />
-              </div>
-            ))}
-          </div>
-        )}
+        </motion.div>
       </div>
+
+      {/* Bento grid */}
+      <LayoutGroup>
+        <AnimatePresence mode="popLayout">
+          {filtered.length > 0 ? (
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-[10px]"
+              layout
+            >
+              {filtered.map((product, i) => {
+                const layout = BENTO[product.id] ?? { col: 'md:col-span-6', aspect: '4/3' }
+                return (
+                  <motion.div
+                    key={product.id}
+                    layout
+                    className={`w-full ${layout.col}`}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+                  >
+                    <ProductCard product={product} index={i} aspectRatio={layout.aspect} />
+                  </motion.div>
+                )
+              })}
+            </motion.div>
+          ) : (
+            /* Empty state */
+            <motion.div
+              className="flex flex-col items-center justify-center py-28 border border-white/[0.06]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <p className="text-[12px] tracking-[0.22em] text-text-secondary uppercase mb-2">
+                Aucune pièce
+              </p>
+              <p className="text-[11px] text-text-muted">dans cette catégorie</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </LayoutGroup>
     </section>
   )
 }

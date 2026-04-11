@@ -1,108 +1,113 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { ShoppingBag, List, X } from '@phosphor-icons/react'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export default function Navigation() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [cartCount] = useState(0)
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 40)
+    const handleScroll = () => setScrolled(window.scrollY > 24)
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  const links = ['Collection', 'Lookbook', 'À propos']
+
   return (
     <>
-      <nav
-        className={`
-          fixed top-0 left-0 right-0 z-50
-          transition-all duration-300
-          ${scrolled
-            ? 'bg-canvas/80 backdrop-blur-xl border-b border-border'
-            : 'bg-transparent'
-          }
-        `}
+      <motion.nav
+        className="fixed top-0 left-0 right-0 z-50"
+        style={{
+          backdropFilter: scrolled ? 'blur(20px)' : 'blur(0px)',
+          WebkitBackdropFilter: scrolled ? 'blur(20px)' : 'blur(0px)',
+          backgroundColor: scrolled ? 'rgba(8,8,8,0.82)' : 'transparent',
+          borderBottom: scrolled ? '1px solid rgba(255,255,255,0.05)' : '1px solid transparent',
+          transition: 'background-color 0.4s ease, border-color 0.4s ease',
+        }}
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.1, type: 'spring', stiffness: 100, damping: 20 }}
       >
-        <div className="max-w-[1400px] mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
-          {/* Logo */}
-          <Link
-            href="/"
-            className="text-text-primary font-bold tracking-[-0.04em] text-xl uppercase hover:text-accent transition-colors duration-200"
-          >
-            Freez
-          </Link>
+        <div className="max-w-[1600px] mx-auto px-6 md:px-10 h-[60px] flex items-center justify-between">
+          <span className="text-[12px] tracking-[0.32em] font-medium text-text-primary uppercase select-none">
+            FREEZ
+          </span>
 
-          {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-8">
-            {['Collection', 'À propos', 'Contact'].map((item) => (
-              <Link
-                key={item}
-                href={`/${item.toLowerCase().replace(' ', '-').replace('à-', '')}`}
-                className="text-text-secondary text-sm tracking-wide hover:text-text-primary transition-colors duration-200"
+          <div className="hidden md:flex items-center gap-10">
+            {links.map((link) => (
+              <button
+                key={link}
+                className="text-[11px] tracking-[0.18em] text-text-secondary hover:text-text-primary transition-colors duration-300 uppercase"
               >
-                {item}
-              </Link>
+                {link}
+              </button>
             ))}
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center gap-4">
-            <button
-              className="relative p-2 text-text-secondary hover:text-text-primary transition-colors duration-200"
-              aria-label="Panier"
-            >
-              <ShoppingBag size={20} weight="regular" />
-              {cartCount > 0 && (
-                <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-accent" />
-              )}
-            </button>
-
-            <button
-              className="md:hidden p-2 text-text-secondary hover:text-text-primary transition-colors duration-200"
-              onClick={() => setMenuOpen(true)}
-              aria-label="Menu"
-            >
-              <List size={20} weight="regular" />
+          <div className="hidden md:flex items-center gap-6">
+            <span className="text-[10px] tracking-[0.22em] text-text-muted uppercase">ICE AGE 02</span>
+            <button className="text-[11px] tracking-[0.18em] border border-white/10 hover:border-accent/40 hover:text-accent px-5 py-2 transition-all duration-300 uppercase text-text-secondary">
+              Shop
             </button>
           </div>
+
+          {/* Mobile hamburger */}
+          <button
+            className="md:hidden flex flex-col gap-[5px] p-1"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label={menuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+          >
+            <motion.span
+              className="block w-[22px] h-px bg-text-primary origin-center"
+              animate={{ rotate: menuOpen ? 45 : 0, y: menuOpen ? 6 : 0 }}
+              transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+            />
+            <motion.span
+              className="block w-[22px] h-px bg-text-primary"
+              animate={{ opacity: menuOpen ? 0 : 1, scaleX: menuOpen ? 0 : 1 }}
+              transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+            />
+            <motion.span
+              className="block w-[22px] h-px bg-text-primary origin-center"
+              animate={{ rotate: menuOpen ? -45 : 0, y: menuOpen ? -6 : 0 }}
+              transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+            />
+          </button>
         </div>
-      </nav>
+      </motion.nav>
 
-      {/* Mobile menu */}
-      <div
-        className={`
-          fixed inset-0 z-[60] bg-canvas/95 backdrop-blur-xl
-          flex flex-col justify-center px-8
-          transition-all duration-400
-          ${menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
-        `}
-      >
-        <button
-          className="absolute top-5 right-5 p-2 text-text-secondary hover:text-text-primary transition-colors"
-          onClick={() => setMenuOpen(false)}
-          aria-label="Fermer"
-        >
-          <X size={24} weight="regular" />
-        </button>
-
-        <nav className="flex flex-col gap-6">
-          {['Collection', 'À propos', 'Contact'].map((item, i) => (
-            <Link
-              key={item}
-              href={`/${item.toLowerCase().replace(' ', '-').replace('à-', '')}`}
-              className="text-4xl font-bold tracking-[-0.04em] uppercase text-text-primary hover:text-accent transition-colors duration-200"
-              style={{ animationDelay: `${i * 80}ms` }}
-              onClick={() => setMenuOpen(false)}
-            >
-              {item}
-            </Link>
-          ))}
-        </nav>
-      </div>
+      {/* Mobile menu overlay */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            className="fixed inset-0 z-40 bg-canvas flex flex-col justify-center px-8"
+            initial={{ opacity: 0, y: -16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -16 }}
+            transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+          >
+            <nav className="flex flex-col gap-8 mt-16">
+              {[...links, 'Shop'].map((link, i) => (
+                <motion.button
+                  key={link}
+                  onClick={() => setMenuOpen(false)}
+                  className="text-left text-[2.5rem] font-medium tracking-tight uppercase text-text-primary hover:text-accent transition-colors duration-200"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.06, type: 'spring', stiffness: 100, damping: 20 }}
+                >
+                  {link}
+                </motion.button>
+              ))}
+            </nav>
+            <div className="absolute bottom-10 left-8">
+              <span className="text-[10px] tracking-[0.28em] text-text-muted uppercase">ICE AGE 02 — 2025</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }

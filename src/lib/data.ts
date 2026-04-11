@@ -2,19 +2,13 @@ export type Product = {
   id: string
   name: string
   price: number
-  category: string
-  size: string[]
+  category: 'Hauts' | 'Bas' | 'Vestes' | 'Accessoires'
+  sizes: string[]
   image: string
   isNew?: boolean
   isSoldOut?: boolean
-}
-
-export type Collection = {
-  id: string
-  name: string
-  season: string
   description: string
-  products: Product[]
+  material: string
 }
 
 export const products: Product[] = [
@@ -23,66 +17,76 @@ export const products: Product[] = [
     name: 'Arctic Cargo Pant',
     price: 189,
     category: 'Bas',
-    size: ['XS', 'S', 'M', 'L', 'XL'],
-    image: 'https://source.unsplash.com/600x800/?cargo,pants,streetwear',
+    sizes: ['XS', 'S', 'M', 'L', 'XL'],
+    image: 'https://source.unsplash.com/800x1100/?cargo,pants,streetwear,black',
     isNew: true,
+    description: 'Cargo technique, coupe ample. Ripstop déperlant, six poches.',
+    material: '100% Nylon ripstop',
   },
   {
     id: 'frz-002',
     name: 'Subzero Hoodie',
     price: 149,
     category: 'Hauts',
-    size: ['S', 'M', 'L', 'XL'],
-    image: 'https://source.unsplash.com/600x800/?hoodie,urban,fashion',
+    sizes: ['S', 'M', 'L', 'XL'],
+    image: 'https://source.unsplash.com/700x1000/?hoodie,oversized,dark,fashion',
     isNew: true,
+    description: 'Hoodie oversize lourd. Double épaisseur, intérieur brossé.',
+    material: '400g French Terry',
   },
   {
     id: 'frz-003',
-    name: 'Frost Shell Jacket',
-    price: 349,
-    category: 'Vestes',
-    size: ['S', 'M', 'L'],
-    image: 'https://source.unsplash.com/600x800/?jacket,technical,streetwear',
-    isSoldOut: true,
-  },
-  {
-    id: 'frz-004',
     name: 'Cold Wave Tee',
     price: 79,
     category: 'Hauts',
-    size: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
-    image: 'https://source.unsplash.com/600x800/?tshirt,streetwear,urban',
+    sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+    image: 'https://source.unsplash.com/600x750/?tshirt,oversized,minimal,black',
+    description: 'Tee oversize en coton lourd. Coutures renforcées, col dropped.',
+    material: '220g Coton peigné',
+  },
+  {
+    id: 'frz-004',
+    name: 'Frost Shell Jacket',
+    price: 349,
+    category: 'Vestes',
+    sizes: ['S', 'M', 'L'],
+    image: 'https://source.unsplash.com/800x950/?jacket,technical,streetwear,dark',
+    isSoldOut: true,
+    description: 'Shell technique waterproof. Zip YKK, coutures soudées imperméables.',
+    material: 'Gore-Tex 3 couches',
   },
   {
     id: 'frz-005',
     name: 'Glacier Cap',
     price: 59,
     category: 'Accessoires',
-    size: ['Unique'],
-    image: 'https://source.unsplash.com/600x800/?cap,hat,streetwear',
+    sizes: ['Unique'],
+    image: 'https://source.unsplash.com/600x700/?cap,hat,streetwear,minimal',
     isNew: true,
+    description: 'Casquette 6 panneaux structurée. Logo brodé ton sur ton.',
+    material: 'Coton twill 100%',
   },
   {
     id: 'frz-006',
     name: 'Permafrost Shorts',
     price: 109,
     category: 'Bas',
-    size: ['S', 'M', 'L', 'XL'],
-    image: 'https://source.unsplash.com/600x800/?shorts,urban,fashion',
+    sizes: ['S', 'M', 'L', 'XL'],
+    image: 'https://source.unsplash.com/700x875/?shorts,technical,urban,dark',
+    description: 'Short technique avec poches cargo latérales zippées.',
+    material: 'Ripstop léger déperlant',
   },
 ]
 
-export const currentCollection: Collection = {
-  id: 'col-001',
-  name: 'ICE AGE 01',
-  season: 'Automne — Hiver 2024',
-  description:
-    'Première capsule Freez. Six pièces. Zéro compromis. Conçue pour ceux qui refusent le confort du banal.',
-  products,
+export const collection = {
+  name: 'ICE AGE',
+  number: '02',
+  season: 'Printemps — Été 2025',
+  description: 'Deuxième capsule Freez. Conçue pour ceux qui refusent le confort du banal.',
 }
 
 export const stats = [
-  { label: 'Pièces par drop', value: '6' },
-  { label: 'Drops par an', value: '4' },
-  { label: 'Éditions limitées', value: '100%' },
+  { value: '6', label: 'Pièces' },
+  { value: '02', label: 'Drop' },
+  { value: '100%', label: 'Limitées' },
 ]
