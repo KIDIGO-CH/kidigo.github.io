@@ -24,7 +24,7 @@ export const products: Product[] = [
     price: 189,
     category: 'Bas',
     size: ['XS', 'S', 'M', 'L', 'XL'],
-    image: 'https://picsum.photos/seed/frz001/600/800',
+    image: 'https://source.unsplash.com/600x800/?cargo,pants,streetwear',
     isNew: true,
   },
   {
@@ -33,7 +33,7 @@ export const products: Product[] = [
     price: 149,
     category: 'Hauts',
     size: ['S', 'M', 'L', 'XL'],
-    image: 'https://picsum.photos/seed/frz002/600/800',
+    image: 'https://source.unsplash.com/600x800/?hoodie,urban,fashion',
     isNew: true,
   },
   {
@@ -42,7 +42,7 @@ export const products: Product[] = [
     price: 349,
     category: 'Vestes',
     size: ['S', 'M', 'L'],
-    image: 'https://picsum.photos/seed/frz003/600/800',
+    image: 'https://source.unsplash.com/600x800/?jacket,technical,streetwear',
     isSoldOut: true,
   },
   {
@@ -51,7 +51,7 @@ export const products: Product[] = [
     price: 79,
     category: 'Hauts',
     size: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
-    image: 'https://picsum.photos/seed/frz004/600/800',
+    image: 'https://source.unsplash.com/600x800/?tshirt,streetwear,urban',
   },
   {
     id: 'frz-005',
@@ -59,7 +59,7 @@ export const products: Product[] = [
     price: 59,
     category: 'Accessoires',
     size: ['Unique'],
-    image: 'https://picsum.photos/seed/frz005/600/800',
+    image: 'https://source.unsplash.com/600x800/?cap,hat,streetwear',
     isNew: true,
   },
   {
@@ -68,7 +68,7 @@ export const products: Product[] = [
     price: 109,
     category: 'Bas',
     size: ['S', 'M', 'L', 'XL'],
-    image: 'https://picsum.photos/seed/frz006/600/800',
+    image: 'https://source.unsplash.com/600x800/?shorts,urban,fashion',
   },
 ]
 
