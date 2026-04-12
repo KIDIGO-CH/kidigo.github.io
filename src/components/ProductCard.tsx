@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { motion, useSpring, useMotionValue, useTransform } from 'framer-motion'
 import type { Product } from '@/lib/data'
 
@@ -13,7 +13,12 @@ interface ProductCardProps {
 export default function ProductCard({ product, index, aspectRatio = '3/4' }: ProductCardProps) {
   const [hovered, setHovered] = useState(false)
   const [imgError, setImgError] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768)
+  }, [])
 
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
@@ -151,8 +156,8 @@ export default function ProductCard({ product, index, aspectRatio = '3/4' }: Pro
         <motion.div
           className="overflow-hidden"
           animate={{
-            height: hovered && !product.isSoldOut ? 'auto' : 0,
-            opacity: hovered && !product.isSoldOut ? 1 : 0,
+            height: (hovered || isMobile) && !product.isSoldOut ? 'auto' : 0,
+            opacity: (hovered || isMobile) && !product.isSoldOut ? 1 : 0,
           }}
           transition={{ type: 'spring', stiffness: 100, damping: 20 }}
         >

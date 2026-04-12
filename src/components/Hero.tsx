@@ -141,6 +141,44 @@ export default function Hero() {
             </MagneticButton>
           </motion.div>
 
+          {/* Mobile hero image — visible uniquement sur mobile */}
+          <motion.div
+            className="md:hidden relative mb-10 overflow-hidden"
+            style={{ border: '1px solid rgba(255,255,255,0.07)', aspectRatio: '3/4' }}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.8, type: 'spring', stiffness: 80, damping: 20 }}
+          >
+            <img
+              src="https://picsum.photos/seed/freez-hero/600/900"
+              alt="Freez ICE AGE 02 — pièce vedette"
+              className="w-full h-full object-cover"
+              style={{ filter: 'grayscale(12%) contrast(1.05)' }}
+            />
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{ background: 'linear-gradient(to top, rgba(8,8,8,0.88) 0%, rgba(8,8,8,0.1) 50%, transparent 100%)' }}
+            />
+            <div className="absolute top-3 right-3">
+              <span
+                className="text-[9px] tracking-[0.28em] uppercase px-2.5 py-1"
+                style={{
+                  backgroundColor: 'rgba(96,165,250,0.08)',
+                  border: '1px solid rgba(96,165,250,0.25)',
+                  color: '#60A5FA',
+                  backdropFilter: 'blur(8px)',
+                }}
+              >
+                ICE AGE 02
+              </span>
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 p-4">
+              <p className="text-[10px] tracking-[0.22em] text-text-secondary uppercase mb-1">À la une</p>
+              <p className="text-[14px] font-medium text-text-primary">Frost Shell Jacket</p>
+              <p className="text-[11px] text-text-secondary mt-0.5">Gore-Tex 3 couches — 349€</p>
+            </div>
+          </motion.div>
+
           {/* Stats row */}
           <motion.div
             className="flex items-center gap-8 pt-8 border-t border-white/[0.06]"
@@ -178,7 +216,7 @@ export default function Hero() {
               style={{ border: '1px solid rgba(255,255,255,0.07)' }}
             >
               <img
-                src="https://source.unsplash.com/600x900/?streetwear,model,fashion,dark,minimal"
+                src="https://picsum.photos/seed/freez-hero/600/900"
                 alt="Freez ICE AGE 02 — pièce vedette"
                 className="w-full h-full object-cover"
                 style={{ filter: 'grayscale(12%) contrast(1.05)' }}
