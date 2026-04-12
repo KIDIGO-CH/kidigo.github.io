@@ -4,6 +4,7 @@ import { GeistMono } from 'geist/font/mono'
 import './globals.css'
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://parlonsvisuel.github.io'),
   title: 'FREEZ — ICE AGE 02',
   description: 'Streetwear technique. Six pièces. Zéro compromis. Édition limitée.',
   openGraph: {
