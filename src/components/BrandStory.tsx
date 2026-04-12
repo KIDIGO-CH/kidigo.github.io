@@ -126,7 +126,7 @@ export default function BrandStory() {
                 border: '1px solid rgba(255,255,255,0.07)',
               }}
               animate={{ y: [0, -5, 0] }}
-              transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+              transition={{ type: 'spring', stiffness: 35, damping: 8, repeat: Infinity, repeatType: 'mirror' }}
             >
               <p className="text-[9px] tracking-[0.22em] text-text-secondary uppercase mb-0.5">Collection</p>
               <p className="text-[13px] font-medium text-text-primary">ICE AGE 02 — 2025</p>

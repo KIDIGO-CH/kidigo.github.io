@@ -233,7 +233,7 @@ export default function Hero() {
                 border: '1px solid rgba(255,255,255,0.07)',
               }}
               animate={{ y: [0, -5, 0] }}
-              transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
+              transition={{ type: 'spring', stiffness: 40, damping: 8, repeat: Infinity, repeatType: 'mirror' }}
             >
               <p className="text-[9px] tracking-[0.2em] text-text-secondary uppercase mb-0.5">Matière</p>
               <p className="text-[12px] font-medium text-text-primary">Gore-Tex 3 couches</p>
@@ -254,7 +254,7 @@ export default function Hero() {
           <motion.div
             className="w-full h-full bg-gradient-to-b from-white/40 to-transparent"
             animate={{ y: ['0%', '100%'] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+            transition={{ type: 'spring', stiffness: 30, damping: 10, repeat: Infinity, repeatType: 'mirror' }}
           />
         </div>
       </motion.div>

@@ -18,7 +18,7 @@ module.exports = {
         accent: '#60A5FA',
         'accent-deep': '#3B82F6',
         'text-primary': '#F0F0F0',
-        'text-secondary': '#777777',
+        'text-secondary': '#888888',
         'text-muted': '#3A3A3A',
       },
       keyframes: {
