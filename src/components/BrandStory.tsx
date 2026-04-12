@@ -103,7 +103,7 @@ export default function BrandStory() {
               style={{ border: '1px solid rgba(255,255,255,0.06)', aspectRatio: '4/5' }}
             >
               <img
-                src="https://source.unsplash.com/700x875/?fashion,editorial,dark,minimal,style"
+                src="https://picsum.photos/seed/freez-story/700/875"
                 alt="Freez — esprit de marque"
                 className="w-full h-full object-cover"
                 style={{ filter: 'grayscale(18%) contrast(1.04)' }}
