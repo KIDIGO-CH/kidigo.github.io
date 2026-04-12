@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 
 export default function BrandStory() {
   return (
-    <section className="border-t border-white/[0.05] py-24 md:py-36">
+    <section id="a-propos" className="border-t border-white/[0.05] py-24 md:py-36">
       <div className="max-w-[1600px] mx-auto px-6 md:px-10">
 
         <motion.p

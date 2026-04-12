@@ -1,7 +1,15 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+
+type NavLink = { label: string; href: string; soon?: boolean }
+
+const NAV_LINKS: NavLink[] = [
+  { label: 'Collection', href: '#collection' },
+  { label: 'Lookbook', href: '#lookbook', soon: true },
+  { label: 'À propos', href: '#a-propos' },
+]
 
 export default function Navigation() {
   const [scrolled, setScrolled] = useState(false)
@@ -13,7 +21,13 @@ export default function Navigation() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const links = ['Collection', 'Lookbook', 'À propos']
+  const scrollTo = useCallback((href: string) => {
+    if (href.startsWith('#')) {
+      const el = document.querySelector(href)
+      el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+    setMenuOpen(false)
+  }, [])
 
   return (
     <>
@@ -24,31 +38,44 @@ export default function Navigation() {
           WebkitBackdropFilter: scrolled ? 'blur(20px)' : 'blur(0px)',
           backgroundColor: scrolled ? 'rgba(8,8,8,0.82)' : 'transparent',
           borderBottom: scrolled ? '1px solid rgba(255,255,255,0.05)' : '1px solid transparent',
-          transition: 'background-color 0.4s ease, border-color 0.4s ease',
+          transition: 'background-color 0.35s, border-color 0.35s',
         }}
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.1, type: 'spring', stiffness: 100, damping: 20 }}
+        transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.1 }}
       >
         <div className="max-w-[1600px] mx-auto px-6 md:px-10 h-[60px] flex items-center justify-between">
-          <span className="text-[12px] tracking-[0.32em] font-medium text-text-primary uppercase select-none">
+          <button
+            onClick={() => scrollTo('#hero')}
+            className="text-[12px] tracking-[0.32em] font-medium text-text-primary uppercase select-none"
+          >
             FREEZ
-          </span>
+          </button>
 
           <div className="hidden md:flex items-center gap-10">
-            {links.map((link) => (
+            {NAV_LINKS.map(({ label, href, soon }) => (
               <button
-                key={link}
-                className="text-[11px] tracking-[0.18em] text-text-secondary hover:text-text-primary transition-colors duration-300 uppercase"
+                key={label}
+                onClick={() => !soon && scrollTo(href)}
+                disabled={soon}
+                className="relative text-[11px] tracking-[0.18em] text-text-secondary hover:text-text-primary transition-colors duration-300 uppercase disabled:cursor-default disabled:opacity-50"
               >
-                {link}
+                {label}
+                {soon && (
+                  <span className="absolute -top-2 -right-7 text-[8px] tracking-[0.1em] text-accent/70 uppercase">
+                    bientôt
+                  </span>
+                )}
               </button>
             ))}
           </div>
 
           <div className="hidden md:flex items-center gap-6">
             <span className="text-[10px] tracking-[0.22em] text-text-muted uppercase">ICE AGE 02</span>
-            <button className="text-[11px] tracking-[0.18em] border border-white/10 hover:border-accent/40 hover:text-accent px-5 py-2 transition-all duration-300 uppercase text-text-secondary">
+            <button
+              onClick={() => scrollTo('#collection')}
+              className="text-[11px] tracking-[0.18em] border border-white/10 hover:border-accent/40 hover:text-accent px-5 py-2 transition-colors duration-300 uppercase text-text-secondary"
+            >
               Shop
             </button>
           </div>
@@ -89,16 +116,22 @@ export default function Navigation() {
             transition={{ type: 'spring', stiffness: 100, damping: 20 }}
           >
             <nav className="flex flex-col gap-8 mt-16">
-              {[...links, 'Shop'].map((link, i) => (
+              {[...NAV_LINKS, { label: 'Shop', href: '#collection' }].map(({ label, href, soon }, i) => (
                 <motion.button
-                  key={link}
-                  onClick={() => setMenuOpen(false)}
-                  className="text-left text-[2.5rem] font-medium tracking-tight uppercase text-text-primary hover:text-accent transition-colors duration-200"
+                  key={label}
+                  onClick={() => !soon && scrollTo(href)}
+                  disabled={soon}
+                  className="text-left text-[2.5rem] font-medium tracking-tight uppercase text-text-primary hover:text-accent transition-colors duration-200 disabled:opacity-40 disabled:cursor-default"
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.06, type: 'spring', stiffness: 100, damping: 20 }}
                 >
-                  {link}
+                  {label}
+                  {soon && (
+                    <span className="ml-3 text-[1rem] text-accent/60 tracking-[0.15em] align-middle">
+                      bientôt
+                    </span>
+                  )}
                 </motion.button>
               ))}
             </nav>

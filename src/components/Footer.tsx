@@ -1,7 +1,62 @@
 'use client'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { InstagramLogo, TiktokLogo, ArrowUpRight } from '@phosphor-icons/react'
+
+function NewsletterForm() {
+  const [email, setEmail] = useState('')
+  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
+    if (!valid) { setStatus('error'); return }
+    setStatus('success')
+    setEmail('')
+  }
+
+  if (status === 'success') {
+    return (
+      <motion.p
+        className="text-[11px] text-accent tracking-[0.12em]"
+        initial={{ opacity: 0, y: 4 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+      >
+        Inscrit — prochain drop en avant-première.
+      </motion.p>
+    )
+  }
+
+  return (
+    <form onSubmit={handleSubmit} noValidate>
+      <div className={`flex border transition-colors duration-300 ${status === 'error' ? 'border-red-500/50' : 'border-white/10 hover:border-white/20'}`}>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => { setEmail(e.target.value); setStatus('idle') }}
+          placeholder="Votre email"
+          aria-label="Adresse email pour la newsletter"
+          className="flex-1 bg-transparent text-[11px] text-text-primary px-3 py-2.5 outline-none placeholder:text-text-muted"
+        />
+        <button
+          type="submit"
+          aria-label="S'inscrire à la newsletter"
+          className="px-3 py-2.5 text-text-secondary hover:text-text-primary transition-colors duration-200 border-l border-white/10"
+        >
+          <ArrowUpRight size={13} />
+        </button>
+      </div>
+      {status === 'error' && (
+        <p className="text-[10px] text-red-400/80 mt-1.5 tracking-[0.08em]">Email invalide.</p>
+      )}
+      {status === 'idle' && (
+        <p className="text-[10px] text-text-muted mt-2">Drops en avant-première.</p>
+      )}
+    </form>
+  )
+}
 
 export default function Footer() {
   return (
@@ -79,17 +134,7 @@ export default function Footer() {
 
         <div>
           <p className="text-[9px] tracking-[0.28em] text-text-muted uppercase mb-5">Newsletter</p>
-          <div className="flex border border-white/10 hover:border-white/20 transition-colors duration-300">
-            <input
-              type="email"
-              placeholder="Votre email"
-              className="flex-1 bg-transparent text-[11px] text-text-primary px-3 py-2.5 outline-none placeholder:text-text-muted"
-            />
-            <button className="px-3 py-2.5 text-text-secondary hover:text-text-primary transition-colors duration-200 border-l border-white/10">
-              <ArrowUpRight size={13} />
-            </button>
-          </div>
-          <p className="text-[10px] text-text-muted mt-2">Drops en avant-première.</p>
+          <NewsletterForm />
         </div>
       </div>
 

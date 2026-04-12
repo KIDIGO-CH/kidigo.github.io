@@ -161,7 +161,7 @@ export default function ProductCard({ product, index, aspectRatio = '3/4' }: Pro
             {product.sizes.map((size) => (
               <button
                 key={size}
-                className="text-[9px] tracking-wide border border-white/12 hover:border-accent/50 hover:text-accent px-2 py-[3px] transition-all duration-200 text-text-secondary"
+                className="text-[9px] tracking-wide border border-white/12 hover:border-accent/50 hover:text-accent px-3 py-2.5 min-h-[44px] transition-all duration-200 text-text-secondary"
               >
                 {size}
               </button>

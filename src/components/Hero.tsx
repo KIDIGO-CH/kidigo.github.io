@@ -26,7 +26,7 @@ export default function Hero() {
   }, [mouseX, mouseY])
 
   return (
-    <section className="relative min-h-[100dvh] overflow-hidden bg-canvas">
+    <section id="hero" className="relative min-h-[100dvh] overflow-hidden bg-canvas">
       {/* Mesh gradient ambient */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -118,7 +118,10 @@ export default function Hero() {
             transition={{ duration: 0.5, delay: 0.74, type: 'spring', stiffness: 100, damping: 20 }}
           >
             <MagneticButton>
-              <button className="group flex items-center gap-3 bg-text-primary text-canvas text-[11px] tracking-[0.18em] uppercase px-7 py-[14px] hover:bg-accent transition-colors duration-300">
+              <button
+                onClick={() => document.querySelector('#collection')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                className="group flex items-center gap-3 bg-text-primary text-canvas text-[11px] tracking-[0.18em] uppercase px-7 py-[14px] hover:bg-accent transition-colors duration-300"
+              >
                 Voir la collection
                 <ArrowRight
                   size={13}
@@ -128,8 +131,12 @@ export default function Hero() {
             </MagneticButton>
 
             <MagneticButton strength={0.2}>
-              <button className="text-[11px] tracking-[0.18em] uppercase text-text-secondary hover:text-text-primary transition-colors duration-300 border-b border-transparent hover:border-white/20 pb-px">
+              <button
+                disabled
+                className="relative text-[11px] tracking-[0.18em] uppercase text-text-secondary/50 cursor-default border-b border-transparent pb-px"
+              >
                 Lookbook
+                <span className="absolute -top-2 -right-8 text-[8px] tracking-[0.1em] text-accent/60 uppercase">bientôt</span>
               </button>
             </MagneticButton>
           </motion.div>
