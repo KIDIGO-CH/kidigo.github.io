@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ShieldCheck, Search, Star, Clock } from 'lucide-react'
+import { ShieldCheck, Search, Star } from 'lucide-react'
 
 const REASONS = [
   {
@@ -24,13 +24,6 @@ const REASONS = [
     description: 'Des milliers d\'avis de parents comme vous, vérifiés et transparents. Choisissez en toute confiance grâce à des retours réels.',
     color: '#D97706',
     bg: '#FEF3C7',
-  },
-  {
-    icon: Clock,
-    title: 'Disponibilités en temps réel',
-    description: 'Consultez les créneaux disponibles instantanément et réservez en quelques clics, sans appel ni attente inutile.',
-    color: '#7C3AED',
-    bg: '#EDE9FE',
   },
 ]
 
@@ -58,7 +51,7 @@ export function WhyKidigo() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
           {REASONS.map((reason, i) => (
             <motion.div
               key={reason.title}

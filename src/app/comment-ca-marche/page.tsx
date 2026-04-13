@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Search, Filter, Calendar, CheckCircle, Shield, Star, ArrowRight } from 'lucide-react'
+import { Search, Filter, CheckCircle, Shield, Star, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 
 const STEPS = [
@@ -24,14 +24,6 @@ const STEPS = [
   },
   {
     step: '03',
-    icon: Calendar,
-    title: 'Réservez',
-    description: 'Consultez les créneaux disponibles et envoyez votre demande de réservation en un clic. L\'organisateur confirme sous 24h.',
-    color: '#7C3AED',
-    bg: '#EDE9FE',
-  },
-  {
-    step: '04',
     icon: CheckCircle,
     title: 'Profitez',
     description: 'Votre enfant vit une expérience mémorable. Partagez votre avis pour aider les autres familles à choisir en confiance.',
@@ -66,12 +58,12 @@ export default function CommentCaMarchePage() {
             Comment ça marche ?
           </h1>
           <p className="text-[16px] text-text-secondary leading-relaxed">
-            KIDIGO vous guide à chaque étape, de la recherche à la réservation. Trouver l'activité parfaite n'a jamais été aussi simple.
+            KIDIGO vous guide à chaque étape pour trouver l'activité parfaite. Simple, rapide et efficace.
           </p>
         </motion.div>
 
         {/* Steps */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-20">
           {STEPS.map((step, i) => (
             <motion.div
               key={step.step}

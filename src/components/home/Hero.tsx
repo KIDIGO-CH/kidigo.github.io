@@ -40,7 +40,7 @@ export function Hero() {
         />
       </div>
 
-      <div className="relative z-10 max-w-[1400px] mx-auto px-6 md:px-10 min-h-[100dvh] grid grid-cols-1 lg:grid-cols-[58fr_42fr] gap-12 items-center pt-36 pb-28 lg:py-0">
+      <div className="relative z-10 max-w-[1400px] mx-auto px-6 md:px-10 min-h-[100dvh] grid grid-cols-1 lg:grid-cols-[58fr_42fr] gap-12 items-center pt-48 pb-28 lg:pt-32 lg:pb-0">
 
         {/* Left — Content */}
         <div className="flex flex-col">
