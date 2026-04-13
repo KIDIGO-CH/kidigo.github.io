@@ -6,27 +6,27 @@ import { StarRating } from '@/components/ui/StarRating'
 const TESTIMONIALS = [
   {
     name: 'Sophie M.',
-    city: 'Paris',
+    city: 'Genève',
     avatar: 'https://picsum.photos/seed/user-1/80/80',
     rating: 5,
     text: 'KIDIGO m\'a sauvé la mise pendant les vacances de printemps. En 5 minutes, j\'avais trouvé un stage de tennis pour mes deux garçons, avec des horaires compatibles. Le site est tellement clair et rassurant.',
-    activity: 'Stage Multi-Sports Lyon',
+    activity: 'Stage Multi-Sports Lausanne',
   },
   {
     name: 'Julien R.',
-    city: 'Lyon',
+    city: 'Lausanne',
     avatar: 'https://picsum.photos/seed/user-2/80/80',
     rating: 5,
     text: 'Ma fille adore son atelier aquarelle, elle en parle tous les soirs ! J\'ai pu lire les avis d\'autres parents, vérifier que l\'organisatrice était diplômée, et réserver sans appeler personne. Parfait.',
-    activity: 'Atelier Aquarelle Paris',
+    activity: 'Atelier Aquarelle Genève',
   },
   {
     name: 'Amina K.',
-    city: 'Bordeaux',
+    city: 'Fribourg',
     avatar: 'https://picsum.photos/seed/user-3/80/80',
     rating: 5,
     text: 'Enfin une plateforme qui prend en compte vraiment l\'âge et les disponibilités. Je cherchais quelque chose pour le mercredi avec mon fils de 4 ans — j\'ai trouvé l\'éveil musical en 2 minutes.',
-    activity: 'Éveil Musical Bordeaux',
+    activity: 'Éveil Musical Fribourg',
   },
 ]
 

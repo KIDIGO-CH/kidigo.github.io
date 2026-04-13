@@ -11,8 +11,8 @@ export const metadata: Metadata = {
     default: 'KIDIGO — Activités & Loisirs pour Enfants',
     template: '%s | KIDIGO',
   },
-  description: 'Trouvez les meilleures activités et loisirs pour vos enfants. Sport, art, musique, danse, science — plus de 2 400 activités vérifiées partout en France.',
-  keywords: ['activités enfants', 'loisirs enfants', 'sport enfants', 'atelier enfants', 'cours enfants France'],
+  description: 'Trouvez les meilleures activités et loisirs pour vos enfants. Sport, art, musique, danse, science — plus de 2 400 activités vérifiées en Suisse romande.',
+  keywords: ['activités enfants', 'loisirs enfants', 'sport enfants', 'atelier enfants', 'cours enfants Suisse romande'],
   openGraph: {
     title: 'KIDIGO — Activités & Loisirs pour Enfants',
     description: 'Trouvez les meilleures activités et loisirs pour vos enfants.',

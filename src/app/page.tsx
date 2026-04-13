@@ -8,7 +8,7 @@ import { CTABanner } from '@/components/home/CTABanner'
 
 export const metadata: Metadata = {
   title: 'KIDIGO — Trouvez les meilleures activités pour vos enfants',
-  description: 'Découvrez plus de 2 400 activités vérifiées pour enfants en France. Sport, art, musique, stages vacances. Réservez simplement en ligne.',
+  description: 'Découvrez plus de 2 400 activités vérifiées pour enfants en Suisse romande. Sport, art, musique, stages vacances.',
 }
 
 export default function HomePage() {

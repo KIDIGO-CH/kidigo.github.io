@@ -54,9 +54,9 @@ export default function AProposPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-20">
           {[
-            { icon: Heart, title: 'Notre mission', text: 'Permettre à chaque enfant d\'accéder à des activités de qualité qui l\'épanouissent, partout en France.', color: '#E11D48', bg: '#FEF2F2' },
+            { icon: Heart, title: 'Notre mission', text: 'Permettre à chaque enfant d\'accéder à des activités de qualité qui l\'épanouissent, partout en Suisse romande.', color: '#E11D48', bg: '#FEF2F2' },
             { icon: Target, title: 'Notre vision', text: 'Devenir le partenaire de confiance de toutes les familles pour l\'épanouissement de leurs enfants.', color: '#16A34A', bg: '#DCFCE7' },
-            { icon: Users, title: 'Notre équipe', text: 'Une équipe de 12 personnes passionnées, parents pour la plupart, basée à Paris et Lyon.', color: '#7C3AED', bg: '#EDE9FE' },
+            { icon: Users, title: 'Notre équipe', text: 'Une équipe de 12 personnes passionnées, parents pour la plupart, basée à Genève et Lausanne.', color: '#7C3AED', bg: '#EDE9FE' },
           ].map((item, i) => (
             <motion.div
               key={item.title}

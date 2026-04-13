@@ -172,7 +172,7 @@ export function Hero() {
             <div className="absolute bottom-4 left-4 right-4">
               <span className="inline-block bg-accent text-white text-[11px] font-medium px-3 py-1 rounded-full mb-2">Art créatif</span>
               <p className="text-white font-display font-bold text-[15px] leading-snug">Atelier Aquarelle</p>
-              <p className="text-white/80 text-[12px]">Paris · 28 CHF</p>
+              <p className="text-white/80 text-[12px]">Genève · 28 CHF</p>
             </div>
           </div>
 
@@ -182,7 +182,7 @@ export function Hero() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
             <div className="absolute bottom-3 left-3 right-3">
               <p className="text-white font-display font-bold text-[13px]">Tennis Junior</p>
-              <p className="text-white/80 text-[11px]">Lyon · 35 CHF</p>
+              <p className="text-white/80 text-[11px]">Lausanne · 35 CHF</p>
             </div>
           </div>
 
@@ -208,7 +208,7 @@ export function Hero() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
             <div className="absolute bottom-3 left-3">
               <p className="text-white font-display font-bold text-[13px]">Nature & Aventure</p>
-              <p className="text-white/80 text-[11px]">Nantes · 18 CHF</p>
+              <p className="text-white/80 text-[11px]">Montreux · 18 CHF</p>
             </div>
           </div>
         </motion.div>

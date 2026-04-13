@@ -52,7 +52,7 @@ export default function ContactPage() {
               <form onSubmit={handleSubmit} className="space-y-5">
                 {[
                   { id: 'name', label: 'Votre nom', type: 'text', placeholder: 'Marie Dupont' },
-                  { id: 'email', label: 'Votre email', type: 'email', placeholder: 'marie@exemple.fr' },
+                  { id: 'email', label: 'Votre email', type: 'email', placeholder: 'marie@exemple.ch' },
                   { id: 'subject', label: 'Sujet', type: 'text', placeholder: 'Question sur une réservation' },
                 ].map(({ id, label, type, placeholder }) => (
                   <div key={id}>
@@ -93,8 +93,8 @@ export default function ContactPage() {
             transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.2 }}
           >
             {[
-              { icon: Mail, title: 'Email', value: 'bonjour@kidigo.fr' },
-              { icon: MapPin, title: 'Siège social', value: '12 rue de la Paix\n75001 Paris' },
+              { icon: Mail, title: 'Email', value: 'bonjour@kidigo.ch' },
+              { icon: MapPin, title: 'Siège social', value: '10 rue du Rhône\n1204 Genève' },
               { icon: Clock, title: 'Horaires', value: 'Lun–Ven, 9h–18h\nRéponse sous 24h' },
             ].map(({ icon: Icon, title, value }) => (
               <div key={title} className="bg-elevated rounded-3xl p-6 border border-border">
