@@ -33,3 +33,20 @@
     font-family: var(--font-cabinet);
   }
 }
+
+/* Leaflet popup overrides */
+.kidigo-popup .leaflet-popup-content-wrapper {
+  padding: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+.kidigo-popup .leaflet-popup-content {
+  margin: 0;
+  width: auto !important;
+}
+
+.kidigo-popup .leaflet-popup-tip {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}

@@ -1,13 +1,19 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import dynamic from 'next/dynamic'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, SlidersHorizontal, X, MapPin, ChevronDown } from 'lucide-react'
+import { Search, SlidersHorizontal, X, MapPin, ChevronDown, LayoutGrid, Map } from 'lucide-react'
 import { ActivityCard } from '@/components/search/ActivityCard'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { activities, cities, categories } from '@/lib/data'
 import type { Category } from '@/lib/types'
+
+const MapView = dynamic(
+  () => import('@/components/search/MapView').then(mod => mod.MapView),
+  { ssr: false, loading: () => <div className="w-full h-[calc(100dvh-200px)] rounded-3xl bg-surface animate-pulse" /> }
+)
 
 type SortOption = 'rating' | 'price-asc' | 'price-desc' | 'popular'
 
@@ -19,6 +25,7 @@ export default function RecherchePage() {
   const [priceMax, setPriceMax] = useState<number | null>(null)
   const [sortBy, setSortBy] = useState<SortOption>('rating')
   const [showFilters, setShowFilters] = useState(false)
+  const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid')
 
   const filtered = useMemo(() => {
     let result = [...activities]
@@ -192,17 +199,45 @@ export default function RecherchePage() {
             </h1>
           </div>
 
-          {/* Sort */}
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as SortOption)}
-            className="bg-elevated border border-border rounded-xl px-3 py-2 text-[13px] text-text-primary outline-none cursor-pointer"
-          >
-            <option value="rating">Mieux notées</option>
-            <option value="popular">Plus populaires</option>
-            <option value="price-asc">Prix croissant</option>
-            <option value="price-desc">Prix décroissant</option>
-          </select>
+          <div className="flex items-center gap-3">
+            {/* View mode toggle */}
+            <div className="flex bg-canvas border border-border rounded-xl overflow-hidden">
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`flex items-center gap-1.5 px-3 py-2 text-[12px] font-medium transition-all duration-200 ${
+                  viewMode === 'grid'
+                    ? 'bg-accent text-white'
+                    : 'text-text-secondary hover:text-text-primary'
+                }`}
+              >
+                <LayoutGrid size={14} />
+                Liste
+              </button>
+              <button
+                onClick={() => setViewMode('map')}
+                className={`flex items-center gap-1.5 px-3 py-2 text-[12px] font-medium transition-all duration-200 ${
+                  viewMode === 'map'
+                    ? 'bg-accent text-white'
+                    : 'text-text-secondary hover:text-text-primary'
+                }`}
+              >
+                <Map size={14} />
+                Carte
+              </button>
+            </div>
+
+            {/* Sort */}
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as SortOption)}
+              className="bg-elevated border border-border rounded-xl px-3 py-2 text-[13px] text-text-primary outline-none cursor-pointer"
+            >
+              <option value="rating">Mieux notées</option>
+              <option value="popular">Plus populaires</option>
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+            </select>
+          </div>
         </div>
 
         {/* Active filter badges */}
@@ -215,15 +250,19 @@ export default function RecherchePage() {
           </div>
         )}
 
-        {/* Results grid */}
+        {/* Results */}
         {filtered.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            <AnimatePresence mode="popLayout">
-              {filtered.map((activity, i) => (
-                <ActivityCard key={activity.id} activity={activity} index={i} />
-              ))}
-            </AnimatePresence>
-          </div>
+          viewMode === 'grid' ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+              <AnimatePresence mode="popLayout">
+                {filtered.map((activity, i) => (
+                  <ActivityCard key={activity.id} activity={activity} index={i} />
+                ))}
+              </AnimatePresence>
+            </div>
+          ) : (
+            <MapView activities={filtered} />
+          )
         ) : (
           <motion.div
             initial={{ opacity: 0, y: 16 }}
