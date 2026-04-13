@@ -172,7 +172,7 @@ export function Hero() {
             <div className="absolute bottom-4 left-4 right-4">
               <span className="inline-block bg-accent text-white text-[11px] font-medium px-3 py-1 rounded-full mb-2">Art créatif</span>
               <p className="text-white font-display font-bold text-[15px] leading-snug">Atelier Aquarelle</p>
-              <p className="text-white/80 text-[12px]">Paris · 28€</p>
+              <p className="text-white/80 text-[12px]">Paris · 28 CHF</p>
             </div>
           </div>
 
@@ -182,7 +182,7 @@ export function Hero() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
             <div className="absolute bottom-3 left-3 right-3">
               <p className="text-white font-display font-bold text-[13px]">Tennis Junior</p>
-              <p className="text-white/80 text-[11px]">Lyon · 35€</p>
+              <p className="text-white/80 text-[11px]">Lyon · 35 CHF</p>
             </div>
           </div>
 
@@ -190,7 +190,7 @@ export function Hero() {
           <div className="rounded-3xl bg-accent-subtle border border-accent/20 flex flex-col justify-center items-center p-4 shadow-card">
             <div className="text-3xl mb-2">🎵</div>
             <p className="font-display font-bold text-[14px] text-text-primary text-center leading-snug">Éveil Musical</p>
-            <p className="text-[11px] text-accent font-medium mt-1">Dès 2 ans · 22€</p>
+            <p className="text-[11px] text-accent font-medium mt-1">Dès 2 ans · 22 CHF</p>
           </div>
 
           {/* Bottom left */}
@@ -208,7 +208,7 @@ export function Hero() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
             <div className="absolute bottom-3 left-3">
               <p className="text-white font-display font-bold text-[13px]">Nature & Aventure</p>
-              <p className="text-white/80 text-[11px]">Nantes · 18€</p>
+              <p className="text-white/80 text-[11px]">Nantes · 18 CHF</p>
             </div>
           </div>
         </motion.div>

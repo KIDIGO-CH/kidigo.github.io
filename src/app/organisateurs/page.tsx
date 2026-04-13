@@ -25,7 +25,7 @@ const PLANS = [
   },
   {
     name: 'Pro',
-    price: '49€',
+    price: '49 CHF',
     period: '/ mois',
     description: 'Pour les organisateurs actifs qui veulent se développer.',
     features: ['Activités illimitées', 'Mise en avant dans les résultats', 'Statistiques avancées', 'Réservations en ligne', 'Support prioritaire', 'Badge Pro'],
@@ -34,7 +34,7 @@ const PLANS = [
   },
   {
     name: 'Premium',
-    price: '99€',
+    price: '99 CHF',
     period: '/ mois',
     description: 'Pour les structures multi-activités ambitieuses.',
     features: ['Tout ce qui est dans Pro', 'Page organisateur dédiée', 'Campagnes email', 'Intégration agenda', 'Account manager dédié', 'Accès API'],

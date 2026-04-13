@@ -119,7 +119,7 @@ export function ActivityCard({ activity, index = 0 }: ActivityCardProps) {
             {/* Price + slots */}
             <div className="flex items-center justify-between pt-3 border-t border-border">
               <div>
-                <span className="text-[16px] font-bold text-text-primary font-display">{activity.price}€</span>
+                <span className="text-[16px] font-bold text-text-primary font-display">{activity.price} CHF</span>
                 <span className="text-[11px] text-text-secondary ml-1">/ séance</span>
               </div>
               {activity.availableSlots <= 5 && (

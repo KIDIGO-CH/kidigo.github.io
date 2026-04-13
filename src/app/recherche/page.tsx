@@ -170,7 +170,7 @@ export default function RecherchePage() {
                           priceMax === price ? 'bg-accent text-white border-accent' : 'bg-canvas border-border text-text-secondary hover:border-accent/30'
                         }`}
                       >
-                        {price === null ? 'Tous prix' : `≤ ${price}€`}
+                        {price === null ? 'Tous prix' : `≤ ${price} CHF`}
                       </button>
                     ))}
                   </div>
@@ -246,7 +246,7 @@ export default function RecherchePage() {
             {city && <Badge variant="subtle">{city} <button onClick={() => setCity('')} className="ml-1">×</button></Badge>}
             {selectedCategory && <Badge variant="subtle">{selectedCategory} <button onClick={() => setSelectedCategory('')} className="ml-1">×</button></Badge>}
             {isIndoor !== null && <Badge variant="subtle">{isIndoor ? 'Intérieur' : 'Extérieur'} <button onClick={() => setIsIndoor(null)} className="ml-1">×</button></Badge>}
-            {priceMax !== null && <Badge variant="subtle">≤ {priceMax}€ <button onClick={() => setPriceMax(null)} className="ml-1">×</button></Badge>}
+            {priceMax !== null && <Badge variant="subtle">≤ {priceMax} CHF <button onClick={() => setPriceMax(null)} className="ml-1">×</button></Badge>}
           </div>
         )}
 

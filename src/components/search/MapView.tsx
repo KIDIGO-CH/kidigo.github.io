@@ -25,7 +25,7 @@ function createPriceIcon(price: number, isCoupDeCoeur: boolean) {
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
       cursor: pointer;
       transition: transform 0.15s ease;
-    ">${price}€</div>`,
+    ">${price} CHF</div>`,
     iconSize: [0, 0],
     iconAnchor: [28, 16],
   })
@@ -108,7 +108,7 @@ export function MapView({ activities }: MapViewProps) {
                         <span className="text-[12px] font-semibold text-[#111814]">{activity.rating}</span>
                         <span className="text-[11px] text-[#6B7280]">({activity.reviewCount})</span>
                       </div>
-                      <span className="text-[14px] font-bold text-[#111814]">{activity.price}€</span>
+                      <span className="text-[14px] font-bold text-[#111814]">{activity.price} CHF</span>
                     </div>
                   </div>
                 </div>

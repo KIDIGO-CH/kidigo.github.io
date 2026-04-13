@@ -197,7 +197,7 @@ export function ActivityDetail({ activity }: { activity: Activity }) {
             >
               <div className="flex items-baseline justify-between mb-6">
                 <div>
-                  <span className="font-display font-black text-[28px] text-text-primary">{activity.price}€</span>
+                  <span className="font-display font-black text-[28px] text-text-primary">{activity.price} CHF</span>
                   <span className="text-[13px] text-text-muted ml-2">/ séance</span>
                 </div>
                 <StarRating rating={activity.rating} size="sm" />
