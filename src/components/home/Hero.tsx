@@ -77,8 +77,8 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.26 }}
           >
-            Des loisirs choisis avec soin pour chaque âge, chaque envie, chaque mercredi.
-            Explorez, comparez, réservez simplement.
+            Des loisirs choisis avec soin pour chaque âge et chaque envie — en soirée, le week-end, pendant les vacances ou pour un anniversaire.
+            Explorez, comparez, émerveillez.
           </motion.p>
 
           {/* Search box */}
