@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { Search, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { LocationSearch } from '@/components/ui/LocationSearch'
+import { Mascot } from '@/components/shared/Mascot'
 import type { Location } from '@/lib/data'
 
 const STAT_ITEMS = [
@@ -45,6 +46,21 @@ export function Hero() {
 
         {/* Left — Content */}
         <div className="flex flex-col">
+
+          {/* Mascot — mobile only */}
+          <motion.div
+            className="flex justify-center mb-6 lg:hidden"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.05 }}
+          >
+            <motion.div
+              animate={{ y: [0, -8, 0] }}
+              transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+            >
+              <Mascot size={140} />
+            </motion.div>
+          </motion.div>
 
           {/* Badge */}
           <motion.div
@@ -180,11 +196,15 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Middle right */}
+          {/* Middle right — Mascot */}
           <div className="rounded-3xl bg-accent-subtle border border-accent/20 flex flex-col justify-center items-center p-4 shadow-card">
-            <div className="text-3xl mb-2">🎵</div>
-            <p className="font-display font-bold text-[14px] text-text-primary text-center leading-snug">Éveil Musical</p>
-            <p className="text-[11px] text-accent font-medium mt-1">Dès 2 ans · 22 CHF</p>
+            <motion.div
+              animate={{ y: [0, -6, 0] }}
+              transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+            >
+              <Mascot size={100} />
+            </motion.div>
+            <p className="font-display font-bold text-[12px] text-text-primary text-center leading-snug mt-1">Kidi, votre guide</p>
           </div>
 
           {/* Bottom left */}

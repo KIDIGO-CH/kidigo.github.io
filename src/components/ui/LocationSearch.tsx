@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { MapPin, X } from 'lucide-react'
 import { locations, type Location } from '@/lib/data'
 
@@ -11,10 +11,8 @@ interface LocationSearchProps {
   compact?: boolean
 }
 
-const TYPE_LABELS: Record<Location['type'], string> = {
-  ville: 'Ville',
-  npa: 'NPA',
-  canton: 'Canton',
+function getLabel(loc: Location) {
+  return `${loc.npa} ${loc.locality}`
 }
 
 export function LocationSearch({ value, onChange, className = '', compact = false }: LocationSearchProps) {
@@ -25,14 +23,30 @@ export function LocationSearch({ value, onChange, className = '', compact = fals
 
   useEffect(() => { setInput(value) }, [value])
 
-  const suggestions = input.length > 0
-    ? locations.filter(l => l.label.toLowerCase().includes(input.toLowerCase())).slice(0, 8)
-    : []
+  const suggestions = useMemo(() => {
+    if (input.length === 0) return []
+    const q = input.toLowerCase().trim()
+    const isNumeric = /^\d+/.test(q)
 
-  const grouped = suggestions.reduce<Record<string, Location[]>>((acc, loc) => {
-    (acc[loc.type] ??= []).push(loc)
-    return acc
-  }, {})
+    const matches = locations.filter(l => {
+      if (isNumeric) {
+        return l.npa.startsWith(q)
+      }
+      return l.locality.toLowerCase().includes(q)
+    })
+
+    // Sort: main localities first, then alphabetically by locality
+    matches.sort((a, b) => {
+      if (a.npa === b.npa) {
+        if (a.isMain && !b.isMain) return -1
+        if (!a.isMain && b.isMain) return 1
+        return a.locality.localeCompare(b.locality)
+      }
+      return a.npa.localeCompare(b.npa)
+    })
+
+    return matches.slice(0, 10)
+  }, [input])
 
   useEffect(() => {
     const handleOutside = (e: MouseEvent) => {
@@ -43,8 +57,9 @@ export function LocationSearch({ value, onChange, className = '', compact = fals
   }, [])
 
   const select = (loc: Location) => {
-    setInput(loc.label)
-    onChange(loc.label, loc)
+    const label = getLabel(loc)
+    setInput(label)
+    onChange(label, loc)
     setOpen(false)
     setHighlighted(-1)
   }
@@ -73,7 +88,7 @@ export function LocationSearch({ value, onChange, className = '', compact = fals
           onChange={(e) => { setInput(e.target.value); setOpen(true); setHighlighted(-1) }}
           onFocus={() => input.length > 0 && setOpen(true)}
           onKeyDown={handleKeyDown}
-          placeholder="Où ? (ville, NPA, canton)"
+          placeholder="NPA, localité…"
           className={`flex-1 bg-transparent text-text-primary placeholder:text-text-muted outline-none ${compact ? 'text-[13px]' : 'text-[14px]'}`}
         />
         {input && (
@@ -84,34 +99,25 @@ export function LocationSearch({ value, onChange, className = '', compact = fals
       </div>
 
       {open && suggestions.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-elevated rounded-xl border border-border shadow-card-hover z-50 overflow-hidden">
-          {(['ville', 'npa', 'canton'] as const).map(type => {
-            const items = grouped[type]
-            if (!items?.length) return null
-            return (
-              <div key={type}>
-                <div className="px-3 pt-2.5 pb-1">
-                  <span className="text-[10px] font-medium text-text-muted uppercase tracking-wider">{TYPE_LABELS[type]}</span>
-                </div>
-                {items.map((loc) => {
-                  const idx = suggestions.indexOf(loc)
-                  return (
-                    <button
-                      key={loc.label}
-                      onClick={() => select(loc)}
-                      className={`w-full text-left px-3 py-2 text-[13px] transition-colors ${
-                        idx === highlighted
-                          ? 'bg-accent-subtle text-accent'
-                          : 'text-text-primary hover:bg-surface'
-                      }`}
-                    >
-                      {loc.label}
-                    </button>
-                  )
-                })}
-              </div>
-            )
-          })}
+        <div className="absolute top-full left-0 right-0 mt-1 bg-elevated rounded-xl border border-border shadow-card-hover z-50 overflow-hidden max-h-[320px] overflow-y-auto">
+          {suggestions.map((loc, idx) => (
+            <button
+              key={`${loc.npa}-${loc.locality}`}
+              onClick={() => select(loc)}
+              className={`w-full text-left px-4 py-2.5 flex items-center justify-between gap-4 transition-colors ${
+                idx === highlighted
+                  ? 'bg-accent-subtle text-accent'
+                  : 'text-text-primary hover:bg-surface'
+              }`}
+            >
+              <span className={`text-[13px] ${loc.isMain ? 'font-semibold' : ''}`}>
+                {loc.npa} {loc.locality}
+              </span>
+              <span className="text-[12px] text-text-muted whitespace-nowrap">
+                Ville - {loc.canton}
+              </span>
+            </button>
+          ))}
         </div>
       )}
     </div>

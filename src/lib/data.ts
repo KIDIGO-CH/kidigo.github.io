@@ -538,49 +538,185 @@ export const categories: { name: Category; icon: string; count: number; color: s
 export const cities = ['Genève', 'Lausanne', 'Fribourg', 'Neuchâtel', 'Sion', 'Montreux']
 
 export type Location = {
-  label: string
-  type: 'ville' | 'npa' | 'canton'
+  npa: string
+  locality: string
+  canton: string
+  cantonCode: string
+  isMain?: boolean
   filterFn: (a: Activity) => boolean
 }
 
 export const locations: Location[] = [
-  // Villes
-  { label: 'Genève', type: 'ville', filterFn: (a) => a.city === 'Genève' },
-  { label: 'Lausanne', type: 'ville', filterFn: (a) => a.city === 'Lausanne' },
-  { label: 'Fribourg', type: 'ville', filterFn: (a) => a.city === 'Fribourg' },
-  { label: 'Neuchâtel', type: 'ville', filterFn: (a) => a.city === 'Neuchâtel' },
-  { label: 'Sion', type: 'ville', filterFn: (a) => a.city === 'Sion' },
-  { label: 'Montreux', type: 'ville', filterFn: (a) => a.city === 'Montreux' },
-  { label: 'Nyon', type: 'ville', filterFn: (a) => a.city === 'Nyon' },
-  { label: 'Yverdon-les-Bains', type: 'ville', filterFn: (a) => a.city === 'Yverdon-les-Bains' },
-  { label: 'La Chaux-de-Fonds', type: 'ville', filterFn: (a) => a.city === 'La Chaux-de-Fonds' },
-  { label: 'Morges', type: 'ville', filterFn: (a) => a.city === 'Morges' },
-  { label: 'Vevey', type: 'ville', filterFn: (a) => a.city === 'Vevey' },
-  { label: 'Bienne', type: 'ville', filterFn: (a) => a.city === 'Bienne' },
-  { label: 'Delémont', type: 'ville', filterFn: (a) => a.city === 'Delémont' },
-  { label: 'Sierre', type: 'ville', filterFn: (a) => a.city === 'Sierre' },
-  { label: 'Martigny', type: 'ville', filterFn: (a) => a.city === 'Martigny' },
-  // NPA
-  { label: '1200 – Genève', type: 'npa', filterFn: (a) => a.canton === 'GE' },
-  { label: '1204 – Genève Vieille-Ville', type: 'npa', filterFn: (a) => a.npa === '1204' },
-  { label: '1207 – Genève Eaux-Vives', type: 'npa', filterFn: (a) => a.npa === '1207' },
-  { label: '1000 – Lausanne', type: 'npa', filterFn: (a) => a.city === 'Lausanne' },
-  { label: '1007 – Lausanne Ouchy / Vidy', type: 'npa', filterFn: (a) => a.npa === '1007' },
-  { label: '1700 – Fribourg', type: 'npa', filterFn: (a) => a.npa === '1700' },
-  { label: '1820 – Montreux', type: 'npa', filterFn: (a) => a.npa === '1820' },
-  { label: '1950 – Sion', type: 'npa', filterFn: (a) => a.npa === '1950' },
-  { label: '2000 – Neuchâtel', type: 'npa', filterFn: (a) => a.npa === '2000' },
-  { label: '1260 – Nyon', type: 'npa', filterFn: (a) => a.city === 'Nyon' },
-  { label: '1400 – Yverdon-les-Bains', type: 'npa', filterFn: (a) => a.city === 'Yverdon-les-Bains' },
-  { label: '1800 – Vevey', type: 'npa', filterFn: (a) => a.city === 'Vevey' },
-  // Cantons
-  { label: 'Canton de Genève (GE)', type: 'canton', filterFn: (a) => a.canton === 'GE' },
-  { label: 'Canton de Vaud (VD)', type: 'canton', filterFn: (a) => a.canton === 'VD' },
-  { label: 'Canton de Fribourg (FR)', type: 'canton', filterFn: (a) => a.canton === 'FR' },
-  { label: 'Canton de Neuchâtel (NE)', type: 'canton', filterFn: (a) => a.canton === 'NE' },
-  { label: 'Canton du Valais (VS)', type: 'canton', filterFn: (a) => a.canton === 'VS' },
-  { label: 'Canton du Jura (JU)', type: 'canton', filterFn: (a) => a.canton === 'JU' },
-  { label: 'Canton de Berne (BE)', type: 'canton', filterFn: (a) => a.canton === 'BE' },
+  // Genève
+  { npa: '1200', locality: 'Genève', canton: 'Genève', cantonCode: 'GE', isMain: true, filterFn: (a) => a.canton === 'GE' },
+  { npa: '1201', locality: 'Genève', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.city === 'Genève' },
+  { npa: '1202', locality: 'Genève', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.city === 'Genève' },
+  { npa: '1203', locality: 'Genève', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.city === 'Genève' },
+  { npa: '1204', locality: 'Genève', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.npa === '1204' },
+  { npa: '1205', locality: 'Genève', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.city === 'Genève' },
+  { npa: '1206', locality: 'Genève', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.city === 'Genève' },
+  { npa: '1207', locality: 'Genève', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.npa === '1207' },
+  { npa: '1208', locality: 'Genève', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.city === 'Genève' },
+  { npa: '1209', locality: 'Vernier', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+  { npa: '1212', locality: 'Grand-Lancy', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+  { npa: '1213', locality: 'Onex', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+  { npa: '1213', locality: 'Petit-Lancy', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+  { npa: '1214', locality: 'Vernier', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+  { npa: '1215', locality: 'Genève Aéroport', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+  { npa: '1216', locality: 'Cointrin', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+  { npa: '1217', locality: 'Meyrin', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+  { npa: '1218', locality: 'Le Grand-Saconnex', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+  { npa: '1219', locality: 'Le Lignon', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+  { npa: '1219', locality: 'Aïre', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+  { npa: '1219', locality: 'Châtelaine', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+  { npa: '1220', locality: 'Les Avanchets', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+  { npa: '1222', locality: 'Vésenaz', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+  { npa: '1223', locality: 'Cologny', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+  { npa: '1224', locality: 'Chêne-Bougeries', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+  { npa: '1225', locality: 'Chêne-Bourg', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+  { npa: '1226', locality: 'Thônex', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+  { npa: '1227', locality: 'Carouge GE', canton: 'Genève', cantonCode: 'GE', isMain: true, filterFn: (a) => a.canton === 'GE' },
+  { npa: '1227', locality: 'Les Acacias', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+  { npa: '1228', locality: 'Plan-les-Ouates', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+  { npa: '1232', locality: 'Confignon', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+  { npa: '1233', locality: 'Bernex', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+  { npa: '1245', locality: 'Collonge-Bellerive', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+  { npa: '1246', locality: 'Corsier GE', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+  { npa: '1247', locality: 'Anières', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+  { npa: '1253', locality: 'Vandoeuvres', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+  { npa: '1255', locality: 'Veyrier', canton: 'Genève', cantonCode: 'GE', filterFn: (a) => a.canton === 'GE' },
+
+  // Lausanne
+  { npa: '1000', locality: 'Lausanne', canton: 'Vaud', cantonCode: 'VD', isMain: true, filterFn: (a) => a.city === 'Lausanne' },
+  { npa: '1003', locality: 'Lausanne', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.city === 'Lausanne' },
+  { npa: '1004', locality: 'Lausanne', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.city === 'Lausanne' },
+  { npa: '1005', locality: 'Lausanne', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.city === 'Lausanne' },
+  { npa: '1006', locality: 'Lausanne', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.city === 'Lausanne' },
+  { npa: '1007', locality: 'Lausanne', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.npa === '1007' },
+  { npa: '1010', locality: 'Lausanne', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.city === 'Lausanne' },
+  { npa: '1012', locality: 'Lausanne', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.city === 'Lausanne' },
+  { npa: '1018', locality: 'Lausanne', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.city === 'Lausanne' },
+
+  // Agglomération lausannoise
+  { npa: '1020', locality: 'Renens VD', canton: 'Vaud', cantonCode: 'VD', isMain: true, filterFn: (a) => a.canton === 'VD' },
+  { npa: '1022', locality: 'Chavannes-près-Renens', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+  { npa: '1023', locality: 'Crissier', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+  { npa: '1024', locality: 'Ecublens VD', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+  { npa: '1025', locality: 'St-Sulpice VD', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+  { npa: '1028', locality: 'Préverenges', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+  { npa: '1030', locality: 'Bussigny', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+  { npa: '1052', locality: 'Le Mont-sur-Lausanne', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+  { npa: '1066', locality: 'Epalinges', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+  { npa: '1092', locality: 'Belmont-sur-Lausanne', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+  { npa: '1094', locality: 'Paudex', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+  { npa: '1095', locality: 'Lutry', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+  { npa: '1009', locality: 'Pully', canton: 'Vaud', cantonCode: 'VD', isMain: true, filterFn: (a) => a.canton === 'VD' },
+
+  // Morges
+  { npa: '1110', locality: 'Morges', canton: 'Vaud', cantonCode: 'VD', isMain: true, filterFn: (a) => a.city === 'Morges' },
+  { npa: '1112', locality: 'Echichens', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+  { npa: '1114', locality: 'Colombier VD', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+
+  // Nyon
+  { npa: '1260', locality: 'Nyon', canton: 'Vaud', cantonCode: 'VD', isMain: true, filterFn: (a) => a.city === 'Nyon' },
+  { npa: '1262', locality: 'Eysins', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+  { npa: '1263', locality: 'Crassier', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+  { npa: '1264', locality: 'St-Cergue', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+  { npa: '1270', locality: 'Trélex', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+  { npa: '1271', locality: 'Givrins', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+  { npa: '1272', locality: 'Genolier', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+  { npa: '1274', locality: 'Grens', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+  { npa: '1276', locality: 'Gingins', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+  { npa: '1279', locality: 'Chavannes-de-Bogis', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+
+  // Yverdon
+  { npa: '1400', locality: 'Yverdon-les-Bains', canton: 'Vaud', cantonCode: 'VD', isMain: true, filterFn: (a) => a.city === 'Yverdon-les-Bains' },
+  { npa: '1400', locality: 'Cheseaux-Noréaz', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+  { npa: '1401', locality: 'Yverdon-les-Bains', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.city === 'Yverdon-les-Bains' },
+  { npa: '1422', locality: 'Grandson', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+
+  // Estavayer (user's example!)
+  { npa: '1470', locality: 'Estavayer-le-Lac', canton: 'Fribourg', cantonCode: 'FR', isMain: true, filterFn: (a) => a.canton === 'FR' },
+  { npa: '1470', locality: 'Bollion', canton: 'Fribourg', cantonCode: 'FR', filterFn: (a) => a.canton === 'FR' },
+  { npa: '1470', locality: 'Lully FR', canton: 'Fribourg', cantonCode: 'FR', filterFn: (a) => a.canton === 'FR' },
+  { npa: '1470', locality: 'Seiry', canton: 'Fribourg', cantonCode: 'FR', filterFn: (a) => a.canton === 'FR' },
+
+  // Fribourg
+  { npa: '1700', locality: 'Fribourg', canton: 'Fribourg', cantonCode: 'FR', isMain: true, filterFn: (a) => a.npa === '1700' },
+  { npa: '1720', locality: 'Corminboeuf', canton: 'Fribourg', cantonCode: 'FR', filterFn: (a) => a.canton === 'FR' },
+  { npa: '1722', locality: 'Bourguillon', canton: 'Fribourg', cantonCode: 'FR', filterFn: (a) => a.canton === 'FR' },
+  { npa: '1723', locality: 'Marly', canton: 'Fribourg', cantonCode: 'FR', isMain: true, filterFn: (a) => a.canton === 'FR' },
+  { npa: '1723', locality: 'Pierrafortscha', canton: 'Fribourg', cantonCode: 'FR', filterFn: (a) => a.canton === 'FR' },
+  { npa: '1724', locality: 'Le Mouret', canton: 'Fribourg', cantonCode: 'FR', isMain: true, filterFn: (a) => a.canton === 'FR' },
+  { npa: '1724', locality: 'Bonnefontaine', canton: 'Fribourg', cantonCode: 'FR', filterFn: (a) => a.canton === 'FR' },
+  { npa: '1724', locality: 'Ferpicloz', canton: 'Fribourg', cantonCode: 'FR', filterFn: (a) => a.canton === 'FR' },
+  { npa: '1725', locality: 'Posieux', canton: 'Fribourg', cantonCode: 'FR', filterFn: (a) => a.canton === 'FR' },
+  { npa: '1740', locality: 'Neyruz FR', canton: 'Fribourg', cantonCode: 'FR', filterFn: (a) => a.canton === 'FR' },
+  { npa: '1752', locality: 'Villars-sur-Glâne', canton: 'Fribourg', cantonCode: 'FR', filterFn: (a) => a.canton === 'FR' },
+  { npa: '1753', locality: 'Matran', canton: 'Fribourg', cantonCode: 'FR', filterFn: (a) => a.canton === 'FR' },
+  { npa: '1754', locality: 'Avry-sur-Matran', canton: 'Fribourg', cantonCode: 'FR', isMain: true, filterFn: (a) => a.canton === 'FR' },
+  { npa: '1754', locality: 'Rosé', canton: 'Fribourg', cantonCode: 'FR', filterFn: (a) => a.canton === 'FR' },
+  { npa: '1630', locality: 'Bulle', canton: 'Fribourg', cantonCode: 'FR', isMain: true, filterFn: (a) => a.canton === 'FR' },
+
+  // Montreux / Vevey / Riviera
+  { npa: '1800', locality: 'Vevey', canton: 'Vaud', cantonCode: 'VD', isMain: true, filterFn: (a) => a.city === 'Vevey' },
+  { npa: '1802', locality: 'Corseaux', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+  { npa: '1803', locality: 'Chardonne', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+  { npa: '1806', locality: 'St-Légier-La Chiésaz', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+  { npa: '1807', locality: 'Blonay', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.canton === 'VD' },
+  { npa: '1814', locality: 'La Tour-de-Peilz', canton: 'Vaud', cantonCode: 'VD', isMain: true, filterFn: (a) => a.canton === 'VD' },
+  { npa: '1815', locality: 'Clarens', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.city === 'Montreux' },
+  { npa: '1816', locality: 'Chailly-Montreux', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.city === 'Montreux' },
+  { npa: '1820', locality: 'Montreux', canton: 'Vaud', cantonCode: 'VD', isMain: true, filterFn: (a) => a.npa === '1820' },
+  { npa: '1820', locality: 'Territet', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.npa === '1820' },
+  { npa: '1820', locality: 'Veytaux', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.npa === '1820' },
+  { npa: '1823', locality: 'Glion', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.city === 'Montreux' },
+  { npa: '1824', locality: 'Caux', canton: 'Vaud', cantonCode: 'VD', filterFn: (a) => a.city === 'Montreux' },
+
+  // Neuchâtel
+  { npa: '2000', locality: 'Neuchâtel', canton: 'Neuchâtel', cantonCode: 'NE', isMain: true, filterFn: (a) => a.npa === '2000' },
+  { npa: '2001', locality: 'Neuchâtel', canton: 'Neuchâtel', cantonCode: 'NE', filterFn: (a) => a.city === 'Neuchâtel' },
+  { npa: '2002', locality: 'Neuchâtel', canton: 'Neuchâtel', cantonCode: 'NE', filterFn: (a) => a.city === 'Neuchâtel' },
+  { npa: '2012', locality: 'Auvernier', canton: 'Neuchâtel', cantonCode: 'NE', filterFn: (a) => a.canton === 'NE' },
+  { npa: '2013', locality: 'Colombier NE', canton: 'Neuchâtel', cantonCode: 'NE', filterFn: (a) => a.canton === 'NE' },
+  { npa: '2016', locality: 'Cortaillod', canton: 'Neuchâtel', cantonCode: 'NE', filterFn: (a) => a.canton === 'NE' },
+  { npa: '2017', locality: 'Boudry', canton: 'Neuchâtel', cantonCode: 'NE', filterFn: (a) => a.canton === 'NE' },
+  { npa: '2022', locality: 'Bevaix', canton: 'Neuchâtel', cantonCode: 'NE', filterFn: (a) => a.canton === 'NE' },
+  { npa: '2034', locality: 'Peseux', canton: 'Neuchâtel', cantonCode: 'NE', filterFn: (a) => a.canton === 'NE' },
+  { npa: '2035', locality: 'Corcelles NE', canton: 'Neuchâtel', cantonCode: 'NE', filterFn: (a) => a.canton === 'NE' },
+  { npa: '2035', locality: 'Cormondrèche', canton: 'Neuchâtel', cantonCode: 'NE', filterFn: (a) => a.canton === 'NE' },
+  { npa: '2036', locality: 'Cormondrèche', canton: 'Neuchâtel', cantonCode: 'NE', filterFn: (a) => a.canton === 'NE' },
+  { npa: '2300', locality: 'La Chaux-de-Fonds', canton: 'Neuchâtel', cantonCode: 'NE', isMain: true, filterFn: (a) => a.canton === 'NE' },
+  { npa: '2400', locality: 'Le Locle', canton: 'Neuchâtel', cantonCode: 'NE', isMain: true, filterFn: (a) => a.canton === 'NE' },
+
+  // Sion / Valais
+  { npa: '1950', locality: 'Sion', canton: 'Valais', cantonCode: 'VS', isMain: true, filterFn: (a) => a.npa === '1950' },
+  { npa: '1951', locality: 'Sion', canton: 'Valais', cantonCode: 'VS', filterFn: (a) => a.city === 'Sion' },
+  { npa: '1963', locality: 'Vétroz', canton: 'Valais', cantonCode: 'VS', filterFn: (a) => a.canton === 'VS' },
+  { npa: '1964', locality: 'Conthey', canton: 'Valais', cantonCode: 'VS', filterFn: (a) => a.canton === 'VS' },
+  { npa: '1965', locality: 'Savièse', canton: 'Valais', cantonCode: 'VS', filterFn: (a) => a.canton === 'VS' },
+  { npa: '1971', locality: 'Grimisuat', canton: 'Valais', cantonCode: 'VS', isMain: true, filterFn: (a) => a.canton === 'VS' },
+  { npa: '1971', locality: 'Champlan', canton: 'Valais', cantonCode: 'VS', filterFn: (a) => a.canton === 'VS' },
+  { npa: '1972', locality: 'Anzère', canton: 'Valais', cantonCode: 'VS', filterFn: (a) => a.canton === 'VS' },
+  { npa: '1920', locality: 'Martigny', canton: 'Valais', cantonCode: 'VS', isMain: true, filterFn: (a) => a.city === 'Martigny' },
+  { npa: '1926', locality: 'Fully', canton: 'Valais', cantonCode: 'VS', filterFn: (a) => a.canton === 'VS' },
+  { npa: '3960', locality: 'Sierre', canton: 'Valais', cantonCode: 'VS', isMain: true, filterFn: (a) => a.city === 'Sierre' },
+  { npa: '3960', locality: 'Muraz VS', canton: 'Valais', cantonCode: 'VS', filterFn: (a) => a.canton === 'VS' },
+  { npa: '3960', locality: 'Noës', canton: 'Valais', cantonCode: 'VS', filterFn: (a) => a.canton === 'VS' },
+  { npa: '3963', locality: 'Crans-Montana', canton: 'Valais', cantonCode: 'VS', isMain: true, filterFn: (a) => a.canton === 'VS' },
+  { npa: '3963', locality: 'Montana', canton: 'Valais', cantonCode: 'VS', filterFn: (a) => a.canton === 'VS' },
+  { npa: '1870', locality: 'Monthey', canton: 'Valais', cantonCode: 'VS', isMain: true, filterFn: (a) => a.canton === 'VS' },
+  { npa: '1890', locality: 'St-Maurice', canton: 'Valais', cantonCode: 'VS', filterFn: (a) => a.canton === 'VS' },
+
+  // Jura
+  { npa: '2800', locality: 'Delémont', canton: 'Jura', cantonCode: 'JU', isMain: true, filterFn: (a) => a.canton === 'JU' },
+  { npa: '2900', locality: 'Porrentruy', canton: 'Jura', cantonCode: 'JU', isMain: true, filterFn: (a) => a.canton === 'JU' },
+
+  // Bienne
+  { npa: '2500', locality: 'Bienne', canton: 'Berne', cantonCode: 'BE', isMain: true, filterFn: (a) => a.canton === 'BE' },
+  { npa: '2501', locality: 'Bienne', canton: 'Berne', cantonCode: 'BE', filterFn: (a) => a.canton === 'BE' },
+  { npa: '2502', locality: 'Bienne', canton: 'Berne', cantonCode: 'BE', filterFn: (a) => a.canton === 'BE' },
+  { npa: '2503', locality: 'Bienne', canton: 'Berne', cantonCode: 'BE', filterFn: (a) => a.canton === 'BE' },
 ]
 
 export const featuredActivities = activities.filter(a => a.isFeatured)
