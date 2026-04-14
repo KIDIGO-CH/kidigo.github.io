@@ -74,7 +74,7 @@ export default function AProposPage() {
                 Mais surtout, vous faire gagner du temps et vous en redonner là où ça compte vraiment :
               </p>
               <p className="text-[22px] font-display font-bold text-text-primary mt-3">
-                avec eux.
+                avec eux. ❤️
               </p>
             </div>
           </Section>
