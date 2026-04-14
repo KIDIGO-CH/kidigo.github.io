@@ -47,7 +47,7 @@ function RechercheContent() {
     if (q) setQuery(q)
     if (lieu) {
       setLocationLabel(lieu)
-      const match = locations.find(l => `${l.npa} ${l.locality}` === lieu)
+      const match = locations.find(l => (l.type === 'canton' ? l.locality : `${l.npa} ${l.locality}`) === lieu)
       if (match) setLocationFilter(match)
     }
   }, [searchParams])
