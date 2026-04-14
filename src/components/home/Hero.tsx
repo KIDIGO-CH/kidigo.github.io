@@ -3,10 +3,9 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Search, Sparkles, SlidersHorizontal, Plus } from 'lucide-react'
+import { Search, Sparkles, SlidersHorizontal, Plus, Heart } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { LocationSearch } from '@/components/ui/LocationSearch'
-import { Mascot } from '@/components/shared/Mascot'
 import { WeatherWidget } from '@/components/home/WeatherWidget'
 import { FilterBar, defaultFilters, countActiveFilters, type Filters } from '@/components/search/FilterBar'
 import type { Location } from '@/lib/data'
@@ -52,21 +51,6 @@ export function Hero() {
 
         {/* Left — Content */}
         <div className="flex flex-col">
-
-          {/* Mascot — mobile only */}
-          <motion.div
-            className="flex justify-center mb-6 lg:hidden"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.05 }}
-          >
-            <motion.div
-              animate={{ y: [0, -8, 0] }}
-              transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-            >
-              <Mascot size={140} />
-            </motion.div>
-          </motion.div>
 
           {/* Badge + Weather */}
           <motion.div
@@ -225,16 +209,13 @@ export function Hero() {
             <p className="text-[11px] text-text-secondary text-center mt-0.5">Suggérez une activité kids friendly</p>
           </a>
 
-          {/* Bottom right — Mascot */}
-          <div className="rounded-3xl bg-accent-subtle border border-accent/20 flex flex-col justify-center items-center p-4 shadow-card">
-            <motion.div
-              animate={{ y: [0, -6, 0] }}
-              transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-            >
-              <Mascot size={80} />
-            </motion.div>
-            <p className="font-display font-bold text-[11px] text-text-primary text-center leading-snug mt-1">Kidi, votre guide</p>
-          </div>
+          {/* Bottom right — Coup de coeur */}
+          <a href="/activite/atelier-peinture-aquarelle-geneve" className="rounded-3xl bg-gradient-to-br from-red-50 to-accent-subtle border border-accent/15 flex flex-col justify-center items-center p-4 shadow-card hover:shadow-card-hover hover:scale-[1.02] transition-all duration-200">
+            <Heart size={18} className="text-accent fill-accent mb-1.5" />
+            <p className="font-display font-bold text-[13px] text-text-primary leading-tight text-center">Coup de coeur</p>
+            <p className="text-[11px] text-accent font-medium mt-1 text-center">Atelier Aquarelle</p>
+            <p className="text-[10px] text-text-muted">Genève · 28 CHF</p>
+          </a>
         </motion.div>
       </div>
     </section>
