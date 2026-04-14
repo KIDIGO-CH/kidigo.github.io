@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Search, Sparkles, SlidersHorizontal } from 'lucide-react'
+import { Search, Sparkles, SlidersHorizontal, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { LocationSearch } from '@/components/ui/LocationSearch'
 import { Mascot } from '@/components/shared/Mascot'
@@ -210,34 +210,30 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Middle right — Mascot */}
+          {/* Middle right — Weather */}
+          <WeatherWidget variant="card" />
+
+          {/* Bottom left — Partager un lieu CTA */}
+          <a
+            href="/partager"
+            className="rounded-3xl bg-gradient-to-br from-accent-subtle to-accent/10 border border-accent/20 flex flex-col justify-center items-center p-4 shadow-card hover:shadow-card-hover hover:scale-[1.02] transition-all duration-200 group cursor-pointer"
+          >
+            <div className="w-11 h-11 rounded-full bg-accent/15 flex items-center justify-center mb-2 group-hover:bg-accent/25 transition-colors">
+              <Plus size={20} className="text-accent" />
+            </div>
+            <p className="font-display font-bold text-[13px] text-text-primary leading-tight text-center">Partager un lieu</p>
+            <p className="text-[11px] text-text-secondary text-center mt-0.5">Suggérez une activité kids friendly</p>
+          </a>
+
+          {/* Bottom right — Mascot */}
           <div className="rounded-3xl bg-accent-subtle border border-accent/20 flex flex-col justify-center items-center p-4 shadow-card">
             <motion.div
               animate={{ y: [0, -6, 0] }}
               transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
             >
-              <Mascot size={100} />
+              <Mascot size={80} />
             </motion.div>
-            <p className="font-display font-bold text-[12px] text-text-primary text-center leading-snug mt-1">Kidi, votre guide</p>
-          </div>
-
-          {/* Bottom left */}
-          <div className="rounded-3xl bg-elevated border border-border flex items-center gap-3 p-4 shadow-card">
-            <div className="w-10 h-10 rounded-2xl bg-accent-subtle flex items-center justify-center text-lg">🔬</div>
-            <div>
-              <p className="font-display font-bold text-[13px] text-text-primary leading-tight">Lab Juniors</p>
-              <p className="text-[11px] text-text-secondary">Science & Découvertes</p>
-            </div>
-          </div>
-
-          {/* Bottom right */}
-          <div className="rounded-3xl overflow-hidden relative shadow-card">
-            <img src="https://picsum.photos/seed/hero-3/400/200" alt="" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-            <div className="absolute bottom-3 left-3">
-              <p className="text-white font-display font-bold text-[13px]">Nature & Aventure</p>
-              <p className="text-white/80 text-[11px]">Montreux · 18 CHF</p>
-            </div>
+            <p className="font-display font-bold text-[11px] text-text-primary text-center leading-snug mt-1">Kidi, votre guide</p>
           </div>
         </motion.div>
       </div>
