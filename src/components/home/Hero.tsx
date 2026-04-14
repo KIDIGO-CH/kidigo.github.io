@@ -87,8 +87,19 @@ export function Hero() {
   // Current pair of activities for the two bento slots
   const card1 = nearbyActivities[cardIndex] || allActivities[0]
   const card2 = nearbyActivities[(cardIndex + 1) % nearbyActivities.length] || allActivities[1]
-  // Coup de coeur = highest rated nearby
-  const coupDeCoeur = nearbyActivities.reduce((best, a) => a.rating > best.rating ? a : best, nearbyActivities[0] || allActivities[0])
+  // Coup de coeur = top rated nearby, rotating
+  const topRated = [...nearbyActivities].sort((a, b) => b.rating - a.rating)
+  const [coeurIndex, setCoeurIndex] = useState(0)
+
+  useEffect(() => {
+    if (topRated.length === 0) return
+    const interval = setInterval(() => {
+      setCoeurIndex((i) => (i + 1) % Math.min(topRated.length, 6))
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [topRated.length])
+
+  const coupDeCoeur = topRated[coeurIndex] || allActivities[0]
 
   const handleSearch = () => {
     const params = new URLSearchParams()
@@ -308,12 +319,23 @@ export function Hero() {
             </div>
           </a>
 
-          {/* Bottom right — Coup de coeur (dynamic) */}
-          <a href={`/activite/${coupDeCoeur.slug}`} className="rounded-3xl bg-gradient-to-br from-red-50 to-accent-subtle border border-accent/15 flex flex-col justify-center items-center p-4 shadow-card hover:shadow-card-hover hover:scale-[1.02] transition-all duration-200">
+          {/* Bottom right — Coup de coeur (rotating) */}
+          <a href={`/activite/${coupDeCoeur.slug}`} className="rounded-3xl bg-gradient-to-br from-red-50 to-accent-subtle border border-accent/15 flex flex-col justify-center items-center p-4 shadow-card hover:shadow-card-hover hover:scale-[1.02] transition-all duration-200 overflow-hidden relative">
             <Heart size={20} className="text-accent fill-accent mb-2" />
             <p className="font-display font-bold text-[14px] text-text-primary leading-tight text-center">Coup de coeur</p>
-            <p className="text-[12px] text-accent font-medium mt-1 text-center leading-tight">{coupDeCoeur.name}</p>
-            <p className="text-[11px] text-text-muted">{coupDeCoeur.city} · {coupDeCoeur.price === 0 ? 'Gratuit' : `${coupDeCoeur.price} CHF`}</p>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={coupDeCoeur.id}
+                className="flex flex-col items-center"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.35 }}
+              >
+                <p className="text-[12px] text-accent font-medium mt-1 text-center leading-tight">{coupDeCoeur.name}</p>
+                <p className="text-[11px] text-text-muted">{coupDeCoeur.city} · {coupDeCoeur.price === 0 ? 'Gratuit' : `${coupDeCoeur.price} CHF`}</p>
+              </motion.div>
+            </AnimatePresence>
           </a>
         </motion.div>
         </div>
@@ -345,12 +367,23 @@ export function Hero() {
             <WeatherWidget />
           </div>
 
-          {/* Coup de coeur (dynamic) */}
-          <a href={`/activite/${coupDeCoeur.slug}`} className="rounded-2xl bg-gradient-to-br from-red-50 to-accent-subtle border border-accent/15 flex flex-col justify-center items-center p-4 shadow-card active:scale-[0.98] transition-all">
+          {/* Coup de coeur (rotating) */}
+          <a href={`/activite/${coupDeCoeur.slug}`} className="rounded-2xl bg-gradient-to-br from-red-50 to-accent-subtle border border-accent/15 flex flex-col justify-center items-center p-4 shadow-card active:scale-[0.98] transition-all overflow-hidden">
             <Heart size={18} className="text-accent fill-accent mb-1.5" />
             <p className="font-display font-bold text-[13px] text-text-primary leading-tight text-center">Coup de coeur</p>
-            <p className="text-[11px] text-accent font-medium mt-1 text-center leading-tight">{coupDeCoeur.name}</p>
-            <p className="text-[10px] text-text-muted">{coupDeCoeur.city} · {coupDeCoeur.price === 0 ? 'Gratuit' : `${coupDeCoeur.price} CHF`}</p>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={coupDeCoeur.id}
+                className="flex flex-col items-center"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.35 }}
+              >
+                <p className="text-[11px] text-accent font-medium mt-1 text-center leading-tight">{coupDeCoeur.name}</p>
+                <p className="text-[10px] text-text-muted">{coupDeCoeur.city} · {coupDeCoeur.price === 0 ? 'Gratuit' : `${coupDeCoeur.price} CHF`}</p>
+              </motion.div>
+            </AnimatePresence>
           </a>
 
           {/* Activity card (rotating) */}
