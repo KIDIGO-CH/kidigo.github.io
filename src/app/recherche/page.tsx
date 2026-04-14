@@ -224,6 +224,18 @@ function RechercheContent() {
                 <button onClick={() => setFilters(f => ({ ...f, dateFilter: null }))} className="ml-1">×</button>
               </Badge>
             )}
+            {filters.accessibility.map(a => (
+              <Badge key={a} variant="subtle">{a === 'pmr' ? '♿ PMR' : '🍼 Poussette'} <button onClick={() => setFilters(f => ({ ...f, accessibility: f.accessibility.filter(x => x !== a) }))} className="ml-1">×</button></Badge>
+            ))}
+            {filters.comfort.map(c => (
+              <Badge key={c} variant="subtle">{c === 'toilettes' ? '🚻 Toilettes' : '☕ Café'} <button onClick={() => setFilters(f => ({ ...f, comfort: f.comfort.filter(x => x !== c) }))} className="ml-1">×</button></Badge>
+            ))}
+            {filters.access.map(a => (
+              <Badge key={a} variant="subtle">{a === 'parking' ? '🅿️ Parking' : '🚌 Transports'} <button onClick={() => setFilters(f => ({ ...f, access: f.access.filter(x => x !== a) }))} className="ml-1">×</button></Badge>
+            ))}
+            {filters.animals && (
+              <Badge variant="subtle">🐾 Animaux <button onClick={() => setFilters(f => ({ ...f, animals: false }))} className="ml-1">×</button></Badge>
+            )}
           </div>
         )}
 

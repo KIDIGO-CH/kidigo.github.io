@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, MapPin, Calendar, ChevronDown } from 'lucide-react'
+import { X, MapPin, Calendar, ChevronDown, SlidersHorizontal } from 'lucide-react'
 import { categories } from '@/lib/data'
 import type { Category } from '@/lib/types'
 
@@ -10,6 +10,10 @@ import type { Category } from '@/lib/types'
 export type AgeOption = '0-3' | '4-6' | '7-10' | '11-14'
 export type PriceOption = 'free' | '<10' | '10-30' | '30+'
 export type DateOption = 'today' | 'weekend' | string
+export type AccessibilityOption = 'pmr' | 'poussette'
+export type ComfortOption = 'toilettes' | 'cafe'
+export type AccessOption = 'parking' | 'transports'
+export type AnimalOption = 'animaux'
 
 export type Filters = {
   categories: Category[]
@@ -20,6 +24,10 @@ export type Filters = {
   nearbyKm: number | null
   userLat: number | null
   userLng: number | null
+  accessibility: AccessibilityOption[]
+  comfort: ComfortOption[]
+  access: AccessOption[]
+  animals: boolean
 }
 
 export const defaultFilters: Filters = {
@@ -31,6 +39,10 @@ export const defaultFilters: Filters = {
   nearbyKm: null,
   userLat: null,
   userLng: null,
+  accessibility: [],
+  comfort: [],
+  access: [],
+  animals: false,
 }
 
 const AGE_OPTIONS: { value: AgeOption; label: string }[] = [
@@ -102,7 +114,7 @@ function FilterGroup({ label, activeCount, isOpen, onToggle }: {
 }
 
 // ── Main FilterBar ────────────────────────────────────────────────────
-type FilterGroupKey = 'category' | 'age' | 'price' | 'lieu' | 'quand'
+type FilterGroupKey = 'category' | 'age' | 'price' | 'quand' | 'advanced'
 
 export function FilterBar({ filters, onChange, open }: FilterBarProps) {
   const [locatingNearby, setLocatingNearby] = useState(false)
@@ -128,9 +140,12 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
     )
   }
 
+  const advancedCount = filters.accessibility.length + filters.comfort.length + filters.access.length + (filters.animals ? 1 : 0)
+
   const hasAnyFilter = filters.categories.length > 0 || filters.ages.length > 0 ||
     filters.indoor !== null || filters.prices.length > 0 ||
-    filters.nearbyKm !== null || filters.dateFilter !== null
+    filters.nearbyKm !== null || filters.dateFilter !== null ||
+    advancedCount > 0
 
   return (
     <AnimatePresence>
@@ -143,19 +158,36 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
         >
           <div className="pt-3 sm:pt-4 pb-2 space-y-2.5 sm:space-y-3">
 
-            {/* Filter group buttons */}
+            {/* Level 1 — Visible filters */}
             <div className="flex flex-wrap gap-1.5 sm:gap-2 items-center">
               <FilterGroup label="Catégorie" activeCount={filters.categories.length} isOpen={openGroup === 'category'} onToggle={() => toggleGroup('category')} />
               <FilterGroup label="Âge" activeCount={filters.ages.length} isOpen={openGroup === 'age'} onToggle={() => toggleGroup('age')} />
               <FilterGroup label="Prix" activeCount={filters.prices.length} isOpen={openGroup === 'price'} onToggle={() => toggleGroup('price')} />
-              <FilterGroup label="Lieu" activeCount={filters.indoor !== null ? 1 : 0} isOpen={openGroup === 'lieu'} onToggle={() => toggleGroup('lieu')} />
               <FilterGroup label="Quand" activeCount={filters.dateFilter ? 1 : 0} isOpen={openGroup === 'quand'} onToggle={() => toggleGroup('quand')} />
 
-              {/* Autour de moi (standalone pill) */}
+              {/* Autour de moi */}
               <Pill active={filters.nearbyKm !== null} onClick={handleNearby}>
                 <MapPin size={12} />
                 {locatingNearby ? 'Localisation…' : filters.nearbyKm !== null ? `≤ ${filters.nearbyKm} km` : 'Autour de moi'}
               </Pill>
+
+              {/* Advanced toggle */}
+              <button
+                onClick={() => toggleGroup('advanced')}
+                className={`text-[12px] px-3 py-1.5 rounded-full border transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap ${
+                  openGroup === 'advanced' || advancedCount > 0
+                    ? 'bg-text-primary text-white border-text-primary'
+                    : 'bg-canvas border-border text-text-secondary hover:border-accent/30'
+                }`}
+              >
+                <SlidersHorizontal size={12} />
+                + Filtres
+                {advancedCount > 0 && (
+                  <span className="w-4 h-4 rounded-full bg-white/25 text-[10px] font-bold flex items-center justify-center">
+                    {advancedCount}
+                  </span>
+                )}
+              </button>
 
               {/* Clear all */}
               {hasAnyFilter && (
@@ -169,7 +201,7 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
             </div>
 
             {/* Expanded filter options (inline) */}
-            {openGroup && (
+            {openGroup && openGroup !== 'advanced' && (
               <div className="flex flex-wrap gap-1.5 sm:gap-2 bg-elevated rounded-2xl border border-border p-2.5 sm:p-3">
                 {openGroup === 'category' && categories.map(c => (
                   <Pill
@@ -191,16 +223,6 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
                 {openGroup === 'price' && PRICE_OPTIONS.map(({ value, label }) => (
                   <Pill key={value} active={filters.prices.includes(value)} onClick={() => set({ prices: toggle(filters.prices, value) })}>
                     {label}
-                  </Pill>
-                ))}
-
-                {openGroup === 'lieu' && [
-                  { v: null as boolean | null, l: 'Tous' },
-                  { v: true, l: 'Intérieur' },
-                  { v: false, l: 'Extérieur' },
-                ].map(({ v, l }) => (
-                  <Pill key={l} active={filters.indoor === v} onClick={() => set({ indoor: v })}>
-                    {l}
                   </Pill>
                 ))}
 
@@ -228,6 +250,60 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
                 )}
               </div>
             )}
+
+            {/* Level 2 — Advanced filters */}
+            {openGroup === 'advanced' && (
+              <div className="bg-elevated rounded-2xl border border-border p-3 sm:p-4 space-y-3">
+                {/* Accessibilité */}
+                <div>
+                  <p className="text-[11px] font-semibold text-text-muted uppercase tracking-[0.1em] mb-2">Accessibilité</p>
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                    <Pill active={filters.accessibility.includes('pmr')} onClick={() => set({ accessibility: toggle(filters.accessibility, 'pmr' as AccessibilityOption) })}>
+                      ♿ PMR
+                    </Pill>
+                    <Pill active={filters.accessibility.includes('poussette')} onClick={() => set({ accessibility: toggle(filters.accessibility, 'poussette' as AccessibilityOption) })}>
+                      🍼 Poussette
+                    </Pill>
+                  </div>
+                </div>
+
+                {/* Confort */}
+                <div>
+                  <p className="text-[11px] font-semibold text-text-muted uppercase tracking-[0.1em] mb-2">Confort</p>
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                    <Pill active={filters.comfort.includes('toilettes')} onClick={() => set({ comfort: toggle(filters.comfort, 'toilettes' as ComfortOption) })}>
+                      🚻 Toilettes
+                    </Pill>
+                    <Pill active={filters.comfort.includes('cafe')} onClick={() => set({ comfort: toggle(filters.comfort, 'cafe' as ComfortOption) })}>
+                      ☕ Café
+                    </Pill>
+                  </div>
+                </div>
+
+                {/* Accès */}
+                <div>
+                  <p className="text-[11px] font-semibold text-text-muted uppercase tracking-[0.1em] mb-2">Accès</p>
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                    <Pill active={filters.access.includes('parking')} onClick={() => set({ access: toggle(filters.access, 'parking' as AccessOption) })}>
+                      🅿️ Parking
+                    </Pill>
+                    <Pill active={filters.access.includes('transports')} onClick={() => set({ access: toggle(filters.access, 'transports' as AccessOption) })}>
+                      🚌 Transports publics
+                    </Pill>
+                  </div>
+                </div>
+
+                {/* Animaux */}
+                <div>
+                  <p className="text-[11px] font-semibold text-text-muted uppercase tracking-[0.1em] mb-2">Animaux</p>
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                    <Pill active={filters.animals} onClick={() => set({ animals: !filters.animals })}>
+                      🐾 Animaux autorisés
+                    </Pill>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </motion.div>
       )}
@@ -235,7 +311,7 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
   )
 }
 
-// ── Filter logic (unchanged) ──────────────────────────────────────────
+// ── Filter logic ──────────────────────────────────────────────────────
 function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const R = 6371
   const dLat = (lat2 - lat1) * Math.PI / 180
@@ -320,5 +396,9 @@ export function countActiveFilters(filters: Filters): number {
     filters.prices.length > 0,
     filters.nearbyKm !== null,
     filters.dateFilter !== null,
+    filters.accessibility.length > 0,
+    filters.comfort.length > 0,
+    filters.access.length > 0,
+    filters.animals,
   ].filter(Boolean).length
 }

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { MapPin, Clock, Users, Calendar, Star, ChevronLeft, Heart, Share2, Shield, CheckCircle, Home, TreePine } from 'lucide-react'
+import { MapPin, Clock, Users, Calendar, Star, Heart, Share2, Shield, CheckCircle, Home, TreePine, Send } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { StarRating } from '@/components/ui/StarRating'
@@ -13,15 +13,24 @@ import type { Activity } from '@/lib/types'
 
 export function ActivityDetail({ activity }: { activity: Activity }) {
   const [liked, setLiked] = useState(false)
-  const [reserved, setReserved] = useState(false)
+  const [reviewText, setReviewText] = useState('')
+  const [reviewRating, setReviewRating] = useState(0)
+  const [reviewSubmitted, setReviewSubmitted] = useState(false)
+  const [hoverRating, setHoverRating] = useState(0)
 
   const related = activities.filter(a => a.id !== activity.id && a.category === activity.category).slice(0, 3)
+
+  const handleSubmitReview = () => {
+    if (reviewRating > 0 && reviewText.trim()) {
+      setReviewSubmitted(true)
+    }
+  }
 
   return (
     <div className="min-h-[100dvh] bg-canvas pt-16">
 
       {/* Breadcrumb */}
-      <div className="max-w-[1400px] mx-auto px-6 md:px-10 pt-8 mb-6">
+      <div className="max-w-[1400px] mx-auto px-5 sm:px-6 md:px-10 pt-8 mb-6">
         <div className="flex items-center gap-2 text-[13px] text-text-muted">
           <Link href="/" className="hover:text-accent transition-colors">Accueil</Link>
           <span>/</span>
@@ -35,7 +44,7 @@ export function ActivityDetail({ activity }: { activity: Activity }) {
         </div>
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-6 md:px-10 pb-20">
+      <div className="max-w-[1400px] mx-auto px-5 sm:px-6 md:px-10 pb-20">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-10">
 
           {/* Left */}
@@ -53,9 +62,6 @@ export function ActivityDetail({ activity }: { activity: Activity }) {
                   {activity.isIndoor ? <><Home size={10} className="mr-1" />Intérieur</> : <><TreePine size={10} className="mr-1" />Extérieur</>}
                 </Badge>
                 {activity.isCoupDeCoeur && <Badge variant="accent">❤️ Coup de cœur</Badge>}
-                {activity.availableSlots <= 5 && (
-                  <Badge variant="warning">{activity.availableSlots} place{activity.availableSlots > 1 ? 's' : ''} restante{activity.availableSlots > 1 ? 's' : ''}</Badge>
-                )}
               </div>
 
               <h1
@@ -176,6 +182,70 @@ export function ActivityDetail({ activity }: { activity: Activity }) {
               <p className="text-[14px] text-text-secondary leading-relaxed">{activity.organizer.description}</p>
             </motion.div>
 
+            {/* Leave a review */}
+            <motion.div
+              className="bg-elevated rounded-3xl p-7 border border-border mb-8"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.35 }}
+            >
+              <h2 className="font-display font-bold text-[18px] text-text-primary mb-5">Laisser un avis</h2>
+              {reviewSubmitted ? (
+                <div className="bg-accent-subtle border border-accent/20 rounded-2xl p-5 text-center">
+                  <CheckCircle size={24} className="text-accent mx-auto mb-2" />
+                  <p className="font-display font-bold text-[15px] text-text-primary">Merci pour votre avis !</p>
+                  <p className="text-[13px] text-text-secondary mt-1">Il sera publié après vérification.</p>
+                </div>
+              ) : (
+                <>
+                  {/* Star selector */}
+                  <div className="flex items-center gap-1 mb-4">
+                    <span className="text-[13px] text-text-secondary mr-2">Votre note :</span>
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        onClick={() => setReviewRating(star)}
+                        onMouseEnter={() => setHoverRating(star)}
+                        onMouseLeave={() => setHoverRating(0)}
+                        className="transition-transform hover:scale-110"
+                      >
+                        <Star
+                          size={22}
+                          className={`transition-colors ${
+                            star <= (hoverRating || reviewRating)
+                              ? 'text-yellow-400 fill-yellow-400'
+                              : 'text-border'
+                          }`}
+                        />
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Text area */}
+                  <textarea
+                    value={reviewText}
+                    onChange={(e) => setReviewText(e.target.value)}
+                    placeholder="Partagez votre expérience avec les autres familles..."
+                    rows={3}
+                    className="w-full bg-canvas border border-border rounded-2xl px-4 py-3 text-[14px] text-text-primary placeholder:text-text-muted outline-none resize-none focus:border-accent/40 transition-colors"
+                  />
+
+                  {/* Submit */}
+                  <div className="flex justify-end mt-3">
+                    <Button
+                      onClick={handleSubmitReview}
+                      disabled={reviewRating === 0 || !reviewText.trim()}
+                      size="sm"
+                      className="gap-2"
+                    >
+                      <Send size={14} />
+                      Publier mon avis
+                    </Button>
+                  </div>
+                </>
+              )}
+            </motion.div>
+
             {/* Related */}
             {related.length > 0 && (
               <div>
@@ -187,7 +257,7 @@ export function ActivityDetail({ activity }: { activity: Activity }) {
             )}
           </div>
 
-          {/* Right — Booking card */}
+          {/* Right — Info card */}
           <div className="lg:sticky lg:top-28 h-fit">
             <motion.div
               className="bg-elevated rounded-3xl p-7 border border-border shadow-card-hover"
@@ -220,24 +290,7 @@ export function ActivityDetail({ activity }: { activity: Activity }) {
                 <span className="text-[13px] text-text-secondary">Âge : {activity.ageMin}–{activity.ageMax} ans</span>
               </div>
 
-              {reserved ? (
-                <div className="bg-accent-subtle border border-accent/20 rounded-2xl p-4 text-center mb-4">
-                  <CheckCircle size={22} className="text-accent mx-auto mb-2" />
-                  <p className="font-display font-bold text-[15px] text-text-primary">Demande envoyée !</p>
-                  <p className="text-[12px] text-text-secondary mt-1">L'organisateur vous contactera sous 24h.</p>
-                </div>
-              ) : (
-                <Button
-                  fullWidth
-                  size="lg"
-                  onClick={() => setReserved(true)}
-                  className="mb-3"
-                >
-                  Réserver cette activité
-                </Button>
-              )}
-
-              <div className="flex gap-2">
+              <div className="flex gap-2 mb-5">
                 <button
                   onClick={() => setLiked(!liked)}
                   className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl border text-[13px] font-medium transition-all duration-200 ${
@@ -253,9 +306,9 @@ export function ActivityDetail({ activity }: { activity: Activity }) {
                 </button>
               </div>
 
-              <div className="flex items-center gap-2 mt-5 pt-5 border-t border-border">
+              <div className="flex items-center gap-2 pt-5 border-t border-border">
                 <Shield size={14} className="text-accent" />
-                <p className="text-[12px] text-text-muted">Organisateur vérifié KIDIGO · Paiement sécurisé</p>
+                <p className="text-[12px] text-text-muted">Organisateur vérifié KIDIGO</p>
               </div>
             </motion.div>
           </div>
