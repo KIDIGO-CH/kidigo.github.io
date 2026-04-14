@@ -31,7 +31,7 @@ export default function AProposPage() {
                 Ses fondateurs, parents eux-mêmes, se sont retrouvés à passer des heures à comparer des sites peu clairs, appeler des structures non réactives et finir souvent déçus. Ils ont décidé de créer la solution qu'ils auraient aimé avoir.
               </p>
               <p>
-                Aujourd'hui, KIDIGO connecte des milliers de familles avec des organisateurs vérifiés et passionnés dans toute la France.
+                Aujourd'hui, KIDIGO connecte des milliers de familles avec des organisateurs vérifiés et passionnés en Suisse romande, en particulier dans la Broye fribourgeoise et vaudoise.
               </p>
             </div>
           </motion.div>
