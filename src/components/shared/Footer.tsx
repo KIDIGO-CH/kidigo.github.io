@@ -113,7 +113,7 @@ export function Footer() {
         {/* Bottom */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-8 border-t border-white/10">
           <p className="text-[12px] text-canvas/40">© {new Date().getFullYear()} KIDIGO. Tous droits réservés.</p>
-          <p className="text-[12px] text-canvas/40">Fait avec ❤️ pour les familles de Suisse romande</p>
+          <p className="text-[12px] text-canvas/40">Fait avec ❤️ pour les familles</p>
         </div>
       </div>
     </footer>
