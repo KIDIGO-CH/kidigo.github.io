@@ -11,47 +11,60 @@ export default function CategoriesPage() {
       <div className="max-w-[1400px] mx-auto px-6 md:px-10">
 
         <motion.div
-          className="mb-14"
+          className="mb-12"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: 'spring', stiffness: 100, damping: 20 }}
         >
-          <p className="text-[12px] font-medium text-accent uppercase tracking-[0.15em] mb-3">Toutes les catégories</p>
+          <p className="text-[12px] font-medium text-accent uppercase tracking-[0.15em] mb-3">Explorer par thème</p>
           <h1
             className="font-display font-black text-text-primary leading-tight mb-4"
-            style={{ fontSize: 'clamp(2rem, 5vw, 4rem)' }}
+            style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}
           >
-            Explorez par thème
+            Toutes les catégories
           </h1>
           <p className="text-[16px] text-text-secondary max-w-xl">
-            Du sport à la science, de la danse à la nature — trouvez l'activité qui éveillera la curiosité de votre enfant.
+            Du sport à la science, de la danse aux balades — trouvez l'activité qui éveillera la curiosité de votre enfant.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
           {categories.map((cat, i) => (
             <motion.div
               key={cat.name}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ type: 'spring', stiffness: 100, damping: 20, delay: i * 0.06 }}
+              transition={{ type: 'spring', stiffness: 100, damping: 20, delay: i * 0.04 }}
             >
               <Link href={`/recherche?categorie=${encodeURIComponent(cat.name)}`}>
-                <div className="group bg-elevated rounded-3xl p-8 border border-border hover:border-accent/30 hover:shadow-card-hover transition-all duration-300 hover:-translate-y-0.5">
+                <div
+                  className="group relative bg-elevated rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-border hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 overflow-hidden"
+                >
+                  {/* Subtle colored gradient on hover */}
                   <div
-                    className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mb-6"
-                    style={{ backgroundColor: `${cat.color}18` }}
-                  >
-                    {cat.icon}
-                  </div>
-                  <div className="flex items-end justify-between">
-                    <div>
-                      <h2 className="font-display font-bold text-[20px] text-text-primary mb-1 group-hover:text-accent transition-colors duration-200">
-                        {cat.name}
-                      </h2>
-                      <p className="text-[13px] text-text-muted">{cat.count} activités disponibles</p>
+                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl sm:rounded-3xl"
+                    style={{ background: `linear-gradient(135deg, ${cat.color}08 0%, ${cat.color}15 100%)` }}
+                  />
+                  <div
+                    className="absolute top-0 left-0 w-full h-[3px] rounded-t-2xl sm:rounded-t-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    style={{ backgroundColor: cat.color }}
+                  />
+
+                  <div className="relative">
+                    <div
+                      className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center text-xl sm:text-2xl mb-4 sm:mb-5 group-hover:scale-110 transition-transform duration-300"
+                      style={{ backgroundColor: `${cat.color}15` }}
+                    >
+                      {cat.icon}
                     </div>
-                    <ArrowRight size={18} className="text-text-muted group-hover:text-accent group-hover:translate-x-1 transition-all duration-200" />
+
+                    <h2 className="font-display font-bold text-[14px] sm:text-[16px] text-text-primary mb-0.5 leading-snug group-hover:text-accent transition-colors duration-200">
+                      {cat.name}
+                    </h2>
+                    <div className="flex items-center justify-between">
+                      <p className="text-[11px] sm:text-[12px] text-text-muted">{cat.count} activités</p>
+                      <ArrowRight size={14} className="text-text-muted opacity-0 group-hover:opacity-100 group-hover:text-accent group-hover:translate-x-0.5 transition-all duration-200" />
+                    </div>
                   </div>
                 </div>
               </Link>
