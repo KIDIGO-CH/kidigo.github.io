@@ -74,8 +74,8 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.18 }}
           >
-            Que faire avec les enfants aujourd'hui ?{' '}
-            <span className="text-accent">Kidigo trouve pour vous.</span>
+            Trouvez l'activité idéale pour{' '}
+            <span className="text-accent">voir leurs yeux s'illuminer.</span>
           </motion.h1>
 
           {/* Subtitle */}

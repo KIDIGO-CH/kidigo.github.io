@@ -245,12 +245,16 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
                     >
                       <Calendar size={12} /> Ce weekend
                     </Pill>
-                    <input
-                      type="date"
-                      value={filters.dateFilter && filters.dateFilter !== 'today' && filters.dateFilter !== 'weekend' ? filters.dateFilter : ''}
-                      onChange={(e) => set({ dateFilter: e.target.value || null })}
-                      className="text-[12px] px-3 py-1.5 rounded-full border bg-canvas border-border text-text-secondary outline-none cursor-pointer"
-                    />
+                    <label className="relative flex items-center gap-1.5 text-[11px] sm:text-[12px] px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border bg-canvas border-border text-text-secondary hover:border-accent/30 transition-all duration-200 cursor-pointer whitespace-nowrap">
+                      <Calendar size={12} />
+                      {filters.dateFilter && filters.dateFilter !== 'today' && filters.dateFilter !== 'weekend' ? filters.dateFilter : 'Date'}
+                      <input
+                        type="date"
+                        value={filters.dateFilter && filters.dateFilter !== 'today' && filters.dateFilter !== 'weekend' ? filters.dateFilter : ''}
+                        onChange={(e) => set({ dateFilter: e.target.value || null })}
+                        className="absolute inset-0 opacity-0 cursor-pointer"
+                      />
+                    </label>
                   </>
                 )}
 
