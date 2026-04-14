@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Search, Sparkles, Plus, Heart } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { LocationSearch } from '@/components/ui/LocationSearch'
@@ -17,11 +17,31 @@ const STAT_ITEMS = [
   { value: '1 200+', label: 'Partages par la communauté' },
 ]
 
+const PLACEHOLDER_PHRASES = [
+  "Que faire aujourd'hui avec un enfant de 3 ans ?",
+  "Activités intérieures pour enfants de 3 et 7 ans",
+  "Cours de natation près d'Estavayer",
+  "Brunch kids friendly ce weekend",
+  "Stage de vacances à Fribourg",
+  "Anniversaire enfant 5 ans Lausanne",
+  "Balade en famille autour du lac",
+  "Atelier créatif pour enfant de 4 ans",
+]
+
 export function Hero() {
   const router = useRouter()
   const [query, setQuery] = useState('')
   const [locationLabel, setLocationLabel] = useState('')
   const [filters, setFilters] = useState<Filters>({ ...defaultFilters })
+  const [phraseIndex, setPhraseIndex] = useState(0)
+  const [isFocused, setIsFocused] = useState(false)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPhraseIndex((i) => (i + 1) % PLACEHOLDER_PHRASES.length)
+    }, 3500)
+    return () => clearInterval(interval)
+  }, [])
 
   const handleSearch = () => {
     const params = new URLSearchParams()
@@ -90,30 +110,50 @@ export function Hero() {
 
           {/* Search box */}
           <motion.div
-            className="bg-elevated rounded-3xl p-2 shadow-card-hover mb-4 border border-border"
+            className="bg-elevated rounded-3xl p-2 shadow-card-hover mb-4 border border-border max-w-[640px]"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.34 }}
           >
-            <div className="flex flex-col sm:flex-row gap-2">
-              {/* Query input */}
-              <div className="flex-1 flex items-center gap-3 bg-canvas rounded-2xl px-4 py-3">
-                <Search size={16} className="text-text-muted flex-shrink-0" />
+            {/* Query input — full width with animated placeholder */}
+            <div className="relative flex items-center gap-3 bg-canvas rounded-2xl px-4 py-3.5 mb-2">
+              <Search size={16} className="text-text-muted flex-shrink-0" />
+              <div className="flex-1 relative">
                 <input
                   type="text"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                  placeholder="Sport, musique, art créatif…"
-                  className="flex-1 bg-transparent text-[14px] text-text-primary placeholder:text-text-muted outline-none"
+                  className="w-full bg-transparent text-[14px] text-text-primary outline-none relative z-10"
                 />
+                {/* Animated rotating placeholder */}
+                {!query && (
+                  <div className="absolute inset-0 flex items-center pointer-events-none overflow-hidden">
+                    <AnimatePresence mode="wait">
+                      <motion.span
+                        key={phraseIndex}
+                        className="text-[14px] text-text-muted whitespace-nowrap"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: isFocused ? 0.5 : 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        {PLACEHOLDER_PHRASES[phraseIndex]}
+                      </motion.span>
+                    </AnimatePresence>
+                  </div>
+                )}
               </div>
+            </div>
 
+            <div className="flex flex-col sm:flex-row gap-2">
               {/* Location search */}
               <LocationSearch
                 value={locationLabel}
                 onChange={(label) => setLocationLabel(label)}
-                className="sm:min-w-[200px]"
+                className="flex-1"
               />
 
               {/* Submit */}
