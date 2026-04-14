@@ -13,7 +13,7 @@ export type DateOption = 'today' | 'weekend' | string
 export type AccessibilityOption = 'pmr' | 'poussette'
 export type ComfortOption = 'toilettes' | 'cafe'
 export type AccessOption = 'parking' | 'transports'
-export type AnimalOption = 'animaux'
+export type EncadreOption = 'activite-encadree' | 'garde-ponctuelle' | 'atelier-animateur'
 
 export type Filters = {
   categories: Category[]
@@ -28,6 +28,7 @@ export type Filters = {
   comfort: ComfortOption[]
   access: AccessOption[]
   animals: boolean
+  encadre: EncadreOption[]
 }
 
 export const defaultFilters: Filters = {
@@ -43,6 +44,7 @@ export const defaultFilters: Filters = {
   comfort: [],
   access: [],
   animals: false,
+  encadre: [],
 }
 
 const AGE_OPTIONS: { value: AgeOption; label: string }[] = [
@@ -114,7 +116,7 @@ function FilterGroup({ label, activeCount, isOpen, onToggle }: {
 }
 
 // ── Main FilterBar ────────────────────────────────────────────────────
-type FilterGroupKey = 'category' | 'age' | 'price' | 'quand' | 'advanced'
+type FilterGroupKey = 'category' | 'age' | 'price' | 'quand' | 'encadre' | 'advanced'
 
 export function FilterBar({ filters, onChange, open }: FilterBarProps) {
   const [locatingNearby, setLocatingNearby] = useState(false)
@@ -145,7 +147,7 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
   const hasAnyFilter = filters.categories.length > 0 || filters.ages.length > 0 ||
     filters.indoor !== null || filters.prices.length > 0 ||
     filters.nearbyKm !== null || filters.dateFilter !== null ||
-    advancedCount > 0
+    filters.encadre.length > 0 || advancedCount > 0
 
   return (
     <AnimatePresence>
@@ -170,6 +172,9 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
                 <MapPin size={12} />
                 {locatingNearby ? 'Localisation…' : filters.nearbyKm !== null ? `≤ ${filters.nearbyKm} km` : 'Autour de moi'}
               </Pill>
+
+              {/* Encadré */}
+              <FilterGroup label="Encadré" activeCount={filters.encadre.length} isOpen={openGroup === 'encadre'} onToggle={() => toggleGroup('encadre')} />
 
               {/* Advanced toggle */}
               <button
@@ -248,6 +253,16 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
                     />
                   </>
                 )}
+
+                {openGroup === 'encadre' && [
+                  { value: 'activite-encadree' as EncadreOption, label: 'Activité encadrée' },
+                  { value: 'garde-ponctuelle' as EncadreOption, label: 'Garde ponctuelle' },
+                  { value: 'atelier-animateur' as EncadreOption, label: 'Atelier avec animateur' },
+                ].map(({ value, label }) => (
+                  <Pill key={value} active={filters.encadre.includes(value)} onClick={() => set({ encadre: toggle(filters.encadre, value) })}>
+                    {label}
+                  </Pill>
+                ))}
               </div>
             )}
 
@@ -400,5 +415,6 @@ export function countActiveFilters(filters: Filters): number {
     filters.comfort.length > 0,
     filters.access.length > 0,
     filters.animals,
+    filters.encadre.length > 0,
   ].filter(Boolean).length
 }
