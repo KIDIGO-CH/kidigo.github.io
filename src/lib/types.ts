@@ -9,8 +9,11 @@ export type Category =
   | 'Anniversaires'
   | 'Stages vacances'
   | 'Sorties famille'
+  | 'Bars & Restos Kids'
 
-export type AgeRange = '2-4 ans' | '5-7 ans' | '8-10 ans' | '11-14 ans' | 'Tous âges'
+export type EffortLevel = 'chill' | 'actif' | 'sportif'
+
+export type AgeRange = '0-3 ans' | '4-6 ans' | '7-10 ans' | '11-14 ans' | 'Tous âges'
 
 export type Activity = {
   id: string
@@ -45,6 +48,7 @@ export type Activity = {
   availableSlots: number
   benefits: string[]
   practical: PracticalInfo
+  effortLevel: EffortLevel
 }
 
 export type Organizer = {
@@ -63,16 +67,4 @@ export type PracticalInfo = {
   transport: string
   equipment: string
   toProvide: string
-}
-
-export type SearchFilters = {
-  query: string
-  city: string
-  category: Category | ''
-  ageMin: number | null
-  ageMax: number | null
-  priceMax: number | null
-  isIndoor: boolean | null
-  date: string
-  sortBy: 'rating' | 'price-asc' | 'price-desc' | 'popular' | 'newest'
 }

@@ -3,10 +3,11 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Search, Sparkles } from 'lucide-react'
+import { Search, Sparkles, SlidersHorizontal, Plus, Heart } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { LocationSearch } from '@/components/ui/LocationSearch'
-import { Mascot } from '@/components/shared/Mascot'
+import { WeatherWidget } from '@/components/home/WeatherWidget'
+import { FilterBar, defaultFilters, countActiveFilters, type Filters } from '@/components/search/FilterBar'
 import type { Location } from '@/lib/data'
 
 const STAT_ITEMS = [
@@ -19,6 +20,10 @@ export function Hero() {
   const router = useRouter()
   const [query, setQuery] = useState('')
   const [locationLabel, setLocationLabel] = useState('')
+  const [filters, setFilters] = useState<Filters>({ ...defaultFilters })
+  const [showFilters, setShowFilters] = useState(false)
+
+  const activeCount = countActiveFilters(filters)
 
   const handleSearch = () => {
     const params = new URLSearchParams()
@@ -47,24 +52,9 @@ export function Hero() {
         {/* Left — Content */}
         <div className="flex flex-col">
 
-          {/* Mascot — mobile only */}
+          {/* Badge + Weather */}
           <motion.div
-            className="flex justify-center mb-6 lg:hidden"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.05 }}
-          >
-            <motion.div
-              animate={{ y: [0, -8, 0] }}
-              transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-            >
-              <Mascot size={140} />
-            </motion.div>
-          </motion.div>
-
-          {/* Badge */}
-          <motion.div
-            className="mb-8"
+            className="mb-8 flex flex-wrap items-center gap-3"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.1 }}
@@ -73,6 +63,7 @@ export function Hero() {
               <Sparkles size={13} />
               La plateforme n°1 des familles actives en Suisse romande
             </span>
+            <WeatherWidget />
           </motion.div>
 
           {/* Headline */}
@@ -100,7 +91,7 @@ export function Hero() {
 
           {/* Search box */}
           <motion.div
-            className="bg-elevated rounded-3xl p-2 shadow-card-hover mb-10 border border-border"
+            className="bg-elevated rounded-3xl p-2 shadow-card-hover mb-4 border border-border"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.34 }}
@@ -133,23 +124,30 @@ export function Hero() {
             </div>
           </motion.div>
 
-          {/* Quick filters */}
+          {/* Filters toggle + FilterBar */}
           <motion.div
-            className="flex flex-wrap gap-2 mb-12"
+            className="mb-10"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.44 }}
+            transition={{ delay: 0.40 }}
           >
-            <span className="text-[12px] text-text-muted self-center mr-1">Populaire :</span>
-            {['Sport', 'Art créatif', 'Musique', 'Stages vacances', 'Anniversaires'].map((tag) => (
-              <button
-                key={tag}
-                onClick={() => router.push(`/recherche?categorie=${encodeURIComponent(tag)}`)}
-                className="text-[12px] font-medium text-text-secondary bg-elevated border border-border hover:border-accent hover:text-accent px-3 py-1.5 rounded-full transition-all duration-200"
-              >
-                {tag}
-              </button>
-            ))}
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl border text-[13px] font-medium transition-all duration-200 mb-2 ${
+                showFilters || activeCount > 0
+                  ? 'bg-accent text-white border-accent'
+                  : 'bg-canvas border-border text-text-secondary hover:border-accent/40'
+              }`}
+            >
+              <SlidersHorizontal size={14} />
+              Filtres
+              {activeCount > 0 && (
+                <span className="w-5 h-5 rounded-full bg-white/25 text-[11px] font-bold flex items-center justify-center">
+                  {activeCount}
+                </span>
+              )}
+            </button>
+            <FilterBar filters={filters} onChange={setFilters} open={showFilters} />
           </motion.div>
 
           {/* Stats */}
@@ -196,35 +194,28 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Middle right — Mascot */}
-          <div className="rounded-3xl bg-accent-subtle border border-accent/20 flex flex-col justify-center items-center p-4 shadow-card">
-            <motion.div
-              animate={{ y: [0, -6, 0] }}
-              transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-            >
-              <Mascot size={100} />
-            </motion.div>
-            <p className="font-display font-bold text-[12px] text-text-primary text-center leading-snug mt-1">Kidi, votre guide</p>
-          </div>
+          {/* Middle right — Weather */}
+          <WeatherWidget variant="card" />
 
-          {/* Bottom left */}
-          <div className="rounded-3xl bg-elevated border border-border flex items-center gap-3 p-4 shadow-card">
-            <div className="w-10 h-10 rounded-2xl bg-accent-subtle flex items-center justify-center text-lg">🔬</div>
-            <div>
-              <p className="font-display font-bold text-[13px] text-text-primary leading-tight">Lab Juniors</p>
-              <p className="text-[11px] text-text-secondary">Science & Découvertes</p>
+          {/* Bottom left — Partager un lieu CTA */}
+          <a
+            href="/partager"
+            className="rounded-3xl bg-gradient-to-br from-accent-subtle to-accent/10 border border-accent/20 flex flex-col justify-center items-center p-4 shadow-card hover:shadow-card-hover hover:scale-[1.02] transition-all duration-200 group cursor-pointer"
+          >
+            <div className="w-11 h-11 rounded-full bg-accent/15 flex items-center justify-center mb-2 group-hover:bg-accent/25 transition-colors">
+              <Plus size={20} className="text-accent" />
             </div>
-          </div>
+            <p className="font-display font-bold text-[13px] text-text-primary leading-tight text-center">Partager un lieu</p>
+            <p className="text-[11px] text-text-secondary text-center mt-0.5">Suggérez une activité kids friendly</p>
+          </a>
 
-          {/* Bottom right */}
-          <div className="rounded-3xl overflow-hidden relative shadow-card">
-            <img src="https://picsum.photos/seed/hero-3/400/200" alt="" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-            <div className="absolute bottom-3 left-3">
-              <p className="text-white font-display font-bold text-[13px]">Nature & Aventure</p>
-              <p className="text-white/80 text-[11px]">Montreux · 18 CHF</p>
-            </div>
-          </div>
+          {/* Bottom right — Coup de coeur */}
+          <a href="/activite/atelier-peinture-aquarelle-geneve" className="rounded-3xl bg-gradient-to-br from-red-50 to-accent-subtle border border-accent/15 flex flex-col justify-center items-center p-4 shadow-card hover:shadow-card-hover hover:scale-[1.02] transition-all duration-200">
+            <Heart size={18} className="text-accent fill-accent mb-1.5" />
+            <p className="font-display font-bold text-[13px] text-text-primary leading-tight text-center">Coup de coeur</p>
+            <p className="text-[11px] text-accent font-medium mt-1 text-center">Atelier Aquarelle</p>
+            <p className="text-[10px] text-text-muted">Genève · 28 CHF</p>
+          </a>
         </motion.div>
       </div>
     </section>
