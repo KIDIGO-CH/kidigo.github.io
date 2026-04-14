@@ -159,7 +159,7 @@ export function WeatherWidget() {
   }
 
   return (
-    <div className="rounded-3xl bg-gradient-to-br from-sky-50 via-blue-50/80 to-sky-50 border border-sky-100 flex flex-col shadow-card relative h-full">
+    <div className="rounded-3xl bg-gradient-to-br from-sky-50 via-blue-50/80 to-sky-50 border border-sky-100 flex flex-col shadow-card relative h-full overflow-hidden">
       {loading ? (
         <div className="flex-1 flex items-center justify-center">
           <div className="animate-pulse text-3xl">🌤️</div>
@@ -217,12 +217,15 @@ export function WeatherWidget() {
 
           {/* Hourly forecast — pinned to bottom with own scroll */}
           {weather.hourly.length > 0 && (
-            <div className="border-t border-sky-100/80 mt-2">
-              <div className="flex overflow-x-auto px-3 py-2.5 gap-1 scrollbar-hide">
+            <div className="border-t border-sky-100/80 mt-2 min-w-0">
+              <div
+                className="flex overflow-x-auto px-3 py-2.5 gap-1 scrollbar-hide"
+                style={{ WebkitOverflowScrolling: 'touch' }}
+              >
                 {weather.hourly.map(h => (
                   <div
                     key={h.hour}
-                    className={`flex flex-col items-center flex-shrink-0 px-2 py-1.5 rounded-lg transition-colors ${
+                    className={`flex flex-col items-center flex-shrink-0 w-[38px] py-1.5 rounded-lg transition-colors ${
                       h.isCurrent
                         ? 'bg-sky-100 ring-1 ring-sky-300'
                         : ''
