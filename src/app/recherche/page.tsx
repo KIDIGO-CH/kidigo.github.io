@@ -18,6 +18,15 @@ const MapView = dynamic(
 )
 
 type SortOption = 'rating' | 'price-asc' | 'price-desc' | 'popular'
+type AgeFilter = null | 2 | 5 | 8 | 11
+
+const AGE_OPTIONS: { value: AgeFilter; label: string }[] = [
+  { value: null, label: 'Tous âges' },
+  { value: 2, label: '2-4 ans' },
+  { value: 5, label: '5-7 ans' },
+  { value: 8, label: '8-10 ans' },
+  { value: 11, label: '11-14 ans' },
+]
 
 export default function RecherchePage() {
   return (
@@ -33,9 +42,11 @@ function RechercheContent() {
   const [query, setQuery] = useState('')
   const [locationLabel, setLocationLabel] = useState('')
   const [locationFilter, setLocationFilter] = useState<Location | null>(null)
-  const [selectedCategory, setSelectedCategory] = useState<Category | ''>('')
+  const [selectedCategories, setSelectedCategories] = useState<Category[]>([])
   const [isIndoor, setIsIndoor] = useState<boolean | null>(null)
   const [priceMax, setPriceMax] = useState<number | null>(null)
+  const [isFree, setIsFree] = useState(false)
+  const [ageFilter, setAgeFilter] = useState<AgeFilter>(null)
   const [sortBy, setSortBy] = useState<SortOption>('rating')
   const [showFilters, setShowFilters] = useState(false)
   const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid')
@@ -57,6 +68,12 @@ function RechercheContent() {
     setLocationFilter(loc)
   }
 
+  const toggleCategory = (cat: Category) => {
+    setSelectedCategories(prev =>
+      prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]
+    )
+  }
+
   const filtered = useMemo(() => {
     let result = [...activities]
 
@@ -70,9 +87,17 @@ function RechercheContent() {
       )
     }
     if (locationFilter) result = result.filter(locationFilter.filterFn)
-    if (selectedCategory) result = result.filter(a => a.category === selectedCategory)
+    if (selectedCategories.length > 0) result = result.filter(a => selectedCategories.includes(a.category))
     if (isIndoor !== null) result = result.filter(a => a.isIndoor === isIndoor)
-    if (priceMax !== null) result = result.filter(a => a.price <= priceMax)
+    if (isFree) {
+      result = result.filter(a => a.price === 0)
+    } else if (priceMax !== null) {
+      result = result.filter(a => a.price <= priceMax)
+    }
+    if (ageFilter !== null) {
+      const ageMax = ageFilter + 3
+      result = result.filter(a => a.ageMin <= ageMax && a.ageMax >= ageFilter)
+    }
 
     switch (sortBy) {
       case 'rating': result.sort((a, b) => b.rating - a.rating); break
@@ -82,16 +107,24 @@ function RechercheContent() {
     }
 
     return result
-  }, [query, locationFilter, selectedCategory, isIndoor, priceMax, sortBy])
+  }, [query, locationFilter, selectedCategories, isIndoor, priceMax, isFree, ageFilter, sortBy])
 
-  const activeFiltersCount = [locationFilter, selectedCategory, isIndoor !== null, priceMax !== null].filter(Boolean).length
+  const activeFiltersCount = [
+    locationFilter,
+    selectedCategories.length > 0,
+    isIndoor !== null,
+    priceMax !== null || isFree,
+    ageFilter !== null,
+  ].filter(Boolean).length
 
   const clearFilters = () => {
     setLocationLabel('')
     setLocationFilter(null)
-    setSelectedCategory('')
+    setSelectedCategories([])
     setIsIndoor(null)
     setPriceMax(null)
+    setIsFree(false)
+    setAgeFilter(null)
   }
 
   return (
@@ -156,55 +189,103 @@ function RechercheContent() {
                 transition={{ type: 'spring', stiffness: 100, damping: 20 }}
                 className="overflow-hidden"
               >
-                <div className="pt-4 pb-2 flex flex-wrap gap-3 items-center">
+                <div className="pt-4 pb-2 space-y-3">
 
-                  {/* Category */}
-                  <div>
-                    <select
-                      value={selectedCategory}
-                      onChange={(e) => setSelectedCategory(e.target.value as Category | '')}
-                      className="bg-canvas border border-border rounded-xl px-3 py-2 text-[13px] text-text-primary outline-none cursor-pointer"
-                    >
-                      <option value="">Toutes les catégories</option>
-                      {categories.map(c => <option key={c.name} value={c.name}>{c.icon} {c.name}</option>)}
-                    </select>
+                  {/* Categories — multi-select pills */}
+                  <div className="flex flex-wrap gap-2">
+                    {categories.map(c => {
+                      const isActive = selectedCategories.includes(c.name)
+                      return (
+                        <button
+                          key={c.name}
+                          onClick={() => toggleCategory(c.name)}
+                          className={`text-[12px] px-3 py-2 rounded-xl border transition-all duration-200 flex items-center gap-1.5 ${
+                            isActive
+                              ? 'text-white border-transparent'
+                              : 'bg-canvas border-border text-text-secondary hover:border-accent/30'
+                          }`}
+                          style={isActive ? { backgroundColor: c.color, borderColor: c.color } : undefined}
+                        >
+                          <span>{c.icon}</span>
+                          {c.name}
+                        </button>
+                      )
+                    })}
                   </div>
 
-                  {/* Indoor/Outdoor */}
-                  <div className="flex gap-2">
-                    {[{ v: null, label: 'Tous lieux' }, { v: true, label: 'Intérieur' }, { v: false, label: 'Extérieur' }].map(({ v, label }) => (
+                  <div className="flex flex-wrap gap-3 items-center">
+
+                    {/* Indoor/Outdoor */}
+                    <div className="flex gap-2">
+                      {[{ v: null, label: 'Tous lieux' }, { v: true, label: 'Intérieur' }, { v: false, label: 'Extérieur' }].map(({ v, label }) => (
+                        <button
+                          key={label}
+                          onClick={() => setIsIndoor(v)}
+                          className={`text-[12px] px-3 py-2 rounded-xl border transition-all duration-200 ${
+                            isIndoor === v ? 'bg-accent text-white border-accent' : 'bg-canvas border-border text-text-secondary hover:border-accent/30'
+                          }`}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="w-px h-6 bg-border" />
+
+                    {/* Age filter */}
+                    <div className="flex gap-2">
+                      {AGE_OPTIONS.map(({ value, label }) => (
+                        <button
+                          key={label}
+                          onClick={() => setAgeFilter(value)}
+                          className={`text-[12px] px-3 py-2 rounded-xl border transition-all duration-200 ${
+                            ageFilter === value ? 'bg-accent text-white border-accent' : 'bg-canvas border-border text-text-secondary hover:border-accent/30'
+                          }`}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="w-px h-6 bg-border" />
+
+                    {/* Price — with Gratuit */}
+                    <div className="flex gap-2">
                       <button
-                        key={label}
-                        onClick={() => setIsIndoor(v)}
+                        onClick={() => { setIsFree(false); setPriceMax(null) }}
                         className={`text-[12px] px-3 py-2 rounded-xl border transition-all duration-200 ${
-                          isIndoor === v ? 'bg-accent text-white border-accent' : 'bg-canvas border-border text-text-secondary hover:border-accent/30'
+                          !isFree && priceMax === null ? 'bg-accent text-white border-accent' : 'bg-canvas border-border text-text-secondary hover:border-accent/30'
                         }`}
                       >
-                        {label}
+                        Tous prix
                       </button>
-                    ))}
-                  </div>
-
-                  {/* Price max */}
-                  <div className="flex gap-2">
-                    {[null, 20, 35, 50, 100].map((price) => (
                       <button
-                        key={price ?? 'all'}
-                        onClick={() => setPriceMax(price)}
+                        onClick={() => { setIsFree(true); setPriceMax(null) }}
                         className={`text-[12px] px-3 py-2 rounded-xl border transition-all duration-200 ${
-                          priceMax === price ? 'bg-accent text-white border-accent' : 'bg-canvas border-border text-text-secondary hover:border-accent/30'
+                          isFree ? 'bg-accent text-white border-accent' : 'bg-canvas border-border text-text-secondary hover:border-accent/30'
                         }`}
                       >
-                        {price === null ? 'Tous prix' : `≤ ${price} CHF`}
+                        Gratuit
                       </button>
-                    ))}
-                  </div>
+                      {[20, 35, 50, 100].map((price) => (
+                        <button
+                          key={price}
+                          onClick={() => { setIsFree(false); setPriceMax(price) }}
+                          className={`text-[12px] px-3 py-2 rounded-xl border transition-all duration-200 ${
+                            !isFree && priceMax === price ? 'bg-accent text-white border-accent' : 'bg-canvas border-border text-text-secondary hover:border-accent/30'
+                          }`}
+                        >
+                          ≤ {price} CHF
+                        </button>
+                      ))}
+                    </div>
 
-                  {activeFiltersCount > 0 && (
-                    <button onClick={clearFilters} className="text-[12px] text-red-500 hover:text-red-600 flex items-center gap-1 ml-2">
-                      <X size={12} /> Effacer
-                    </button>
-                  )}
+                    {activeFiltersCount > 0 && (
+                      <button onClick={clearFilters} className="text-[12px] text-red-500 hover:text-red-600 flex items-center gap-1 ml-2">
+                        <X size={12} /> Effacer tout
+                      </button>
+                    )}
+                  </div>
                 </div>
               </motion.div>
             )}
@@ -219,7 +300,8 @@ function RechercheContent() {
           <div className="flex items-center gap-3">
             <h1 className="font-display font-bold text-[18px] text-text-primary">
               {filtered.length} activité{filtered.length > 1 ? 's' : ''}
-              {selectedCategory && <span className="text-accent ml-1">· {selectedCategory}</span>}
+              {selectedCategories.length === 1 && <span className="text-accent ml-1">· {selectedCategories[0]}</span>}
+              {selectedCategories.length > 1 && <span className="text-accent ml-1">· {selectedCategories.length} catégories</span>}
               {locationLabel && <span className="text-text-secondary ml-1">· {locationLabel}</span>}
             </h1>
           </div>
@@ -269,9 +351,13 @@ function RechercheContent() {
         {activeFiltersCount > 0 && (
           <div className="flex flex-wrap gap-2 mb-6">
             {locationFilter && <Badge variant="subtle">{locationLabel} <button onClick={() => handleLocationChange('', null)} className="ml-1">×</button></Badge>}
-            {selectedCategory && <Badge variant="subtle">{selectedCategory} <button onClick={() => setSelectedCategory('')} className="ml-1">×</button></Badge>}
+            {selectedCategories.map(cat => (
+              <Badge key={cat} variant="subtle">{cat} <button onClick={() => toggleCategory(cat)} className="ml-1">×</button></Badge>
+            ))}
             {isIndoor !== null && <Badge variant="subtle">{isIndoor ? 'Intérieur' : 'Extérieur'} <button onClick={() => setIsIndoor(null)} className="ml-1">×</button></Badge>}
-            {priceMax !== null && <Badge variant="subtle">≤ {priceMax} CHF <button onClick={() => setPriceMax(null)} className="ml-1">×</button></Badge>}
+            {ageFilter !== null && <Badge variant="subtle">{AGE_OPTIONS.find(a => a.value === ageFilter)?.label} <button onClick={() => setAgeFilter(null)} className="ml-1">×</button></Badge>}
+            {isFree && <Badge variant="subtle">Gratuit <button onClick={() => setIsFree(false)} className="ml-1">×</button></Badge>}
+            {!isFree && priceMax !== null && <Badge variant="subtle">≤ {priceMax} CHF <button onClick={() => setPriceMax(null)} className="ml-1">×</button></Badge>}
           </div>
         )}
 
