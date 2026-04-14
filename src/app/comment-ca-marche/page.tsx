@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Search, Filter, CheckCircle, Shield, Star, ArrowRight } from 'lucide-react'
+import { Search, Filter, CheckCircle, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 
 const STEPS = [
@@ -32,11 +32,6 @@ const STEPS = [
   },
 ]
 
-const GUARANTEES = [
-  { icon: Shield, title: 'Organisateurs vérifiés', text: 'Diplômes, assurance, casier judiciaire — nous vérifions tout avant de référencer un organisateur.' },
-  { icon: Star, title: 'Avis certifiés', text: 'Seuls les parents ayant effectivement participé à l\'activité peuvent laisser un avis.' },
-  { icon: CheckCircle, title: 'Satisfaction garantie', text: 'En cas de problème, notre équipe intervient rapidement pour trouver une solution.' },
-]
 
 export default function CommentCaMarchePage() {
   return (
@@ -86,31 +81,6 @@ export default function CommentCaMarchePage() {
             </motion.div>
           ))}
         </div>
-
-        {/* Guarantees */}
-        <motion.div
-          className="bg-accent rounded-4xl p-10 md:p-14 mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ type: 'spring', stiffness: 100, damping: 20 }}
-        >
-          <h2
-            className="font-display font-black text-white leading-tight mb-10 text-center"
-            style={{ fontSize: 'clamp(1.6rem, 3.5vw, 2.8rem)' }}
-          >
-            Nos engagements pour votre sérénité
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {GUARANTEES.map((g, i) => (
-              <div key={g.title} className="bg-white/15 rounded-3xl p-6">
-                <g.icon size={24} className="text-white mb-4" />
-                <h3 className="font-display font-bold text-[16px] text-white mb-2">{g.title}</h3>
-                <p className="text-[13px] text-white/80 leading-relaxed">{g.text}</p>
-              </div>
-            ))}
-          </div>
-        </motion.div>
 
         {/* CTA */}
         <div className="text-center">
