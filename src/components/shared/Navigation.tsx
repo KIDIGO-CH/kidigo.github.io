@@ -9,8 +9,8 @@ import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 
 const NAV_LINKS = [
-  { href: '/recherche', label: 'Explorer' },
-  { href: '/selection', label: 'Sélection' },
+  { href: '/recherche', label: 'Activités' },
+  { href: '/selection', label: 'Idées' },
   { href: '/comment-ca-marche', label: 'Comment ça marche' },
   { href: '/organisateurs', label: 'Organisateurs' },
 ]
