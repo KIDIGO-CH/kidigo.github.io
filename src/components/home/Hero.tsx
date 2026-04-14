@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search, Sparkles, Plus, Heart } from 'lucide-react'
@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/Button'
 import { LocationSearch } from '@/components/ui/LocationSearch'
 import { WeatherWidget } from '@/components/home/WeatherWidget'
 import { FilterBar, defaultFilters, type Filters } from '@/components/search/FilterBar'
-import type { Location } from '@/lib/data'
+import { activities as allActivities } from '@/lib/data'
+import type { Activity } from '@/lib/types'
 
 const STAT_ITEMS = [
   { value: '2 400+', label: 'Activités référencées' },
@@ -28,6 +29,22 @@ const PLACEHOLDER_PHRASES = [
   "Atelier créatif pour enfant de 4 ans",
 ]
 
+function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371
+  const dLat = (lat2 - lat1) * Math.PI / 180
+  const dLng = (lng2 - lng1) * Math.PI / 180
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+}
+
+function sortByProximity(acts: Activity[], lat: number, lng: number): Activity[] {
+  return [...acts].sort((a, b) => haversineKm(lat, lng, a.lat, a.lng) - haversineKm(lat, lng, b.lat, b.lng))
+}
+
+// Default: Estavayer-le-Lac
+const DEFAULT_LAT = 46.849
+const DEFAULT_LNG = 6.846
+
 export function Hero() {
   const router = useRouter()
   const [query, setQuery] = useState('')
@@ -35,6 +52,21 @@ export function Hero() {
   const [filters, setFilters] = useState<Filters>({ ...defaultFilters })
   const [phraseIndex, setPhraseIndex] = useState(0)
   const [isFocused, setIsFocused] = useState(false)
+  const [nearbyActivities, setNearbyActivities] = useState<Activity[]>(() =>
+    sortByProximity(allActivities, DEFAULT_LAT, DEFAULT_LNG)
+  )
+  const [cardIndex, setCardIndex] = useState(0)
+
+  // Geolocate and sort activities
+  useEffect(() => {
+    navigator.geolocation?.getCurrentPosition(
+      (pos) => {
+        setNearbyActivities(sortByProximity(allActivities, pos.coords.latitude, pos.coords.longitude))
+      },
+      () => {}, // keep default sort
+      { enableHighAccuracy: false, timeout: 6000 }
+    )
+  }, [])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -42,6 +74,21 @@ export function Hero() {
     }, 3500)
     return () => clearInterval(interval)
   }, [])
+
+  // Rotate activity cards every 4s
+  useEffect(() => {
+    if (nearbyActivities.length === 0) return
+    const interval = setInterval(() => {
+      setCardIndex((i) => (i + 1) % nearbyActivities.length)
+    }, 4000)
+    return () => clearInterval(interval)
+  }, [nearbyActivities])
+
+  // Current pair of activities for the two bento slots
+  const card1 = nearbyActivities[cardIndex] || allActivities[0]
+  const card2 = nearbyActivities[(cardIndex + 1) % nearbyActivities.length] || allActivities[1]
+  // Coup de coeur = highest rated nearby
+  const coupDeCoeur = nearbyActivities.reduce((best, a) => a.rating > best.rating ? a : best, nearbyActivities[0] || allActivities[0])
 
   const handleSearch = () => {
     const params = new URLSearchParams()
@@ -214,37 +261,59 @@ export function Hero() {
             </span>
           </a>
 
-          {/* Top right — Activity image */}
-          <div className="rounded-3xl overflow-hidden relative shadow-card">
-            <img src="https://picsum.photos/seed/hero-2/400/280" alt="" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-            <div className="absolute bottom-3 left-3 right-3">
-              <span className="inline-block bg-accent text-white text-[10px] font-medium px-2.5 py-0.5 rounded-full mb-1.5">Sport</span>
-              <p className="text-white font-display font-bold text-[14px] leading-snug">Tennis Junior</p>
-              <p className="text-white/80 text-[11px]">Lausanne · 35 CHF</p>
+          {/* Top right — Activity card 1 (rotating) */}
+          <a href={`/activite/${card1.slug}`} className="rounded-3xl overflow-hidden relative shadow-card group cursor-pointer">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={card1.id}
+                className="absolute inset-0"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <img src={card1.image} alt={card1.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              </motion.div>
+            </AnimatePresence>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+            <div className="absolute bottom-3 left-3 right-3 z-10">
+              <span className="inline-block bg-accent text-white text-[10px] font-medium px-2.5 py-0.5 rounded-full mb-1.5">{card1.category}</span>
+              <p className="text-white font-display font-bold text-[14px] leading-snug">{card1.name}</p>
+              <p className="text-white/80 text-[11px]">{card1.city} · {card1.price === 0 ? 'Gratuit' : `${card1.price} CHF`}</p>
             </div>
-          </div>
+          </a>
 
           {/* Middle right — Weather */}
           <WeatherWidget />
 
-          {/* Bottom left — Activity image */}
-          <div className="rounded-3xl overflow-hidden relative shadow-card">
-            <img src="https://picsum.photos/seed/hero-1/400/280" alt="" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-            <div className="absolute bottom-3 left-3 right-3">
-              <span className="inline-block bg-accent text-white text-[10px] font-medium px-2.5 py-0.5 rounded-full mb-1.5">Art créatif</span>
-              <p className="text-white font-display font-bold text-[14px] leading-snug">Atelier Aquarelle</p>
-              <p className="text-white/80 text-[11px]">Genève · 28 CHF</p>
+          {/* Bottom left — Activity card 2 (rotating) */}
+          <a href={`/activite/${card2.slug}`} className="rounded-3xl overflow-hidden relative shadow-card group cursor-pointer">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={card2.id}
+                className="absolute inset-0"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <img src={card2.image} alt={card2.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              </motion.div>
+            </AnimatePresence>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+            <div className="absolute bottom-3 left-3 right-3 z-10">
+              <span className="inline-block bg-accent text-white text-[10px] font-medium px-2.5 py-0.5 rounded-full mb-1.5">{card2.category}</span>
+              <p className="text-white font-display font-bold text-[14px] leading-snug">{card2.name}</p>
+              <p className="text-white/80 text-[11px]">{card2.city} · {card2.price === 0 ? 'Gratuit' : `${card2.price} CHF`}</p>
             </div>
-          </div>
+          </a>
 
-          {/* Bottom right — Coup de coeur */}
-          <a href="/activite/atelier-peinture-aquarelle-geneve" className="rounded-3xl bg-gradient-to-br from-red-50 to-accent-subtle border border-accent/15 flex flex-col justify-center items-center p-4 shadow-card hover:shadow-card-hover hover:scale-[1.02] transition-all duration-200">
+          {/* Bottom right — Coup de coeur (dynamic) */}
+          <a href={`/activite/${coupDeCoeur.slug}`} className="rounded-3xl bg-gradient-to-br from-red-50 to-accent-subtle border border-accent/15 flex flex-col justify-center items-center p-4 shadow-card hover:shadow-card-hover hover:scale-[1.02] transition-all duration-200">
             <Heart size={20} className="text-accent fill-accent mb-2" />
             <p className="font-display font-bold text-[14px] text-text-primary leading-tight text-center">Coup de coeur</p>
-            <p className="text-[12px] text-accent font-medium mt-1 text-center">Atelier Aquarelle</p>
-            <p className="text-[11px] text-text-muted">Genève · 28 CHF</p>
+            <p className="text-[12px] text-accent font-medium mt-1 text-center leading-tight">{coupDeCoeur.name}</p>
+            <p className="text-[11px] text-text-muted">{coupDeCoeur.city} · {coupDeCoeur.price === 0 ? 'Gratuit' : `${coupDeCoeur.price} CHF`}</p>
           </a>
         </motion.div>
         </div>
@@ -276,23 +345,34 @@ export function Hero() {
             <WeatherWidget />
           </div>
 
-          {/* Coup de coeur */}
-          <a href="/activite/atelier-peinture-aquarelle-geneve" className="rounded-2xl bg-gradient-to-br from-red-50 to-accent-subtle border border-accent/15 flex flex-col justify-center items-center p-4 shadow-card active:scale-[0.98] transition-all">
+          {/* Coup de coeur (dynamic) */}
+          <a href={`/activite/${coupDeCoeur.slug}`} className="rounded-2xl bg-gradient-to-br from-red-50 to-accent-subtle border border-accent/15 flex flex-col justify-center items-center p-4 shadow-card active:scale-[0.98] transition-all">
             <Heart size={18} className="text-accent fill-accent mb-1.5" />
             <p className="font-display font-bold text-[13px] text-text-primary leading-tight text-center">Coup de coeur</p>
-            <p className="text-[11px] text-accent font-medium mt-1 text-center">Atelier Aquarelle</p>
-            <p className="text-[10px] text-text-muted">Genève · 28 CHF</p>
+            <p className="text-[11px] text-accent font-medium mt-1 text-center leading-tight">{coupDeCoeur.name}</p>
+            <p className="text-[10px] text-text-muted">{coupDeCoeur.city} · {coupDeCoeur.price === 0 ? 'Gratuit' : `${coupDeCoeur.price} CHF`}</p>
           </a>
 
-          {/* Activity card */}
-          <div className="rounded-2xl overflow-hidden relative shadow-card aspect-[4/3]">
-            <img src="https://picsum.photos/seed/hero-2/400/280" alt="" className="w-full h-full object-cover" />
+          {/* Activity card (rotating) */}
+          <a href={`/activite/${card1.slug}`} className="rounded-2xl overflow-hidden relative shadow-card aspect-[4/3]">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={card1.id}
+                className="absolute inset-0"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <img src={card1.image} alt={card1.name} className="w-full h-full object-cover" />
+              </motion.div>
+            </AnimatePresence>
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-            <div className="absolute bottom-3 left-3 right-3">
-              <p className="text-white font-display font-bold text-[13px] leading-snug">Tennis Junior</p>
-              <p className="text-white/80 text-[10px]">Lausanne · 35 CHF</p>
+            <div className="absolute bottom-3 left-3 right-3 z-10">
+              <p className="text-white font-display font-bold text-[13px] leading-snug">{card1.name}</p>
+              <p className="text-white/80 text-[10px]">{card1.city} · {card1.price === 0 ? 'Gratuit' : `${card1.price} CHF`}</p>
             </div>
-          </div>
+          </a>
         </motion.div>
       </div>
     </section>
