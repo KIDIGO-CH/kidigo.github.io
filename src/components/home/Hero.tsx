@@ -3,11 +3,11 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Search, Sparkles, SlidersHorizontal, Plus, Heart } from 'lucide-react'
+import { Search, Sparkles, Plus, Heart } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { LocationSearch } from '@/components/ui/LocationSearch'
 import { WeatherWidget } from '@/components/home/WeatherWidget'
-import { FilterBar, defaultFilters, countActiveFilters, type Filters } from '@/components/search/FilterBar'
+import { FilterBar, defaultFilters, type Filters } from '@/components/search/FilterBar'
 import type { Location } from '@/lib/data'
 
 const STAT_ITEMS = [
@@ -22,9 +22,6 @@ export function Hero() {
   const [query, setQuery] = useState('')
   const [locationLabel, setLocationLabel] = useState('')
   const [filters, setFilters] = useState<Filters>({ ...defaultFilters })
-  const [showFilters, setShowFilters] = useState(false)
-
-  const activeCount = countActiveFilters(filters)
 
   const handleSearch = () => {
     const params = new URLSearchParams()
@@ -127,30 +124,14 @@ export function Hero() {
             </div>
           </motion.div>
 
-          {/* Filters toggle + FilterBar */}
+          {/* Filters */}
           <motion.div
             className="mb-6 sm:mb-10"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.40 }}
           >
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl border text-[13px] font-medium transition-all duration-200 mb-2 ${
-                showFilters || activeCount > 0
-                  ? 'bg-accent text-white border-accent'
-                  : 'bg-canvas border-border text-text-secondary hover:border-accent/40'
-              }`}
-            >
-              <SlidersHorizontal size={14} />
-              Filtres
-              {activeCount > 0 && (
-                <span className="w-5 h-5 rounded-full bg-white/25 text-[11px] font-bold flex items-center justify-center">
-                  {activeCount}
-                </span>
-              )}
-            </button>
-            <FilterBar filters={filters} onChange={setFilters} open={showFilters} />
+            <FilterBar filters={filters} onChange={setFilters} open={true} />
           </motion.div>
 
           {/* Stats */}

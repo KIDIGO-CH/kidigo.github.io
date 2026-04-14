@@ -1,12 +1,26 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { MapPin, ArrowLeft, LocateFixed } from 'lucide-react'
+import { MapPin, ArrowLeft, LocateFixed, ChevronDown } from 'lucide-react'
 import { ActivityCard } from '@/components/search/ActivityCard'
 import { activities } from '@/lib/data'
 import type { Activity } from '@/lib/types'
+
+const CITY_COORDS = [
+  { name: 'Ma position', lat: 0, lng: 0, geo: true },
+  { name: 'Estavayer-le-Lac', lat: 46.849, lng: 6.846 },
+  { name: 'Fribourg', lat: 46.806, lng: 7.162 },
+  { name: 'Lausanne', lat: 46.519, lng: 6.632 },
+  { name: 'Genève', lat: 46.204, lng: 6.143 },
+  { name: 'Neuchâtel', lat: 46.992, lng: 6.931 },
+  { name: 'Montreux', lat: 46.431, lng: 6.911 },
+  { name: 'Sion', lat: 46.233, lng: 7.360 },
+  { name: 'Yverdon', lat: 46.778, lng: 6.641 },
+  { name: 'Payerne', lat: 46.820, lng: 6.934 },
+  { name: 'Moudon', lat: 46.669, lng: 6.798 },
+]
 
 function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const R = 6371
@@ -87,6 +101,19 @@ export function SelectionDetail({ slug }: { slug: string }) {
   const [userLng, setUserLng] = useState<number | null>(null)
   const [locationName, setLocationName] = useState<string | null>(null)
   const [locating, setLocating] = useState(false)
+  const [showCityPicker, setShowCityPicker] = useState(false)
+  const pickerRef = useRef<HTMLDivElement>(null)
+
+  const selectCity = (city: typeof CITY_COORDS[0]) => {
+    setShowCityPicker(false)
+    if (city.geo) {
+      locateUser()
+    } else {
+      setUserLat(city.lat)
+      setUserLng(city.lng)
+      setLocationName(city.name)
+    }
+  }
 
   const locateUser = () => {
     setLocating(true)
@@ -116,6 +143,14 @@ export function SelectionDetail({ slug }: { slug: string }) {
   }
 
   useEffect(() => { locateUser() }, [])
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) setShowCityPicker(false)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
 
   const displayActivities = useMemo(() => {
     if (!selection) return []
@@ -180,22 +215,39 @@ export function SelectionDetail({ slug }: { slug: string }) {
           <p className="text-[15px] text-text-secondary max-w-xl mb-4">{selection.description}</p>
 
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 text-[13px] text-accent font-medium">
-              <MapPin size={14} />
-              {locating ? (
-                <span className="text-text-muted">Localisation en cours…</span>
-              ) : locationName ? (
-                <span>Résultats près de {locationName}</span>
-              ) : (
-                <span className="text-text-muted">Géolocalisation non disponible</span>
+            <div className="relative" ref={pickerRef}>
+              <button
+                onClick={() => setShowCityPicker(!showCityPicker)}
+                className="flex items-center gap-1.5 text-[13px] text-accent font-medium hover:text-accent-dark transition-colors"
+              >
+                <MapPin size={14} />
+                {locating ? (
+                  <span className="text-text-muted">Localisation en cours…</span>
+                ) : locationName ? (
+                  <span>Résultats près de {locationName}</span>
+                ) : (
+                  <span className="text-text-muted">Choisir un lieu</span>
+                )}
+                <ChevronDown size={12} />
+              </button>
+              {showCityPicker && (
+                <div className="absolute top-full left-0 mt-1 bg-elevated rounded-xl border border-border shadow-card-hover z-50 py-1 min-w-[200px] max-h-[240px] overflow-y-auto">
+                  {CITY_COORDS.map(c => (
+                    <button
+                      key={c.name}
+                      onClick={() => selectCity(c)}
+                      className={`w-full text-left px-3 py-2 text-[13px] hover:bg-accent-subtle transition-colors flex items-center gap-2 ${
+                        locationName === c.name ? 'text-accent font-medium' : 'text-text-primary'
+                      }`}
+                    >
+                      {c.geo && <LocateFixed size={12} className="text-accent" />}
+                      {!c.geo && <MapPin size={12} className="text-text-muted" />}
+                      {c.name}
+                    </button>
+                  ))}
+                </div>
               )}
             </div>
-            <button
-              onClick={locateUser}
-              className="flex items-center gap-1 text-[12px] text-text-muted hover:text-accent transition-colors"
-            >
-              <LocateFixed size={12} /> Actualiser
-            </button>
           </div>
         </motion.div>
 

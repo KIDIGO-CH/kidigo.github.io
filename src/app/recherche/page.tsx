@@ -4,7 +4,7 @@ import { Suspense, useState, useMemo, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, SlidersHorizontal, X, LayoutGrid, Map } from 'lucide-react'
+import { Search, X, LayoutGrid, Map } from 'lucide-react'
 import { ActivityCard } from '@/components/search/ActivityCard'
 import { FilterBar, applyFilters, countActiveFilters, defaultFilters, type Filters } from '@/components/search/FilterBar'
 import { LocationSearch } from '@/components/ui/LocationSearch'
@@ -35,7 +35,6 @@ function RechercheContent() {
   const [locationFilter, setLocationFilter] = useState<Location | null>(null)
   const [filters, setFilters] = useState<Filters>({ ...defaultFilters })
   const [sortBy, setSortBy] = useState<SortOption>('rating')
-  const [showFilters, setShowFilters] = useState(false)
   const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid')
 
   // Read URL params on mount
@@ -126,28 +125,10 @@ function RechercheContent() {
               compact
               className="hidden sm:block sm:min-w-[220px]"
             />
-
-            {/* Filters toggle */}
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 rounded-2xl border text-[13px] font-medium transition-all duration-200 flex-shrink-0 ${
-                showFilters || activeCount > 0
-                  ? 'bg-accent text-white border-accent'
-                  : 'bg-canvas border-border text-text-secondary hover:border-accent/40'
-              }`}
-            >
-              <SlidersHorizontal size={14} />
-              <span className="hidden sm:inline">Filtres</span>
-              {activeCount > 0 && (
-                <span className="w-5 h-5 rounded-full bg-white/25 text-[11px] font-bold flex items-center justify-center">
-                  {activeCount}
-                </span>
-              )}
-            </button>
           </div>
 
-          {/* Shared FilterBar */}
-          <FilterBar filters={filters} onChange={setFilters} open={showFilters} />
+          {/* Filters — always visible */}
+          <FilterBar filters={filters} onChange={setFilters} open={true} />
         </div>
       </div>
 
