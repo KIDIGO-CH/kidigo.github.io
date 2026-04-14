@@ -94,7 +94,7 @@ export default function ContactPage() {
           >
             {[
               { icon: Mail, title: 'Email', value: 'bonjour@kidigo.ch' },
-              { icon: MapPin, title: 'Siège social', value: '10 rue du Rhône\n1204 Genève' },
+              { icon: MapPin, title: 'Siège social', value: 'Estavayer-le-Lac' },
               { icon: Clock, title: 'Horaires', value: 'Lun–Ven, 9h–18h\nRéponse sous 24h' },
             ].map(({ icon: Icon, title, value }) => (
               <div key={title} className="bg-elevated rounded-3xl p-6 border border-border">
