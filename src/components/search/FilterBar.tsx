@@ -70,7 +70,7 @@ function Pill({ active, onClick, children, color }: { active: boolean; onClick: 
   return (
     <button
       onClick={onClick}
-      className={`text-[12px] px-3 py-1.5 rounded-full border transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap ${
+      className={`text-[11px] sm:text-[12px] px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border transition-all duration-200 flex items-center gap-1 sm:gap-1.5 whitespace-nowrap ${
         active
           ? 'text-white border-transparent'
           : 'bg-canvas border-border text-text-secondary hover:border-accent/30'
@@ -149,10 +149,10 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
         >
-          <div className="pt-4 pb-2 space-y-3">
+          <div className="pt-3 sm:pt-4 pb-2 space-y-2.5 sm:space-y-3">
 
             {/* Row 1 — Categories (always visible) */}
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2">
               {categories.map(c => (
                 <Pill
                   key={c.name}
@@ -166,7 +166,7 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
             </div>
 
             {/* Row 2 — Filter group buttons */}
-            <div className="flex flex-wrap gap-2 items-center">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2 items-center">
               <FilterGroup label="Âge" activeCount={filters.ages.length} isOpen={openGroup === 'age'} onToggle={() => toggleGroup('age')} />
               <FilterGroup label="Prix" activeCount={filters.prices.length} isOpen={openGroup === 'price'} onToggle={() => toggleGroup('price')} />
               <FilterGroup label="Lieu" activeCount={filters.indoor !== null ? 1 : 0} isOpen={openGroup === 'lieu'} onToggle={() => toggleGroup('lieu')} />
@@ -192,7 +192,7 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
 
             {/* Row 3 — Expanded filter options (inline) */}
             {openGroup && (
-              <div className="flex flex-wrap gap-2 bg-elevated rounded-2xl border border-border p-3">
+              <div className="flex flex-wrap gap-1.5 sm:gap-2 bg-elevated rounded-2xl border border-border p-2.5 sm:p-3">
                 {openGroup === 'age' && AGE_OPTIONS.map(({ value, label }) => (
                   <Pill key={value} active={filters.ages.includes(value)} onClick={() => set({ ages: toggle(filters.ages, value) })}>
                     {label}

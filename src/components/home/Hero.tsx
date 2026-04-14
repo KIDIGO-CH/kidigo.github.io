@@ -47,29 +47,30 @@ export function Hero() {
         />
       </div>
 
-      <div className="relative z-10 max-w-[1400px] mx-auto px-6 md:px-10 min-h-[100dvh] grid grid-cols-1 lg:grid-cols-[58fr_42fr] gap-12 items-center pt-48 pb-28 lg:pt-32 lg:pb-0">
+      <div className="relative z-10 max-w-[1400px] mx-auto px-5 sm:px-6 md:px-10 min-h-[100dvh] grid grid-cols-1 lg:grid-cols-[58fr_42fr] gap-12 items-center pt-24 pb-16 sm:pt-32 lg:pt-32 lg:pb-0">
 
         {/* Left — Content */}
         <div className="flex flex-col">
 
           {/* Badge + Weather */}
           <motion.div
-            className="mb-8 flex flex-wrap items-center gap-3"
+            className="mb-5 sm:mb-8 flex flex-wrap items-center gap-2 sm:gap-3"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.1 }}
           >
-            <span className="inline-flex items-center gap-2 bg-accent-subtle text-accent text-[12px] font-medium px-4 py-2 rounded-full">
-              <Sparkles size={13} />
-              La plateforme n°1 des familles actives en Suisse romande
+            <span className="inline-flex items-center gap-1.5 bg-accent-subtle text-accent text-[11px] sm:text-[12px] font-medium px-3 sm:px-4 py-1.5 sm:py-2 rounded-full">
+              <Sparkles size={12} />
+              <span className="hidden sm:inline">La plateforme n°1 des familles actives en Suisse romande</span>
+              <span className="sm:hidden">N°1 des familles actives en Suisse romande</span>
             </span>
             <WeatherWidget />
           </motion.div>
 
           {/* Headline */}
           <motion.h1
-            className="font-display font-black text-text-primary leading-[1.05] mb-6"
-            style={{ fontSize: 'clamp(2.8rem, 6.5vw, 6rem)' }}
+            className="font-display font-black text-text-primary leading-[1.08] mb-4 sm:mb-6"
+            style={{ fontSize: 'clamp(2rem, 6.5vw, 6rem)' }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.18 }}
@@ -80,7 +81,7 @@ export function Hero() {
 
           {/* Subtitle */}
           <motion.p
-            className="text-[17px] text-text-secondary leading-relaxed mb-10 max-w-[480px]"
+            className="text-[15px] sm:text-[17px] text-text-secondary leading-relaxed mb-6 sm:mb-10 max-w-[480px]"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.26 }}
@@ -126,7 +127,7 @@ export function Hero() {
 
           {/* Filters toggle + FilterBar */}
           <motion.div
-            className="mb-10"
+            className="mb-6 sm:mb-10"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.40 }}
@@ -152,15 +153,15 @@ export function Hero() {
 
           {/* Stats */}
           <motion.div
-            className="flex items-center gap-8 pt-8 border-t border-border"
+            className="grid grid-cols-3 gap-3 sm:gap-8 pt-6 sm:pt-8 border-t border-border"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.54 }}
           >
             {STAT_ITEMS.map((item) => (
               <div key={item.label}>
-                <p className="font-display font-black text-[22px] text-text-primary leading-none mb-0.5">{item.value}</p>
-                <p className="text-[11px] text-text-secondary">{item.label}</p>
+                <p className="font-display font-black text-[17px] sm:text-[22px] text-text-primary leading-none mb-0.5">{item.value}</p>
+                <p className="text-[10px] sm:text-[11px] text-text-secondary">{item.label}</p>
               </div>
             ))}
           </motion.div>
