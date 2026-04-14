@@ -59,8 +59,8 @@ export default function PartagerPage() {
   }
 
   return (
-    <div className="min-h-[100dvh] bg-canvas pt-28 pb-20">
-      <div className="max-w-2xl mx-auto px-6">
+    <div className="min-h-[100dvh] bg-canvas pt-24 sm:pt-28 pb-16 sm:pb-20">
+      <div className="max-w-2xl mx-auto px-5 sm:px-6">
 
         <motion.div
           initial={{ opacity: 0, y: 16 }}

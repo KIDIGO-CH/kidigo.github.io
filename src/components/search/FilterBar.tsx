@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, MapPin, Calendar, ChevronDown } from 'lucide-react'
 import { categories } from '@/lib/data'
@@ -70,7 +70,7 @@ function Pill({ active, onClick, children, color }: { active: boolean; onClick: 
   return (
     <button
       onClick={onClick}
-      className={`text-[12px] px-3 py-1.5 rounded-full border transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap ${
+      className={`text-[11px] sm:text-[12px] px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border transition-all duration-200 flex items-center gap-1 sm:gap-1.5 whitespace-nowrap ${
         active
           ? 'text-white border-transparent'
           : 'bg-canvas border-border text-text-secondary hover:border-accent/30'
@@ -82,62 +82,43 @@ function Pill({ active, onClick, children, color }: { active: boolean; onClick: 
   )
 }
 
-// ── Dropdown group ────────────────────────────────────────────────────
-function FilterGroup({ label, activeCount, children }: { label: string; activeCount: number; children: React.ReactNode }) {
-  const [open, setOpen] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
-    }
-    document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
-  }, [])
-
+// ── Inline expandable filter group button ─────────────────────────────
+function FilterGroup({ label, activeCount, isOpen, onToggle }: {
+  label: string
+  activeCount: number
+  isOpen: boolean
+  onToggle: () => void
+}) {
   return (
-    <div ref={ref} className="relative">
-      <button
-        onClick={() => setOpen(!open)}
-        className={`text-[12px] px-3 py-1.5 rounded-full border transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap ${
-          activeCount > 0
-            ? 'bg-accent text-white border-accent'
-            : 'bg-canvas border-border text-text-secondary hover:border-accent/30'
-        }`}
-      >
-        {label}
-        {activeCount > 0 && (
-          <span className="w-4 h-4 rounded-full bg-white/25 text-[10px] font-bold flex items-center justify-center">
-            {activeCount}
-          </span>
-        )}
-        <ChevronDown size={12} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
-      </button>
-
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, y: 4, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 4, scale: 0.97 }}
-            transition={{ duration: 0.15 }}
-            className="absolute top-full left-0 mt-2 bg-elevated rounded-2xl border border-border shadow-card-hover z-50 p-3 min-w-[200px]"
-          >
-            <div className="flex flex-wrap gap-2">
-              {children}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+    <button
+      onClick={onToggle}
+      className={`text-[12px] px-3 py-1.5 rounded-full border transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap ${
+        isOpen || activeCount > 0
+          ? 'bg-accent text-white border-accent'
+          : 'bg-canvas border-border text-text-secondary hover:border-accent/30'
+      }`}
+    >
+      {label}
+      {activeCount > 0 && (
+        <span className="w-4 h-4 rounded-full bg-white/25 text-[10px] font-bold flex items-center justify-center">
+          {activeCount}
+        </span>
+      )}
+      <ChevronDown size={12} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+    </button>
   )
 }
 
 // ── Main FilterBar ────────────────────────────────────────────────────
+type FilterGroupKey = 'age' | 'price' | 'lieu' | 'effort' | 'quand'
+
 export function FilterBar({ filters, onChange, open }: FilterBarProps) {
   const [locatingNearby, setLocatingNearby] = useState(false)
+  const [openGroup, setOpenGroup] = useState<FilterGroupKey | null>(null)
 
   const set = (partial: Partial<Filters>) => onChange({ ...filters, ...partial })
+
+  const toggleGroup = (key: FilterGroupKey) => setOpenGroup(prev => prev === key ? null : key)
 
   const handleNearby = () => {
     if (filters.nearbyKm !== null) {
@@ -163,16 +144,15 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
     <AnimatePresence>
       {open && (
         <motion.div
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: 'auto', opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
-          transition={{ type: 'spring', stiffness: 100, damping: 20 }}
-          className="overflow-hidden"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
         >
-          <div className="pt-4 pb-2 space-y-3">
+          <div className="pt-3 sm:pt-4 pb-2 space-y-2.5 sm:space-y-3">
 
             {/* Row 1 — Categories (always visible) */}
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2">
               {categories.map(c => (
                 <Pill
                   key={c.name}
@@ -185,68 +165,13 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
               ))}
             </div>
 
-            {/* Row 2 — Filter groups (compact) */}
-            <div className="flex flex-wrap gap-2 items-center">
-
-              {/* Âge */}
-              <FilterGroup label="Âge" activeCount={filters.ages.length}>
-                {AGE_OPTIONS.map(({ value, label }) => (
-                  <Pill key={value} active={filters.ages.includes(value)} onClick={() => set({ ages: toggle(filters.ages, value) })}>
-                    {label}
-                  </Pill>
-                ))}
-              </FilterGroup>
-
-              {/* Prix */}
-              <FilterGroup label="Prix" activeCount={filters.prices.length}>
-                {PRICE_OPTIONS.map(({ value, label }) => (
-                  <Pill key={value} active={filters.prices.includes(value)} onClick={() => set({ prices: toggle(filters.prices, value) })}>
-                    {label}
-                  </Pill>
-                ))}
-              </FilterGroup>
-
-              {/* Lieu */}
-              <FilterGroup label="Lieu" activeCount={(filters.indoor !== null ? 1 : 0)}>
-                {[{ v: null as boolean | null, l: 'Tous' }, { v: true, l: 'Intérieur' }, { v: false, l: 'Extérieur' }].map(({ v, l }) => (
-                  <Pill key={l} active={filters.indoor === v} onClick={() => set({ indoor: v })}>
-                    {l}
-                  </Pill>
-                ))}
-              </FilterGroup>
-
-              {/* Effort */}
-              <FilterGroup label="Effort" activeCount={filters.efforts.length}>
-                {EFFORT_OPTIONS.map(({ value, label, icon }) => (
-                  <Pill key={value} active={filters.efforts.includes(value)} onClick={() => set({ efforts: toggle(filters.efforts, value) })}>
-                    {icon} {label}
-                  </Pill>
-                ))}
-              </FilterGroup>
-
-              {/* Quand */}
-              <FilterGroup label="Quand" activeCount={filters.dateFilter ? 1 : 0}>
-                <Pill
-                  active={filters.dateFilter === 'today'}
-                  onClick={() => set({ dateFilter: filters.dateFilter === 'today' ? null : 'today' })}
-                >
-                  <Calendar size={12} /> Aujourd&apos;hui
-                </Pill>
-                <Pill
-                  active={filters.dateFilter === 'weekend'}
-                  onClick={() => set({ dateFilter: filters.dateFilter === 'weekend' ? null : 'weekend' })}
-                >
-                  <Calendar size={12} /> Ce weekend
-                </Pill>
-                <div className="w-full pt-1">
-                  <input
-                    type="date"
-                    value={filters.dateFilter && filters.dateFilter !== 'today' && filters.dateFilter !== 'weekend' ? filters.dateFilter : ''}
-                    onChange={(e) => set({ dateFilter: e.target.value || null })}
-                    className="w-full text-[12px] px-3 py-1.5 rounded-full border bg-canvas border-border text-text-secondary outline-none cursor-pointer"
-                  />
-                </div>
-              </FilterGroup>
+            {/* Row 2 — Filter group buttons */}
+            <div className="flex flex-wrap gap-1.5 sm:gap-2 items-center">
+              <FilterGroup label="Âge" activeCount={filters.ages.length} isOpen={openGroup === 'age'} onToggle={() => toggleGroup('age')} />
+              <FilterGroup label="Prix" activeCount={filters.prices.length} isOpen={openGroup === 'price'} onToggle={() => toggleGroup('price')} />
+              <FilterGroup label="Lieu" activeCount={filters.indoor !== null ? 1 : 0} isOpen={openGroup === 'lieu'} onToggle={() => toggleGroup('lieu')} />
+              <FilterGroup label="Effort" activeCount={filters.efforts.length} isOpen={openGroup === 'effort'} onToggle={() => toggleGroup('effort')} />
+              <FilterGroup label="Quand" activeCount={filters.dateFilter ? 1 : 0} isOpen={openGroup === 'quand'} onToggle={() => toggleGroup('quand')} />
 
               {/* Autour de moi (standalone pill) */}
               <Pill active={filters.nearbyKm !== null} onClick={handleNearby}>
@@ -264,6 +189,62 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
                 </button>
               )}
             </div>
+
+            {/* Row 3 — Expanded filter options (inline) */}
+            {openGroup && (
+              <div className="flex flex-wrap gap-1.5 sm:gap-2 bg-elevated rounded-2xl border border-border p-2.5 sm:p-3">
+                {openGroup === 'age' && AGE_OPTIONS.map(({ value, label }) => (
+                  <Pill key={value} active={filters.ages.includes(value)} onClick={() => set({ ages: toggle(filters.ages, value) })}>
+                    {label}
+                  </Pill>
+                ))}
+
+                {openGroup === 'price' && PRICE_OPTIONS.map(({ value, label }) => (
+                  <Pill key={value} active={filters.prices.includes(value)} onClick={() => set({ prices: toggle(filters.prices, value) })}>
+                    {label}
+                  </Pill>
+                ))}
+
+                {openGroup === 'lieu' && [
+                  { v: null as boolean | null, l: 'Tous' },
+                  { v: true, l: 'Intérieur' },
+                  { v: false, l: 'Extérieur' },
+                ].map(({ v, l }) => (
+                  <Pill key={l} active={filters.indoor === v} onClick={() => set({ indoor: v })}>
+                    {l}
+                  </Pill>
+                ))}
+
+                {openGroup === 'effort' && EFFORT_OPTIONS.map(({ value, label, icon }) => (
+                  <Pill key={value} active={filters.efforts.includes(value)} onClick={() => set({ efforts: toggle(filters.efforts, value) })}>
+                    {icon} {label}
+                  </Pill>
+                ))}
+
+                {openGroup === 'quand' && (
+                  <>
+                    <Pill
+                      active={filters.dateFilter === 'today'}
+                      onClick={() => set({ dateFilter: filters.dateFilter === 'today' ? null : 'today' })}
+                    >
+                      <Calendar size={12} /> Aujourd&apos;hui
+                    </Pill>
+                    <Pill
+                      active={filters.dateFilter === 'weekend'}
+                      onClick={() => set({ dateFilter: filters.dateFilter === 'weekend' ? null : 'weekend' })}
+                    >
+                      <Calendar size={12} /> Ce weekend
+                    </Pill>
+                    <input
+                      type="date"
+                      value={filters.dateFilter && filters.dateFilter !== 'today' && filters.dateFilter !== 'weekend' ? filters.dateFilter : ''}
+                      onChange={(e) => set({ dateFilter: e.target.value || null })}
+                      className="text-[12px] px-3 py-1.5 rounded-full border bg-canvas border-border text-text-secondary outline-none cursor-pointer"
+                    />
+                  </>
+                )}
+              </div>
+            )}
           </div>
         </motion.div>
       )}

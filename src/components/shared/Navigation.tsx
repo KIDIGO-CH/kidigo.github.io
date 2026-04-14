@@ -37,7 +37,7 @@ export function Navigation() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 100, damping: 20 }}
       >
-        <div className="max-w-[1400px] mx-auto px-6 md:px-10 h-16 flex items-center justify-between">
+        <div className="max-w-[1400px] mx-auto px-5 sm:px-6 md:px-10 h-16 flex items-center justify-between">
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
@@ -95,7 +95,7 @@ export function Navigation() {
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            className="fixed inset-0 z-40 bg-elevated flex flex-col pt-20 px-6 pb-8"
+            className="fixed inset-0 z-40 bg-elevated flex flex-col pt-20 px-5 sm:px-6 pb-8"
             initial={{ opacity: 0, y: -12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}

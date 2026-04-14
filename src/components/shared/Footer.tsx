@@ -40,13 +40,13 @@ export function Footer() {
 
   return (
     <footer className="bg-text-primary text-canvas/80">
-      <div className="max-w-[1400px] mx-auto px-6 md:px-10 pt-16 pb-10">
+      <div className="max-w-[1400px] mx-auto px-5 sm:px-6 md:px-10 pt-12 sm:pt-16 pb-8 sm:pb-10">
 
         {/* Top */}
-        <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr_1fr_1fr] gap-10 mb-14">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-[1.5fr_1fr_1fr_1fr] gap-8 sm:gap-10 mb-10 sm:mb-14">
 
           {/* Brand */}
-          <div>
+          <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-5">
               <div className="w-8 h-8 bg-accent rounded-xl flex items-center justify-center">
                 <span className="text-white font-display font-black text-[14px]">K</span>

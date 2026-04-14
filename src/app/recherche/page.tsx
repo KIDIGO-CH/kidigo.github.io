@@ -99,18 +99,18 @@ function RechercheContent() {
 
       {/* Sticky search header */}
       <div className="sticky top-16 z-30 bg-elevated/95 backdrop-blur-md border-b border-border">
-        <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-4">
-          <div className="flex items-center gap-3">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10 py-3 sm:py-4">
+          <div className="flex items-center gap-2 sm:gap-3">
 
             {/* Search input */}
-            <div className="flex-1 flex items-center gap-3 bg-canvas rounded-2xl px-4 py-2.5 border border-border">
+            <div className="flex-1 flex items-center gap-2 sm:gap-3 bg-canvas rounded-2xl px-3 sm:px-4 py-2.5 border border-border">
               <Search size={15} className="text-text-muted flex-shrink-0" />
               <input
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Rechercher une activité…"
-                className="flex-1 bg-transparent text-[14px] text-text-primary placeholder:text-text-muted outline-none"
+                placeholder="Rechercher…"
+                className="flex-1 bg-transparent text-[14px] text-text-primary placeholder:text-text-muted outline-none min-w-0"
               />
               {query && (
                 <button onClick={() => setQuery('')}>
@@ -130,14 +130,14 @@ function RechercheContent() {
             {/* Filters toggle */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl border text-[13px] font-medium transition-all duration-200 ${
+              className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 rounded-2xl border text-[13px] font-medium transition-all duration-200 flex-shrink-0 ${
                 showFilters || activeCount > 0
                   ? 'bg-accent text-white border-accent'
                   : 'bg-canvas border-border text-text-secondary hover:border-accent/40'
               }`}
             >
               <SlidersHorizontal size={14} />
-              Filtres
+              <span className="hidden sm:inline">Filtres</span>
               {activeCount > 0 && (
                 <span className="w-5 h-5 rounded-full bg-white/25 text-[11px] font-bold flex items-center justify-center">
                   {activeCount}
@@ -151,23 +151,23 @@ function RechercheContent() {
         </div>
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-8">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10 py-5 sm:py-8">
 
         {/* Results header */}
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="font-display font-bold text-[18px] text-text-primary">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 sm:mb-6">
+          <h1 className="font-display font-bold text-[16px] sm:text-[18px] text-text-primary">
             {filtered.length} activité{filtered.length > 1 ? 's' : ''}
             {filters.categories.length === 1 && <span className="text-accent ml-1">· {filters.categories[0]}</span>}
             {filters.categories.length > 1 && <span className="text-accent ml-1">· {filters.categories.length} catégories</span>}
             {locationLabel && <span className="text-text-secondary ml-1">· {locationLabel}</span>}
           </h1>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             {/* View mode toggle */}
             <div className="flex bg-canvas border border-border rounded-xl overflow-hidden">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`flex items-center gap-1.5 px-3 py-2 text-[12px] font-medium transition-all duration-200 ${
+                className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 text-[12px] font-medium transition-all duration-200 ${
                   viewMode === 'grid' ? 'bg-accent text-white' : 'text-text-secondary hover:text-text-primary'
                 }`}
               >
@@ -175,7 +175,7 @@ function RechercheContent() {
               </button>
               <button
                 onClick={() => setViewMode('map')}
-                className={`flex items-center gap-1.5 px-3 py-2 text-[12px] font-medium transition-all duration-200 ${
+                className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 text-[12px] font-medium transition-all duration-200 ${
                   viewMode === 'map' ? 'bg-accent text-white' : 'text-text-secondary hover:text-text-primary'
                 }`}
               >
@@ -187,7 +187,7 @@ function RechercheContent() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
-              className="bg-elevated border border-border rounded-xl px-3 py-2 text-[13px] text-text-primary outline-none cursor-pointer"
+              className="bg-elevated border border-border rounded-xl px-2.5 sm:px-3 py-1.5 sm:py-2 text-[12px] sm:text-[13px] text-text-primary outline-none cursor-pointer"
             >
               <option value="rating">Mieux notées</option>
               <option value="popular">Plus populaires</option>
@@ -233,7 +233,7 @@ function RechercheContent() {
         {/* Results */}
         {filtered.length > 0 ? (
           viewMode === 'grid' ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
               <AnimatePresence mode="popLayout">
                 {filtered.map((activity, i) => (
                   <ActivityCard key={activity.id} activity={activity} index={i} />
