@@ -174,9 +174,9 @@ export function Hero() {
             transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.34 }}
           >
             {/* Query input — full width with animated placeholder */}
-            <div className="relative flex items-center gap-3 bg-canvas rounded-2xl px-4 py-3.5 mb-2">
-              <Search size={16} className="text-text-muted flex-shrink-0" />
-              <div className="flex-1 relative">
+            <div className="relative flex items-start gap-3 bg-canvas rounded-2xl px-4 py-3.5 mb-2 min-h-[56px]">
+              <Search size={16} className="text-text-muted flex-shrink-0 mt-0.5" />
+              <div className="flex-1 relative min-h-[36px]">
                 <input
                   type="text"
                   value={query}
@@ -188,11 +188,11 @@ export function Hero() {
                 />
                 {/* Animated rotating placeholder */}
                 {!query && (
-                  <div className="absolute inset-0 flex items-center pointer-events-none overflow-hidden">
+                  <div className="absolute inset-0 flex items-start pointer-events-none">
                     <AnimatePresence mode="wait">
                       <motion.span
                         key={phraseIndex}
-                        className="text-[14px] text-text-muted whitespace-nowrap"
+                        className="text-[14px] text-text-muted leading-[1.4]"
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: isFocused ? 0.5 : 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
