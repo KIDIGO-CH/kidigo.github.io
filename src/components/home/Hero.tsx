@@ -74,8 +74,8 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.18 }}
           >
-            Trouvez l'activité idéale pour{' '}
-            <span className="text-accent">voir leurs yeux s'illuminer.</span>
+            Que faire avec les enfants aujourd'hui ?{' '}
+            <span className="text-accent">Kidigo trouve pour vous.</span>
           </motion.h1>
 
           {/* Subtitle */}
@@ -85,8 +85,7 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.26 }}
           >
-            Des activités 100% dédiées aux enfants, choisies avec soin pour chaque âge et chaque envie.
-            Explorez, trouvez, profitez.
+            100% activités pour enfants, près de chez vous, filtrées en quelques secondes.
           </motion.p>
 
           {/* Search box */}

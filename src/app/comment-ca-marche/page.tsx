@@ -53,7 +53,7 @@ export default function CommentCaMarchePage() {
             Comment ça marche ?
           </h1>
           <p className="text-[16px] text-text-secondary leading-relaxed">
-            KIDIGO vous guide à chaque étape pour trouver l'activité parfaite. Simple, rapide et efficace.
+            Des idées pour émerveiller vos enfants. Sans y passer des heures. Bienvenue sur Kidigo.
           </p>
         </motion.div>
 
