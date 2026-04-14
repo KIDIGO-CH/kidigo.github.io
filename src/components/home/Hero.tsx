@@ -3,9 +3,10 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Search, MapPin, ChevronDown, Sparkles } from 'lucide-react'
+import { Search, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
-import { cities, categories } from '@/lib/data'
+import { LocationSearch } from '@/components/ui/LocationSearch'
+import type { Location } from '@/lib/data'
 
 const STAT_ITEMS = [
   { value: '2 400+', label: 'Activités référencées' },
@@ -16,12 +17,12 @@ const STAT_ITEMS = [
 export function Hero() {
   const router = useRouter()
   const [query, setQuery] = useState('')
-  const [city, setCity] = useState('')
+  const [locationLabel, setLocationLabel] = useState('')
 
   const handleSearch = () => {
     const params = new URLSearchParams()
     if (query) params.set('q', query)
-    if (city) params.set('ville', city)
+    if (locationLabel) params.set('lieu', locationLabel)
     router.push(`/recherche?${params.toString()}`)
   }
 
@@ -102,19 +103,12 @@ export function Hero() {
                 />
               </div>
 
-              {/* City select */}
-              <div className="flex items-center gap-3 bg-canvas rounded-2xl px-4 py-3 sm:min-w-[160px]">
-                <MapPin size={16} className="text-text-muted flex-shrink-0" />
-                <select
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  className="flex-1 bg-transparent text-[14px] text-text-primary outline-none cursor-pointer appearance-none"
-                >
-                  <option value="">Toutes les villes</option>
-                  {cities.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-                <ChevronDown size={14} className="text-text-muted flex-shrink-0" />
-              </div>
+              {/* Location search */}
+              <LocationSearch
+                value={locationLabel}
+                onChange={(label) => setLocationLabel(label)}
+                className="sm:min-w-[200px]"
+              />
 
               {/* Submit */}
               <Button onClick={handleSearch} size="lg" className="sm:px-8 rounded-2xl">

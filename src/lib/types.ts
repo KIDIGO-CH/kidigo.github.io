@@ -22,6 +22,8 @@ export type Activity = {
   ageLabel: AgeRange
   city: string
   district: string
+  npa: string
+  canton: string
   lat: number
   lng: number
   price: number

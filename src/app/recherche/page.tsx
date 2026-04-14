@@ -1,13 +1,15 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { Suspense, useState, useMemo, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, SlidersHorizontal, X, MapPin, ChevronDown, LayoutGrid, Map } from 'lucide-react'
+import { Search, SlidersHorizontal, X, LayoutGrid, Map } from 'lucide-react'
 import { ActivityCard } from '@/components/search/ActivityCard'
+import { LocationSearch } from '@/components/ui/LocationSearch'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
-import { activities, cities, categories } from '@/lib/data'
+import { activities, categories, locations, type Location } from '@/lib/data'
 import type { Category } from '@/lib/types'
 
 const MapView = dynamic(
@@ -18,14 +20,42 @@ const MapView = dynamic(
 type SortOption = 'rating' | 'price-asc' | 'price-desc' | 'popular'
 
 export default function RecherchePage() {
+  return (
+    <Suspense fallback={<div className="min-h-[100dvh] bg-canvas" />}>
+      <RechercheContent />
+    </Suspense>
+  )
+}
+
+function RechercheContent() {
+  const searchParams = useSearchParams()
+
   const [query, setQuery] = useState('')
-  const [city, setCity] = useState('')
+  const [locationLabel, setLocationLabel] = useState('')
+  const [locationFilter, setLocationFilter] = useState<Location | null>(null)
   const [selectedCategory, setSelectedCategory] = useState<Category | ''>('')
   const [isIndoor, setIsIndoor] = useState<boolean | null>(null)
   const [priceMax, setPriceMax] = useState<number | null>(null)
   const [sortBy, setSortBy] = useState<SortOption>('rating')
   const [showFilters, setShowFilters] = useState(false)
   const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid')
+
+  // Read URL params on mount
+  useEffect(() => {
+    const q = searchParams.get('q')
+    const lieu = searchParams.get('lieu')
+    if (q) setQuery(q)
+    if (lieu) {
+      setLocationLabel(lieu)
+      const match = locations.find(l => l.label === lieu)
+      if (match) setLocationFilter(match)
+    }
+  }, [searchParams])
+
+  const handleLocationChange = (label: string, loc: Location | null) => {
+    setLocationLabel(label)
+    setLocationFilter(loc)
+  }
 
   const filtered = useMemo(() => {
     let result = [...activities]
@@ -39,7 +69,7 @@ export default function RecherchePage() {
         a.tags.some(t => t.toLowerCase().includes(q))
       )
     }
-    if (city) result = result.filter(a => a.city === city)
+    if (locationFilter) result = result.filter(locationFilter.filterFn)
     if (selectedCategory) result = result.filter(a => a.category === selectedCategory)
     if (isIndoor !== null) result = result.filter(a => a.isIndoor === isIndoor)
     if (priceMax !== null) result = result.filter(a => a.price <= priceMax)
@@ -52,12 +82,13 @@ export default function RecherchePage() {
     }
 
     return result
-  }, [query, city, selectedCategory, isIndoor, priceMax, sortBy])
+  }, [query, locationFilter, selectedCategory, isIndoor, priceMax, sortBy])
 
-  const activeFiltersCount = [city, selectedCategory, isIndoor !== null, priceMax !== null].filter(Boolean).length
+  const activeFiltersCount = [locationFilter, selectedCategory, isIndoor !== null, priceMax !== null].filter(Boolean).length
 
   const clearFilters = () => {
-    setCity('')
+    setLocationLabel('')
+    setLocationFilter(null)
     setSelectedCategory('')
     setIsIndoor(null)
     setPriceMax(null)
@@ -88,19 +119,13 @@ export default function RecherchePage() {
               )}
             </div>
 
-            {/* City */}
-            <div className="hidden sm:flex items-center gap-2 bg-canvas rounded-2xl px-3 py-2.5 border border-border min-w-[140px]">
-              <MapPin size={14} className="text-text-muted" />
-              <select
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                className="bg-transparent text-[13px] text-text-primary outline-none cursor-pointer w-full"
-              >
-                <option value="">Toutes les villes</option>
-                {cities.map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
-              <ChevronDown size={12} className="text-text-muted" />
-            </div>
+            {/* Location search */}
+            <LocationSearch
+              value={locationLabel}
+              onChange={handleLocationChange}
+              compact
+              className="hidden sm:block sm:min-w-[220px]"
+            />
 
             {/* Filters toggle */}
             <button
@@ -195,7 +220,7 @@ export default function RecherchePage() {
             <h1 className="font-display font-bold text-[18px] text-text-primary">
               {filtered.length} activité{filtered.length > 1 ? 's' : ''}
               {selectedCategory && <span className="text-accent ml-1">· {selectedCategory}</span>}
-              {city && <span className="text-text-secondary ml-1">à {city}</span>}
+              {locationLabel && <span className="text-text-secondary ml-1">· {locationLabel}</span>}
             </h1>
           </div>
 
@@ -243,7 +268,7 @@ export default function RecherchePage() {
         {/* Active filter badges */}
         {activeFiltersCount > 0 && (
           <div className="flex flex-wrap gap-2 mb-6">
-            {city && <Badge variant="subtle">{city} <button onClick={() => setCity('')} className="ml-1">×</button></Badge>}
+            {locationFilter && <Badge variant="subtle">{locationLabel} <button onClick={() => handleLocationChange('', null)} className="ml-1">×</button></Badge>}
             {selectedCategory && <Badge variant="subtle">{selectedCategory} <button onClick={() => setSelectedCategory('')} className="ml-1">×</button></Badge>}
             {isIndoor !== null && <Badge variant="subtle">{isIndoor ? 'Intérieur' : 'Extérieur'} <button onClick={() => setIsIndoor(null)} className="ml-1">×</button></Badge>}
             {priceMax !== null && <Badge variant="subtle">≤ {priceMax} CHF <button onClick={() => setPriceMax(null)} className="ml-1">×</button></Badge>}
