@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, MapPin, Calendar, ChevronDown } from 'lucide-react'
 import { categories } from '@/lib/data'
-import type { Category, EffortLevel } from '@/lib/types'
+import type { Category } from '@/lib/types'
 
 // ── Types ────────────────────────────────────────────────────────────
 export type AgeOption = '0-3' | '4-6' | '7-10' | '11-14'
@@ -16,7 +16,6 @@ export type Filters = {
   ages: AgeOption[]
   indoor: boolean | null
   prices: PriceOption[]
-  efforts: EffortLevel[]
   dateFilter: DateOption | null
   nearbyKm: number | null
   userLat: number | null
@@ -28,7 +27,6 @@ export const defaultFilters: Filters = {
   ages: [],
   indoor: null,
   prices: [],
-  efforts: [],
   dateFilter: null,
   nearbyKm: null,
   userLat: null,
@@ -47,12 +45,6 @@ const PRICE_OPTIONS: { value: PriceOption; label: string }[] = [
   { value: '<10', label: '< 10 CHF' },
   { value: '10-30', label: '10-30 CHF' },
   { value: '30+', label: '30+ CHF' },
-]
-
-const EFFORT_OPTIONS: { value: EffortLevel; label: string; icon: string }[] = [
-  { value: 'chill', label: 'Chill', icon: '😌' },
-  { value: 'actif', label: 'Actif', icon: '🚶' },
-  { value: 'sportif', label: 'Sportif', icon: '🏃' },
 ]
 
 interface FilterBarProps {
@@ -110,7 +102,7 @@ function FilterGroup({ label, activeCount, isOpen, onToggle }: {
 }
 
 // ── Main FilterBar ────────────────────────────────────────────────────
-type FilterGroupKey = 'age' | 'price' | 'lieu' | 'effort' | 'quand'
+type FilterGroupKey = 'category' | 'age' | 'price' | 'lieu' | 'quand'
 
 export function FilterBar({ filters, onChange, open }: FilterBarProps) {
   const [locatingNearby, setLocatingNearby] = useState(false)
@@ -137,7 +129,7 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
   }
 
   const hasAnyFilter = filters.categories.length > 0 || filters.ages.length > 0 ||
-    filters.indoor !== null || filters.prices.length > 0 || filters.efforts.length > 0 ||
+    filters.indoor !== null || filters.prices.length > 0 ||
     filters.nearbyKm !== null || filters.dateFilter !== null
 
   return (
@@ -151,26 +143,12 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
         >
           <div className="pt-3 sm:pt-4 pb-2 space-y-2.5 sm:space-y-3">
 
-            {/* Row 1 — Categories (always visible) */}
-            <div className="flex flex-wrap gap-1.5 sm:gap-2">
-              {categories.map(c => (
-                <Pill
-                  key={c.name}
-                  active={filters.categories.includes(c.name)}
-                  onClick={() => set({ categories: toggle(filters.categories, c.name) })}
-                  color={c.color}
-                >
-                  <span>{c.icon}</span> {c.name}
-                </Pill>
-              ))}
-            </div>
-
-            {/* Row 2 — Filter group buttons */}
+            {/* Filter group buttons */}
             <div className="flex flex-wrap gap-1.5 sm:gap-2 items-center">
+              <FilterGroup label="Catégorie" activeCount={filters.categories.length} isOpen={openGroup === 'category'} onToggle={() => toggleGroup('category')} />
               <FilterGroup label="Âge" activeCount={filters.ages.length} isOpen={openGroup === 'age'} onToggle={() => toggleGroup('age')} />
               <FilterGroup label="Prix" activeCount={filters.prices.length} isOpen={openGroup === 'price'} onToggle={() => toggleGroup('price')} />
               <FilterGroup label="Lieu" activeCount={filters.indoor !== null ? 1 : 0} isOpen={openGroup === 'lieu'} onToggle={() => toggleGroup('lieu')} />
-              <FilterGroup label="Effort" activeCount={filters.efforts.length} isOpen={openGroup === 'effort'} onToggle={() => toggleGroup('effort')} />
               <FilterGroup label="Quand" activeCount={filters.dateFilter ? 1 : 0} isOpen={openGroup === 'quand'} onToggle={() => toggleGroup('quand')} />
 
               {/* Autour de moi (standalone pill) */}
@@ -190,9 +168,20 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
               )}
             </div>
 
-            {/* Row 3 — Expanded filter options (inline) */}
+            {/* Expanded filter options (inline) */}
             {openGroup && (
               <div className="flex flex-wrap gap-1.5 sm:gap-2 bg-elevated rounded-2xl border border-border p-2.5 sm:p-3">
+                {openGroup === 'category' && categories.map(c => (
+                  <Pill
+                    key={c.name}
+                    active={filters.categories.includes(c.name)}
+                    onClick={() => set({ categories: toggle(filters.categories, c.name) })}
+                    color={c.color}
+                  >
+                    <span>{c.icon}</span> {c.name}
+                  </Pill>
+                ))}
+
                 {openGroup === 'age' && AGE_OPTIONS.map(({ value, label }) => (
                   <Pill key={value} active={filters.ages.includes(value)} onClick={() => set({ ages: toggle(filters.ages, value) })}>
                     {label}
@@ -212,12 +201,6 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
                 ].map(({ v, l }) => (
                   <Pill key={l} active={filters.indoor === v} onClick={() => set({ indoor: v })}>
                     {l}
-                  </Pill>
-                ))}
-
-                {openGroup === 'effort' && EFFORT_OPTIONS.map(({ value, label, icon }) => (
-                  <Pill key={value} active={filters.efforts.includes(value)} onClick={() => set({ efforts: toggle(filters.efforts, value) })}>
-                    {icon} {label}
                   </Pill>
                 ))}
 
@@ -313,8 +296,6 @@ export function applyFilters(
     result = result.filter(a => a.isIndoor === filters.indoor)
   if (filters.prices.length > 0)
     result = result.filter(a => matchesPrice(a.price, filters.prices))
-  if (filters.efforts.length > 0)
-    result = result.filter(a => filters.efforts.includes(a.effortLevel))
   if (filters.nearbyKm !== null && filters.userLat !== null && filters.userLng !== null) {
     const { nearbyKm, userLat, userLng } = filters
     result = result.filter(a => haversineKm(userLat, userLng, a.lat, a.lng) <= nearbyKm)
@@ -337,7 +318,6 @@ export function countActiveFilters(filters: Filters): number {
     filters.ages.length > 0,
     filters.indoor !== null,
     filters.prices.length > 0,
-    filters.efforts.length > 0,
     filters.nearbyKm !== null,
     filters.dateFilter !== null,
   ].filter(Boolean).length

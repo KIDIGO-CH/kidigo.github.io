@@ -215,9 +215,6 @@ function RechercheContent() {
             {filters.prices.map(p => (
               <Badge key={p} variant="subtle">{p === 'free' ? 'Gratuit' : p === '<10' ? '< 10 CHF' : p === '10-30' ? '10-30 CHF' : '30+ CHF'} <button onClick={() => setFilters(f => ({ ...f, prices: f.prices.filter(x => x !== p) }))} className="ml-1">×</button></Badge>
             ))}
-            {filters.efforts.map(e => (
-              <Badge key={e} variant="subtle">{e} <button onClick={() => setFilters(f => ({ ...f, efforts: f.efforts.filter(x => x !== e) }))} className="ml-1">×</button></Badge>
-            ))}
             {filters.nearbyKm !== null && (
               <Badge variant="subtle">≤ {filters.nearbyKm} km <button onClick={() => setFilters(f => ({ ...f, nearbyKm: null, userLat: null, userLng: null }))} className="ml-1">×</button></Badge>
             )}
