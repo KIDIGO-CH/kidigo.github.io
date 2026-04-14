@@ -6,11 +6,11 @@ import dynamic from 'next/dynamic'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search, SlidersHorizontal, X, LayoutGrid, Map } from 'lucide-react'
 import { ActivityCard } from '@/components/search/ActivityCard'
+import { FilterBar, applyFilters, countActiveFilters, defaultFilters, type Filters } from '@/components/search/FilterBar'
 import { LocationSearch } from '@/components/ui/LocationSearch'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
-import { activities, categories, locations, type Location } from '@/lib/data'
-import type { Category } from '@/lib/types'
+import { activities, locations, type Location } from '@/lib/data'
 
 const MapView = dynamic(
   () => import('@/components/search/MapView').then(mod => mod.MapView),
@@ -18,15 +18,6 @@ const MapView = dynamic(
 )
 
 type SortOption = 'rating' | 'price-asc' | 'price-desc' | 'popular'
-type AgeFilter = null | 2 | 5 | 8 | 11
-
-const AGE_OPTIONS: { value: AgeFilter; label: string }[] = [
-  { value: null, label: 'Tous âges' },
-  { value: 2, label: '2-4 ans' },
-  { value: 5, label: '5-7 ans' },
-  { value: 8, label: '8-10 ans' },
-  { value: 11, label: '11-14 ans' },
-]
 
 export default function RecherchePage() {
   return (
@@ -42,11 +33,7 @@ function RechercheContent() {
   const [query, setQuery] = useState('')
   const [locationLabel, setLocationLabel] = useState('')
   const [locationFilter, setLocationFilter] = useState<Location | null>(null)
-  const [selectedCategories, setSelectedCategories] = useState<Category[]>([])
-  const [isIndoor, setIsIndoor] = useState<boolean | null>(null)
-  const [priceMax, setPriceMax] = useState<number | null>(null)
-  const [isFree, setIsFree] = useState(false)
-  const [ageFilter, setAgeFilter] = useState<AgeFilter>(null)
+  const [filters, setFilters] = useState<Filters>({ ...defaultFilters })
   const [sortBy, setSortBy] = useState<SortOption>('rating')
   const [showFilters, setShowFilters] = useState(false)
   const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid')
@@ -68,15 +55,10 @@ function RechercheContent() {
     setLocationFilter(loc)
   }
 
-  const toggleCategory = (cat: Category) => {
-    setSelectedCategories(prev =>
-      prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]
-    )
-  }
-
   const filtered = useMemo(() => {
     let result = [...activities]
 
+    // Text search
     if (query) {
       const q = query.toLowerCase()
       result = result.filter(a =>
@@ -86,19 +68,14 @@ function RechercheContent() {
         a.tags.some(t => t.toLowerCase().includes(q))
       )
     }
-    if (locationFilter) result = result.filter(locationFilter.filterFn)
-    if (selectedCategories.length > 0) result = result.filter(a => selectedCategories.includes(a.category))
-    if (isIndoor !== null) result = result.filter(a => a.isIndoor === isIndoor)
-    if (isFree) {
-      result = result.filter(a => a.price === 0)
-    } else if (priceMax !== null) {
-      result = result.filter(a => a.price <= priceMax)
-    }
-    if (ageFilter !== null) {
-      const ageMax = ageFilter + 3
-      result = result.filter(a => a.ageMin <= ageMax && a.ageMax >= ageFilter)
-    }
 
+    // Location
+    if (locationFilter) result = result.filter(locationFilter.filterFn)
+
+    // All filters
+    result = applyFilters(result, filters)
+
+    // Sort
     switch (sortBy) {
       case 'rating': result.sort((a, b) => b.rating - a.rating); break
       case 'price-asc': result.sort((a, b) => a.price - b.price); break
@@ -107,24 +84,14 @@ function RechercheContent() {
     }
 
     return result
-  }, [query, locationFilter, selectedCategories, isIndoor, priceMax, isFree, ageFilter, sortBy])
+  }, [query, locationFilter, filters, sortBy])
 
-  const activeFiltersCount = [
-    locationFilter,
-    selectedCategories.length > 0,
-    isIndoor !== null,
-    priceMax !== null || isFree,
-    ageFilter !== null,
-  ].filter(Boolean).length
+  const activeCount = countActiveFilters(filters) + (locationFilter ? 1 : 0)
 
-  const clearFilters = () => {
+  const clearAll = () => {
     setLocationLabel('')
     setLocationFilter(null)
-    setSelectedCategories([])
-    setIsIndoor(null)
-    setPriceMax(null)
-    setIsFree(false)
-    setAgeFilter(null)
+    setFilters({ ...defaultFilters })
   }
 
   return (
@@ -164,132 +131,23 @@ function RechercheContent() {
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl border text-[13px] font-medium transition-all duration-200 ${
-                showFilters || activeFiltersCount > 0
+                showFilters || activeCount > 0
                   ? 'bg-accent text-white border-accent'
                   : 'bg-canvas border-border text-text-secondary hover:border-accent/40'
               }`}
             >
               <SlidersHorizontal size={14} />
               Filtres
-              {activeFiltersCount > 0 && (
+              {activeCount > 0 && (
                 <span className="w-5 h-5 rounded-full bg-white/25 text-[11px] font-bold flex items-center justify-center">
-                  {activeFiltersCount}
+                  {activeCount}
                 </span>
               )}
             </button>
           </div>
 
-          {/* Filters panel */}
-          <AnimatePresence>
-            {showFilters && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ type: 'spring', stiffness: 100, damping: 20 }}
-                className="overflow-hidden"
-              >
-                <div className="pt-4 pb-2 space-y-3">
-
-                  {/* Categories — multi-select pills */}
-                  <div className="flex flex-wrap gap-2">
-                    {categories.map(c => {
-                      const isActive = selectedCategories.includes(c.name)
-                      return (
-                        <button
-                          key={c.name}
-                          onClick={() => toggleCategory(c.name)}
-                          className={`text-[12px] px-3 py-2 rounded-xl border transition-all duration-200 flex items-center gap-1.5 ${
-                            isActive
-                              ? 'text-white border-transparent'
-                              : 'bg-canvas border-border text-text-secondary hover:border-accent/30'
-                          }`}
-                          style={isActive ? { backgroundColor: c.color, borderColor: c.color } : undefined}
-                        >
-                          <span>{c.icon}</span>
-                          {c.name}
-                        </button>
-                      )
-                    })}
-                  </div>
-
-                  <div className="flex flex-wrap gap-3 items-center">
-
-                    {/* Indoor/Outdoor */}
-                    <div className="flex gap-2">
-                      {[{ v: null, label: 'Tous lieux' }, { v: true, label: 'Intérieur' }, { v: false, label: 'Extérieur' }].map(({ v, label }) => (
-                        <button
-                          key={label}
-                          onClick={() => setIsIndoor(v)}
-                          className={`text-[12px] px-3 py-2 rounded-xl border transition-all duration-200 ${
-                            isIndoor === v ? 'bg-accent text-white border-accent' : 'bg-canvas border-border text-text-secondary hover:border-accent/30'
-                          }`}
-                        >
-                          {label}
-                        </button>
-                      ))}
-                    </div>
-
-                    <div className="w-px h-6 bg-border" />
-
-                    {/* Age filter */}
-                    <div className="flex gap-2">
-                      {AGE_OPTIONS.map(({ value, label }) => (
-                        <button
-                          key={label}
-                          onClick={() => setAgeFilter(value)}
-                          className={`text-[12px] px-3 py-2 rounded-xl border transition-all duration-200 ${
-                            ageFilter === value ? 'bg-accent text-white border-accent' : 'bg-canvas border-border text-text-secondary hover:border-accent/30'
-                          }`}
-                        >
-                          {label}
-                        </button>
-                      ))}
-                    </div>
-
-                    <div className="w-px h-6 bg-border" />
-
-                    {/* Price — with Gratuit */}
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => { setIsFree(false); setPriceMax(null) }}
-                        className={`text-[12px] px-3 py-2 rounded-xl border transition-all duration-200 ${
-                          !isFree && priceMax === null ? 'bg-accent text-white border-accent' : 'bg-canvas border-border text-text-secondary hover:border-accent/30'
-                        }`}
-                      >
-                        Tous prix
-                      </button>
-                      <button
-                        onClick={() => { setIsFree(true); setPriceMax(null) }}
-                        className={`text-[12px] px-3 py-2 rounded-xl border transition-all duration-200 ${
-                          isFree ? 'bg-accent text-white border-accent' : 'bg-canvas border-border text-text-secondary hover:border-accent/30'
-                        }`}
-                      >
-                        Gratuit
-                      </button>
-                      {[20, 35, 50, 100].map((price) => (
-                        <button
-                          key={price}
-                          onClick={() => { setIsFree(false); setPriceMax(price) }}
-                          className={`text-[12px] px-3 py-2 rounded-xl border transition-all duration-200 ${
-                            !isFree && priceMax === price ? 'bg-accent text-white border-accent' : 'bg-canvas border-border text-text-secondary hover:border-accent/30'
-                          }`}
-                        >
-                          ≤ {price} CHF
-                        </button>
-                      ))}
-                    </div>
-
-                    {activeFiltersCount > 0 && (
-                      <button onClick={clearFilters} className="text-[12px] text-red-500 hover:text-red-600 flex items-center gap-1 ml-2">
-                        <X size={12} /> Effacer tout
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* Shared FilterBar */}
+          <FilterBar filters={filters} onChange={setFilters} open={showFilters} />
         </div>
       </div>
 
@@ -297,14 +155,12 @@ function RechercheContent() {
 
         {/* Results header */}
         <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <h1 className="font-display font-bold text-[18px] text-text-primary">
-              {filtered.length} activité{filtered.length > 1 ? 's' : ''}
-              {selectedCategories.length === 1 && <span className="text-accent ml-1">· {selectedCategories[0]}</span>}
-              {selectedCategories.length > 1 && <span className="text-accent ml-1">· {selectedCategories.length} catégories</span>}
-              {locationLabel && <span className="text-text-secondary ml-1">· {locationLabel}</span>}
-            </h1>
-          </div>
+          <h1 className="font-display font-bold text-[18px] text-text-primary">
+            {filtered.length} activité{filtered.length > 1 ? 's' : ''}
+            {filters.categories.length === 1 && <span className="text-accent ml-1">· {filters.categories[0]}</span>}
+            {filters.categories.length > 1 && <span className="text-accent ml-1">· {filters.categories.length} catégories</span>}
+            {locationLabel && <span className="text-text-secondary ml-1">· {locationLabel}</span>}
+          </h1>
 
           <div className="flex items-center gap-3">
             {/* View mode toggle */}
@@ -312,24 +168,18 @@ function RechercheContent() {
               <button
                 onClick={() => setViewMode('grid')}
                 className={`flex items-center gap-1.5 px-3 py-2 text-[12px] font-medium transition-all duration-200 ${
-                  viewMode === 'grid'
-                    ? 'bg-accent text-white'
-                    : 'text-text-secondary hover:text-text-primary'
+                  viewMode === 'grid' ? 'bg-accent text-white' : 'text-text-secondary hover:text-text-primary'
                 }`}
               >
-                <LayoutGrid size={14} />
-                Liste
+                <LayoutGrid size={14} /> Liste
               </button>
               <button
                 onClick={() => setViewMode('map')}
                 className={`flex items-center gap-1.5 px-3 py-2 text-[12px] font-medium transition-all duration-200 ${
-                  viewMode === 'map'
-                    ? 'bg-accent text-white'
-                    : 'text-text-secondary hover:text-text-primary'
+                  viewMode === 'map' ? 'bg-accent text-white' : 'text-text-secondary hover:text-text-primary'
                 }`}
               >
-                <Map size={14} />
-                Carte
+                <Map size={14} /> Carte
               </button>
             </div>
 
@@ -348,16 +198,35 @@ function RechercheContent() {
         </div>
 
         {/* Active filter badges */}
-        {activeFiltersCount > 0 && (
+        {activeCount > 0 && (
           <div className="flex flex-wrap gap-2 mb-6">
-            {locationFilter && <Badge variant="subtle">{locationLabel} <button onClick={() => handleLocationChange('', null)} className="ml-1">×</button></Badge>}
-            {selectedCategories.map(cat => (
-              <Badge key={cat} variant="subtle">{cat} <button onClick={() => toggleCategory(cat)} className="ml-1">×</button></Badge>
+            {locationFilter && (
+              <Badge variant="subtle">{locationLabel} <button onClick={() => handleLocationChange('', null)} className="ml-1">×</button></Badge>
+            )}
+            {filters.categories.map(cat => (
+              <Badge key={cat} variant="subtle">{cat} <button onClick={() => setFilters(f => ({ ...f, categories: f.categories.filter(c => c !== cat) }))} className="ml-1">×</button></Badge>
             ))}
-            {isIndoor !== null && <Badge variant="subtle">{isIndoor ? 'Intérieur' : 'Extérieur'} <button onClick={() => setIsIndoor(null)} className="ml-1">×</button></Badge>}
-            {ageFilter !== null && <Badge variant="subtle">{AGE_OPTIONS.find(a => a.value === ageFilter)?.label} <button onClick={() => setAgeFilter(null)} className="ml-1">×</button></Badge>}
-            {isFree && <Badge variant="subtle">Gratuit <button onClick={() => setIsFree(false)} className="ml-1">×</button></Badge>}
-            {!isFree && priceMax !== null && <Badge variant="subtle">≤ {priceMax} CHF <button onClick={() => setPriceMax(null)} className="ml-1">×</button></Badge>}
+            {filters.ages.map(age => (
+              <Badge key={age} variant="subtle">{age} ans <button onClick={() => setFilters(f => ({ ...f, ages: f.ages.filter(a => a !== age) }))} className="ml-1">×</button></Badge>
+            ))}
+            {filters.indoor !== null && (
+              <Badge variant="subtle">{filters.indoor ? 'Intérieur' : 'Extérieur'} <button onClick={() => setFilters(f => ({ ...f, indoor: null }))} className="ml-1">×</button></Badge>
+            )}
+            {filters.prices.map(p => (
+              <Badge key={p} variant="subtle">{p === 'free' ? 'Gratuit' : p === '<10' ? '< 10 CHF' : p === '10-30' ? '10-30 CHF' : '30+ CHF'} <button onClick={() => setFilters(f => ({ ...f, prices: f.prices.filter(x => x !== p) }))} className="ml-1">×</button></Badge>
+            ))}
+            {filters.efforts.map(e => (
+              <Badge key={e} variant="subtle">{e} <button onClick={() => setFilters(f => ({ ...f, efforts: f.efforts.filter(x => x !== e) }))} className="ml-1">×</button></Badge>
+            ))}
+            {filters.nearbyKm !== null && (
+              <Badge variant="subtle">≤ {filters.nearbyKm} km <button onClick={() => setFilters(f => ({ ...f, nearbyKm: null, userLat: null, userLng: null }))} className="ml-1">×</button></Badge>
+            )}
+            {filters.dateFilter && (
+              <Badge variant="subtle">
+                {filters.dateFilter === 'today' ? "Aujourd'hui" : filters.dateFilter === 'weekend' ? 'Ce weekend' : filters.dateFilter}
+                <button onClick={() => setFilters(f => ({ ...f, dateFilter: null }))} className="ml-1">×</button>
+              </Badge>
+            )}
           </div>
         )}
 
@@ -385,7 +254,7 @@ function RechercheContent() {
             <p className="text-text-secondary text-[15px] mb-8 max-w-md">
               Essayez de modifier vos filtres ou d'élargir votre recherche à d'autres villes.
             </p>
-            <Button onClick={clearFilters} variant="outline">Effacer les filtres</Button>
+            <Button onClick={clearAll} variant="outline">Effacer les filtres</Button>
           </motion.div>
         )}
       </div>

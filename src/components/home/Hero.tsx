@@ -3,10 +3,12 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Search, Sparkles } from 'lucide-react'
+import { Search, Sparkles, SlidersHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { LocationSearch } from '@/components/ui/LocationSearch'
 import { Mascot } from '@/components/shared/Mascot'
+import { WeatherWidget } from '@/components/home/WeatherWidget'
+import { FilterBar, defaultFilters, countActiveFilters, type Filters } from '@/components/search/FilterBar'
 import type { Location } from '@/lib/data'
 
 const STAT_ITEMS = [
@@ -19,6 +21,10 @@ export function Hero() {
   const router = useRouter()
   const [query, setQuery] = useState('')
   const [locationLabel, setLocationLabel] = useState('')
+  const [filters, setFilters] = useState<Filters>({ ...defaultFilters })
+  const [showFilters, setShowFilters] = useState(false)
+
+  const activeCount = countActiveFilters(filters)
 
   const handleSearch = () => {
     const params = new URLSearchParams()
@@ -62,9 +68,9 @@ export function Hero() {
             </motion.div>
           </motion.div>
 
-          {/* Badge */}
+          {/* Badge + Weather */}
           <motion.div
-            className="mb-8"
+            className="mb-8 flex flex-wrap items-center gap-3"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.1 }}
@@ -73,6 +79,7 @@ export function Hero() {
               <Sparkles size={13} />
               La plateforme n°1 des familles actives en Suisse romande
             </span>
+            <WeatherWidget />
           </motion.div>
 
           {/* Headline */}
@@ -100,7 +107,7 @@ export function Hero() {
 
           {/* Search box */}
           <motion.div
-            className="bg-elevated rounded-3xl p-2 shadow-card-hover mb-10 border border-border"
+            className="bg-elevated rounded-3xl p-2 shadow-card-hover mb-4 border border-border"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.34 }}
@@ -133,23 +140,30 @@ export function Hero() {
             </div>
           </motion.div>
 
-          {/* Quick filters */}
+          {/* Filters toggle + FilterBar */}
           <motion.div
-            className="flex flex-wrap gap-2 mb-12"
+            className="mb-10"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.44 }}
+            transition={{ delay: 0.40 }}
           >
-            <span className="text-[12px] text-text-muted self-center mr-1">Populaire :</span>
-            {['Sport', 'Art créatif', 'Musique', 'Stages vacances', 'Anniversaires'].map((tag) => (
-              <button
-                key={tag}
-                onClick={() => router.push(`/recherche?categorie=${encodeURIComponent(tag)}`)}
-                className="text-[12px] font-medium text-text-secondary bg-elevated border border-border hover:border-accent hover:text-accent px-3 py-1.5 rounded-full transition-all duration-200"
-              >
-                {tag}
-              </button>
-            ))}
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl border text-[13px] font-medium transition-all duration-200 mb-2 ${
+                showFilters || activeCount > 0
+                  ? 'bg-accent text-white border-accent'
+                  : 'bg-canvas border-border text-text-secondary hover:border-accent/40'
+              }`}
+            >
+              <SlidersHorizontal size={14} />
+              Filtres
+              {activeCount > 0 && (
+                <span className="w-5 h-5 rounded-full bg-white/25 text-[11px] font-bold flex items-center justify-center">
+                  {activeCount}
+                </span>
+              )}
+            </button>
+            <FilterBar filters={filters} onChange={setFilters} open={showFilters} />
           </motion.div>
 
           {/* Stats */}
