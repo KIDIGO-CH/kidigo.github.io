@@ -7,7 +7,7 @@ import { ArrowRight, Instagram, Youtube } from 'lucide-react'
 const FOOTER_LINKS = {
   Explorer: [
     { label: 'Toutes les activités', href: '/recherche' },
-    { label: 'Catégories', href: '/categories' },
+    { label: 'Sélection', href: '/selection' },
     { label: 'Activités par âge', href: '/recherche?age=2-4' },
     { label: 'Stages vacances', href: '/recherche?categorie=Stages+vacances' },
     { label: 'Anniversaires', href: '/recherche?categorie=Anniversaires' },

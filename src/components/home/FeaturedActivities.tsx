@@ -74,7 +74,7 @@ export function FeaturedActivities() {
         <ActivitySection
           label="Tendances"
           title="Ce que les familles adorent"
-          subtitle="Les activités les plus réservées par les familles près de chez vous."
+          subtitle="Les activités les plus likées par les familles, près de chez vous."
           activities={popularActivities.slice(0, 4)}
           href="/recherche?tri=popular"
         />
