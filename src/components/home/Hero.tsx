@@ -54,7 +54,7 @@ export function Hero() {
           >
             <span className="inline-flex items-center gap-2 bg-accent-subtle text-accent text-[12px] font-medium px-4 py-2 rounded-full">
               <Sparkles size={13} />
-              La plateforme n°1 des familles actives
+              La plateforme n°1 des familles actives en Suisse romande
             </span>
           </motion.div>
 
