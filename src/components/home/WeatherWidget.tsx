@@ -3,10 +3,21 @@
 import { useState, useEffect, useRef } from 'react'
 import { MapPin, ChevronDown } from 'lucide-react'
 
+type HourForecast = {
+  hour: string
+  temp: number
+  icon: string
+  isCurrent?: boolean
+}
+
 type WeatherData = {
   temperature: number
   description: string
   icon: string
+  tempMin: number
+  tempMax: number
+  dayName: string
+  hourly: HourForecast[]
 }
 
 const WMO_CODES: Record<number, { desc: string; icon: string }> = {
@@ -45,6 +56,8 @@ const CITIES = [
   { name: 'Moudon', lat: 46.669, lng: 6.798 },
 ]
 
+const DAY_NAMES = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
+
 function getWeatherInfo(code: number) {
   return WMO_CODES[code] || { desc: 'Inconnu', icon: '🌡️' }
 }
@@ -52,22 +65,44 @@ function getWeatherInfo(code: number) {
 async function fetchWeather(lat: number, lng: number): Promise<WeatherData | null> {
   try {
     const res = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current_weather=true&timezone=Europe/Zurich`
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current_weather=true&hourly=temperature_2m,weathercode&daily=temperature_2m_max,temperature_2m_min&timezone=Europe/Zurich&forecast_days=1`
     )
     const data = await res.json()
     const cw = data.current_weather
     const info = getWeatherInfo(cw.weathercode)
-    return { temperature: Math.round(cw.temperature), description: info.desc, icon: info.icon }
+
+    const now = new Date()
+    const currentHour = now.getHours()
+
+    // Build hourly forecast: full day every 3h (0h, 3h, 6h, ... 21h)
+    const hourly: HourForecast[] = []
+    if (data.hourly) {
+      for (let h = 0; h < 24; h += 3) {
+        const hInfo = getWeatherInfo(data.hourly.weathercode[h])
+        hourly.push({
+          hour: `${String(h).padStart(2, '0')}:00`,
+          temp: Math.round(data.hourly.temperature_2m[h]),
+          icon: hInfo.icon,
+          isCurrent: h <= currentHour && currentHour < h + 3,
+        })
+      }
+    }
+
+    return {
+      temperature: Math.round(cw.temperature),
+      description: info.desc,
+      icon: info.icon,
+      tempMin: data.daily ? Math.round(data.daily.temperature_2m_min[0]) : Math.round(cw.temperature) - 3,
+      tempMax: data.daily ? Math.round(data.daily.temperature_2m_max[0]) : Math.round(cw.temperature) + 3,
+      dayName: DAY_NAMES[now.getDay()],
+      hourly,
+    }
   } catch {
     return null
   }
 }
 
-interface WeatherWidgetProps {
-  variant?: 'inline' | 'card'
-}
-
-export function WeatherWidget({ variant = 'inline' }: WeatherWidgetProps) {
+export function WeatherWidget() {
   const [weather, setWeather] = useState<WeatherData | null>(null)
   const [loading, setLoading] = useState(true)
   const [city, setCity] = useState('')
@@ -98,7 +133,6 @@ export function WeatherWidget({ variant = 'inline' }: WeatherWidgetProps) {
         }
       },
       () => {
-        // Fallback: Estavayer-le-Lac
         loadWeatherForCoords(46.849, 6.846, 'Estavayer-le-Lac')
       },
       { enableHighAccuracy: false, timeout: 6000 }
@@ -124,18 +158,18 @@ export function WeatherWidget({ variant = 'inline' }: WeatherWidgetProps) {
     }
   }
 
-  // ── Card variant (for bento grid) ──
-  if (variant === 'card') {
-    return (
-      <div className="rounded-3xl bg-gradient-to-br from-sky-50 to-blue-50 border border-sky-100 flex flex-col justify-center items-center p-4 shadow-card relative overflow-hidden">
-        {loading ? (
+  return (
+    <div className="rounded-3xl bg-gradient-to-br from-sky-50 to-blue-50 border border-sky-100 flex flex-col p-4 sm:p-5 shadow-card relative overflow-hidden h-full">
+      {loading ? (
+        <div className="flex-1 flex items-center justify-center">
           <div className="animate-pulse text-3xl">🌤️</div>
-        ) : weather ? (
-          <>
-            <span className="text-4xl leading-none mb-1">{weather.icon}</span>
-            <p className="font-display font-bold text-[20px] text-text-primary leading-tight">{weather.temperature}°C</p>
-            <p className="text-[11px] text-text-secondary mt-0.5">{weather.description}</p>
-            <div className="relative mt-2" ref={pickerRef}>
+        </div>
+      ) : weather ? (
+        <>
+          {/* Header: day + city picker */}
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-[11px] font-semibold text-sky-500 uppercase tracking-wide">{weather.dayName}</p>
+            <div className="relative" ref={pickerRef}>
               <button
                 onClick={() => setShowPicker(!showPicker)}
                 className="flex items-center gap-1 text-[11px] text-sky-600 hover:text-sky-700 font-medium"
@@ -145,7 +179,7 @@ export function WeatherWidget({ variant = 'inline' }: WeatherWidgetProps) {
                 <ChevronDown size={10} />
               </button>
               {showPicker && (
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-white rounded-xl border border-border shadow-card-hover z-50 py-1 min-w-[160px] max-h-[200px] overflow-y-auto">
+                <div className="absolute top-full right-0 mt-1 bg-white rounded-xl border border-border shadow-card-hover z-50 py-1 min-w-[160px] max-h-[200px] overflow-y-auto">
                   {CITIES.map(c => (
                     <button
                       key={c.name}
@@ -161,58 +195,44 @@ export function WeatherWidget({ variant = 'inline' }: WeatherWidgetProps) {
                 </div>
               )}
             </div>
-          </>
-        ) : null}
-      </div>
-    )
-  }
+          </div>
 
-  // ── Inline variant (for badge area) ──
-  if (loading) {
-    return (
-      <div className="flex items-center gap-2 bg-elevated/60 rounded-2xl px-4 py-2.5 border border-border animate-pulse">
-        <span className="text-[12px] text-text-muted">Météo…</span>
-      </div>
-    )
-  }
+          {/* Current weather */}
+          <div className="flex items-center gap-3 mb-1">
+            <span className="text-4xl leading-none">{weather.icon}</span>
+            <div>
+              <p className="font-display font-bold text-[24px] text-text-primary leading-none">{weather.temperature}°C</p>
+              <p className="text-[11px] text-text-secondary mt-0.5">{weather.description}</p>
+            </div>
+          </div>
 
-  if (!weather) return null
+          {/* Min / Max */}
+          <div className="flex items-center gap-3 mb-3">
+            <span className="text-[11px] text-sky-600 font-medium">↓ {weather.tempMin}°</span>
+            <span className="text-[11px] text-red-400 font-medium">↑ {weather.tempMax}°</span>
+          </div>
 
-  return (
-    <div className="relative" ref={pickerRef}>
-      <button
-        onClick={() => setShowPicker(!showPicker)}
-        className="flex items-center gap-2.5 bg-elevated/80 backdrop-blur-sm rounded-2xl px-4 py-2.5 border border-border hover:border-accent/30 transition-colors"
-      >
-        <span className="text-xl leading-none">{weather.icon}</span>
-        <div className="flex flex-col text-left">
-          <span className="text-[13px] font-medium text-text-primary leading-tight">
-            {weather.temperature}°C · {weather.description}
-          </span>
-          {city && (
-            <span className="text-[11px] text-text-muted leading-tight flex items-center gap-0.5">
-              <MapPin size={9} /> {city}
-            </span>
+          {/* Hourly forecast — horizontal timeline */}
+          {weather.hourly.length > 0 && (
+            <div className="flex gap-0.5 mt-auto overflow-x-auto -mx-1 px-1 pb-0.5 scrollbar-hide">
+              {weather.hourly.map(h => (
+                <div
+                  key={h.hour}
+                  className={`flex flex-col items-center flex-shrink-0 w-[46px] py-1.5 rounded-xl transition-colors ${
+                    h.isCurrent
+                      ? 'bg-sky-100 ring-1 ring-sky-300'
+                      : 'bg-white/40'
+                  }`}
+                >
+                  <span className={`text-[10px] leading-none ${h.isCurrent ? 'text-sky-700 font-semibold' : 'text-text-muted'}`}>{h.hour}</span>
+                  <span className="text-base leading-none my-1">{h.icon}</span>
+                  <span className={`text-[11px] leading-none font-medium ${h.isCurrent ? 'text-sky-700' : 'text-text-primary'}`}>{h.temp}°</span>
+                </div>
+              ))}
+            </div>
           )}
-        </div>
-        <ChevronDown size={12} className="text-text-muted" />
-      </button>
-      {showPicker && (
-        <div className="absolute top-full left-0 mt-1 bg-elevated rounded-xl border border-border shadow-card-hover z-50 py-1 min-w-[180px] max-h-[240px] overflow-y-auto">
-          {CITIES.map(c => (
-            <button
-              key={c.name}
-              onClick={() => selectCity(c)}
-              className={`w-full text-left px-3 py-2 text-[12px] hover:bg-surface transition-colors ${
-                city === c.name ? 'text-accent font-medium' : 'text-text-primary'
-              }`}
-            >
-              {c.geo && <MapPin size={10} className="inline mr-1" />}
-              {c.name}
-            </button>
-          ))}
-        </div>
-      )}
+        </>
+      ) : null}
     </div>
   )
 }

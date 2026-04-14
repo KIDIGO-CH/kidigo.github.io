@@ -263,7 +263,7 @@ export const activities: Activity[] = [
     id: 'act-006',
     slug: 'sortie-nature-montreux',
     name: 'Explorateurs de Nature — Forêt & Animaux',
-    category: 'Nature',
+    category: 'Balades kids friendly',
     ageMin: 4,
     ageMax: 10,
     ageLabel: '4-6 ans',
@@ -579,12 +579,15 @@ export const categories: { name: Category; icon: string; count: number; color: s
   { name: 'Musique', icon: '🎵', count: 12, color: '#7C3AED' },
   { name: 'Danse', icon: '💃', count: 9, color: '#DB2777' },
   { name: 'Science', icon: '🔬', count: 8, color: '#0284C7' },
-  { name: 'Nature', icon: '🌿', count: 11, color: '#65A30D' },
   { name: 'Ateliers', icon: '✂️', count: 15, color: '#D97706' },
   { name: 'Anniversaires', icon: '🎂', count: 7, color: '#E11D48' },
   { name: 'Stages vacances', icon: '🏕️', count: 13, color: '#0891B2' },
   { name: 'Sorties famille', icon: '👨‍👩‍👧', count: 6, color: '#4F46E5' },
   { name: 'Bars & Restos Kids', icon: '☕', count: 5, color: '#92400E' },
+  { name: 'Parcs / Places de jeux', icon: '🛝', count: 14, color: '#16A34A' },
+  { name: 'Balades kids friendly', icon: '🥾', count: 11, color: '#65A30D' },
+  { name: 'Musées enfants', icon: '🏛️', count: 9, color: '#6366F1' },
+  { name: 'Piscine', icon: '🏊', count: 8, color: '#0EA5E9' },
 ]
 
 export const cities = ['Genève', 'Lausanne', 'Fribourg', 'Neuchâtel', 'Sion', 'Montreux']

@@ -14,6 +14,7 @@ const STAT_ITEMS = [
   { value: '2 400+', label: 'Activités référencées' },
   { value: '850+', label: 'Organisateurs vérifiés' },
   { value: '45 000', label: 'Familles satisfaites' },
+  { value: '1 200+', label: 'Partages par la communauté' },
 ]
 
 export function Hero() {
@@ -86,8 +87,8 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.26 }}
           >
-            Des loisirs choisis avec soin pour chaque âge et chaque envie.
-            Explorez, comparez, émerveillez.
+            Des activités 100% dédiées aux enfants, choisies avec soin pour chaque âge et chaque envie.
+            Explorez, trouvez, profitez.
           </motion.p>
 
           {/* Search box */}
@@ -153,7 +154,7 @@ export function Hero() {
 
           {/* Stats */}
           <motion.div
-            className="grid grid-cols-3 gap-3 sm:gap-8 pt-6 sm:pt-8 border-t border-border"
+            className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-8 pt-6 sm:pt-8 border-t border-border"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.54 }}
@@ -196,7 +197,7 @@ export function Hero() {
           </div>
 
           {/* Middle right — Weather */}
-          <WeatherWidget variant="card" />
+          <WeatherWidget />
 
           {/* Bottom left — Partager un lieu CTA */}
           <a

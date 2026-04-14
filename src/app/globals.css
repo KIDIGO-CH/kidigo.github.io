@@ -32,6 +32,14 @@
   .font-display {
     font-family: var(--font-cabinet);
   }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* Leaflet popup overrides */
