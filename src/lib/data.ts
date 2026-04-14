@@ -536,7 +536,7 @@ export const activities: Activity[] = [
     id: 'act-013',
     slug: 'cafe-kids-friendly-estavayer',
     name: 'Le Petit Nid — Café Kids Friendly',
-    category: 'Bars & Restos Kids',
+    category: 'Cafés-Restaurants kids friendly',
     ageMin: 0,
     ageMax: 10,
     ageLabel: '0-3 ans',
@@ -583,11 +583,12 @@ export const categories: { name: Category; icon: string; count: number; color: s
   { name: 'Anniversaires', icon: '🎂', count: 7, color: '#E11D48' },
   { name: 'Stages vacances', icon: '🏕️', count: 13, color: '#0891B2' },
   { name: 'Sorties famille', icon: '👨‍👩‍👧', count: 6, color: '#4F46E5' },
-  { name: 'Bars & Restos Kids', icon: '☕', count: 5, color: '#92400E' },
+  { name: 'Cafés-Restaurants kids friendly', icon: '☕', count: 5, color: '#92400E' },
   { name: 'Parcs / Places de jeux', icon: '🛝', count: 14, color: '#16A34A' },
   { name: 'Balades kids friendly', icon: '🥾', count: 11, color: '#65A30D' },
   { name: 'Musées enfants', icon: '🏛️', count: 9, color: '#6366F1' },
   { name: 'Piscine', icon: '🏊', count: 8, color: '#0EA5E9' },
+  { name: 'Animaux', icon: '🐾', count: 6, color: '#A16207' },
 ]
 
 export const cities = ['Genève', 'Lausanne', 'Fribourg', 'Neuchâtel', 'Sion', 'Montreux']
