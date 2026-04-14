@@ -7,6 +7,7 @@ type HourForecast = {
   hour: string
   temp: number
   icon: string
+  isCurrent?: boolean
 }
 
 type WeatherData = {
@@ -73,15 +74,16 @@ async function fetchWeather(lat: number, lng: number): Promise<WeatherData | nul
     const now = new Date()
     const currentHour = now.getHours()
 
-    // Build hourly forecast: every 3h from now through end of day
+    // Build hourly forecast: full day every 3h (0h, 3h, 6h, ... 21h)
     const hourly: HourForecast[] = []
     if (data.hourly) {
-      for (let h = currentHour; h < 24; h += 3) {
+      for (let h = 0; h < 24; h += 3) {
         const hInfo = getWeatherInfo(data.hourly.weathercode[h])
         hourly.push({
-          hour: `${h}h`,
+          hour: `${String(h).padStart(2, '0')}:00`,
           temp: Math.round(data.hourly.temperature_2m[h]),
           icon: hInfo.icon,
+          isCurrent: h <= currentHour && currentHour < h + 3,
         })
       }
     }
@@ -210,14 +212,21 @@ export function WeatherWidget() {
             <span className="text-[11px] text-red-400 font-medium">↑ {weather.tempMax}°</span>
           </div>
 
-          {/* Hourly forecast */}
+          {/* Hourly forecast — horizontal timeline */}
           {weather.hourly.length > 0 && (
-            <div className="flex gap-1 mt-auto overflow-x-auto">
+            <div className="flex gap-0.5 mt-auto overflow-x-auto -mx-1 px-1 pb-0.5 scrollbar-hide">
               {weather.hourly.map(h => (
-                <div key={h.hour} className="flex flex-col items-center min-w-[40px] py-1.5 px-1 rounded-xl bg-white/50">
-                  <span className="text-[10px] text-text-muted">{h.hour}</span>
-                  <span className="text-sm leading-none my-0.5">{h.icon}</span>
-                  <span className="text-[10px] font-medium text-text-primary">{h.temp}°</span>
+                <div
+                  key={h.hour}
+                  className={`flex flex-col items-center flex-shrink-0 w-[46px] py-1.5 rounded-xl transition-colors ${
+                    h.isCurrent
+                      ? 'bg-sky-100 ring-1 ring-sky-300'
+                      : 'bg-white/40'
+                  }`}
+                >
+                  <span className={`text-[10px] leading-none ${h.isCurrent ? 'text-sky-700 font-semibold' : 'text-text-muted'}`}>{h.hour}</span>
+                  <span className="text-base leading-none my-1">{h.icon}</span>
+                  <span className={`text-[11px] leading-none font-medium ${h.isCurrent ? 'text-sky-700' : 'text-text-primary'}`}>{h.temp}°</span>
                 </div>
               ))}
             </div>

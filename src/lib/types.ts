@@ -4,12 +4,16 @@ export type Category =
   | 'Musique'
   | 'Danse'
   | 'Science'
-  | 'Nature'
   | 'Ateliers'
   | 'Anniversaires'
   | 'Stages vacances'
   | 'Sorties famille'
-  | 'Bars & Restos Kids'
+  | 'Cafés-Restaurants kids friendly'
+  | 'Animaux'
+  | 'Parcs / Places de jeux'
+  | 'Balades kids friendly'
+  | 'Musées enfants'
+  | 'Piscine'
 
 export type EffortLevel = 'chill' | 'actif' | 'sportif'
 
