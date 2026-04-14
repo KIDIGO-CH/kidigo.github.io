@@ -2,7 +2,11 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, MapPin, Calendar, ChevronDown, SlidersHorizontal } from 'lucide-react'
+import {
+  X, MapPin, Calendar, ChevronDown, SlidersHorizontal,
+  LayoutGrid, Baby, Coins, Clock, ShieldCheck,
+  Accessibility, Sofa, Car, PawPrint,
+} from 'lucide-react'
 import { categories } from '@/lib/data'
 import type { Category } from '@/lib/types'
 
@@ -47,18 +51,24 @@ export const defaultFilters: Filters = {
   encadre: [],
 }
 
-const AGE_OPTIONS: { value: AgeOption; label: string }[] = [
-  { value: '0-3', label: '0-3 ans' },
-  { value: '4-6', label: '4-6 ans' },
-  { value: '7-10', label: '7-10 ans' },
-  { value: '11-14', label: '11-14 ans' },
+const AGE_OPTIONS: { value: AgeOption; label: string; emoji: string }[] = [
+  { value: '0-3', label: '0 – 3 ans', emoji: '👶' },
+  { value: '4-6', label: '4 – 6 ans', emoji: '🧒' },
+  { value: '7-10', label: '7 – 10 ans', emoji: '👦' },
+  { value: '11-14', label: '11 – 14 ans', emoji: '🧑' },
 ]
 
-const PRICE_OPTIONS: { value: PriceOption; label: string }[] = [
-  { value: 'free', label: 'Gratuit' },
-  { value: '<10', label: '< 10 CHF' },
-  { value: '10-30', label: '10-30 CHF' },
-  { value: '30+', label: '30+ CHF' },
+const PRICE_OPTIONS: { value: PriceOption; label: string; emoji: string }[] = [
+  { value: 'free', label: 'Gratuit', emoji: '🎁' },
+  { value: '<10', label: '< 10 CHF', emoji: '🪙' },
+  { value: '10-30', label: '10 – 30 CHF', emoji: '💰' },
+  { value: '30+', label: '30+ CHF', emoji: '💎' },
+]
+
+const ENCADRE_OPTIONS: { value: EncadreOption; label: string; emoji: string }[] = [
+  { value: 'activite-encadree', label: 'Activité encadrée', emoji: '👩‍🏫' },
+  { value: 'garde-ponctuelle', label: 'Garde ponctuelle', emoji: '🤱' },
+  { value: 'atelier-animateur', label: 'Atelier avec animateur', emoji: '🎨' },
 ]
 
 interface FilterBarProps {
@@ -73,15 +83,16 @@ function toggle<T>(arr: T[], item: T): T[] {
 
 // ── Pill ──────────────────────────────────────────────────────────────
 function Pill({ active, onClick, children, color }: { active: boolean; onClick: () => void; children: React.ReactNode; color?: string }) {
+  const activeColor = color || '#FF6B52'
   return (
     <button
       onClick={onClick}
-      className={`text-[11px] sm:text-[12px] px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border transition-all duration-200 flex items-center gap-1 sm:gap-1.5 whitespace-nowrap ${
+      className={`text-[12px] sm:text-[13px] px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl border transition-all duration-200 flex items-center gap-1.5 sm:gap-2 whitespace-nowrap font-medium ${
         active
-          ? 'text-white border-transparent'
-          : 'bg-canvas border-border text-text-secondary hover:border-accent/30'
+          ? 'border-transparent shadow-sm'
+          : 'bg-white border-border/80 text-text-secondary hover:border-accent/30 hover:shadow-sm'
       }`}
-      style={active ? { backgroundColor: color || '#FF6B52', borderColor: color || '#FF6B52' } : undefined}
+      style={active ? { backgroundColor: `${activeColor}15`, color: activeColor, borderColor: `${activeColor}40` } : undefined}
     >
       {children}
     </button>
@@ -89,28 +100,31 @@ function Pill({ active, onClick, children, color }: { active: boolean; onClick: 
 }
 
 // ── Inline expandable filter group button ─────────────────────────────
-function FilterGroup({ label, activeCount, isOpen, onToggle }: {
+function FilterChip({ label, icon, activeCount, isOpen, onToggle }: {
   label: string
+  icon: React.ReactNode
   activeCount: number
   isOpen: boolean
   onToggle: () => void
 }) {
+  const isActive = isOpen || activeCount > 0
   return (
     <button
       onClick={onToggle}
-      className={`text-[12px] px-3 py-1.5 rounded-full border transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap ${
-        isOpen || activeCount > 0
-          ? 'bg-accent text-white border-accent'
-          : 'bg-canvas border-border text-text-secondary hover:border-accent/30'
+      className={`text-[12px] sm:text-[13px] px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl border transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap font-medium ${
+        isActive
+          ? 'bg-accent/10 text-accent border-accent/30 shadow-sm'
+          : 'bg-white border-border/80 text-text-secondary hover:border-accent/30 hover:shadow-sm'
       }`}
     >
+      {icon}
       {label}
       {activeCount > 0 && (
-        <span className="w-4 h-4 rounded-full bg-white/25 text-[10px] font-bold flex items-center justify-center">
+        <span className="w-[18px] h-[18px] rounded-full bg-accent text-white text-[10px] font-bold flex items-center justify-center">
           {activeCount}
         </span>
       )}
-      <ChevronDown size={12} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      <ChevronDown size={12} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
     </button>
   )
 }
@@ -162,33 +176,39 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
 
             {/* Level 1 — Visible filters */}
             <div className="flex flex-wrap gap-1.5 sm:gap-2 items-center">
-              <FilterGroup label="Catégorie" activeCount={filters.categories.length} isOpen={openGroup === 'category'} onToggle={() => toggleGroup('category')} />
-              <FilterGroup label="Âge" activeCount={filters.ages.length} isOpen={openGroup === 'age'} onToggle={() => toggleGroup('age')} />
-              <FilterGroup label="Prix" activeCount={filters.prices.length} isOpen={openGroup === 'price'} onToggle={() => toggleGroup('price')} />
-              <FilterGroup label="Quand" activeCount={filters.dateFilter ? 1 : 0} isOpen={openGroup === 'quand'} onToggle={() => toggleGroup('quand')} />
+              <FilterChip icon={<LayoutGrid size={14} />} label="Catégorie" activeCount={filters.categories.length} isOpen={openGroup === 'category'} onToggle={() => toggleGroup('category')} />
+              <FilterChip icon={<Baby size={14} />} label="Âge" activeCount={filters.ages.length} isOpen={openGroup === 'age'} onToggle={() => toggleGroup('age')} />
+              <FilterChip icon={<Coins size={14} />} label="Prix" activeCount={filters.prices.length} isOpen={openGroup === 'price'} onToggle={() => toggleGroup('price')} />
+              <FilterChip icon={<Clock size={14} />} label="Quand" activeCount={filters.dateFilter ? 1 : 0} isOpen={openGroup === 'quand'} onToggle={() => toggleGroup('quand')} />
 
               {/* Autour de moi */}
-              <Pill active={filters.nearbyKm !== null} onClick={handleNearby}>
-                <MapPin size={12} />
+              <button
+                onClick={handleNearby}
+                className={`text-[12px] sm:text-[13px] px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl border transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap font-medium ${
+                  filters.nearbyKm !== null
+                    ? 'bg-accent/10 text-accent border-accent/30 shadow-sm'
+                    : 'bg-white border-border/80 text-text-secondary hover:border-accent/30 hover:shadow-sm'
+                }`}
+              >
+                <MapPin size={14} />
                 {locatingNearby ? 'Localisation…' : filters.nearbyKm !== null ? `≤ ${filters.nearbyKm} km` : 'Autour de moi'}
-              </Pill>
+              </button>
 
-              {/* Encadré */}
-              <FilterGroup label="Encadré" activeCount={filters.encadre.length} isOpen={openGroup === 'encadre'} onToggle={() => toggleGroup('encadre')} />
+              <FilterChip icon={<ShieldCheck size={14} />} label="Encadré" activeCount={filters.encadre.length} isOpen={openGroup === 'encadre'} onToggle={() => toggleGroup('encadre')} />
 
               {/* Advanced toggle */}
               <button
                 onClick={() => toggleGroup('advanced')}
-                className={`text-[12px] px-3 py-1.5 rounded-full border transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap ${
+                className={`text-[12px] sm:text-[13px] px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl border transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap font-medium ${
                   openGroup === 'advanced' || advancedCount > 0
-                    ? 'bg-text-primary text-white border-text-primary'
-                    : 'bg-canvas border-border text-text-secondary hover:border-accent/30'
+                    ? 'bg-text-primary text-white border-text-primary shadow-sm'
+                    : 'bg-white border-border/80 text-text-secondary hover:border-accent/30 hover:shadow-sm'
                 }`}
               >
-                <SlidersHorizontal size={12} />
+                <SlidersHorizontal size={14} />
                 + Filtres
                 {advancedCount > 0 && (
-                  <span className="w-4 h-4 rounded-full bg-white/25 text-[10px] font-bold flex items-center justify-center">
+                  <span className="w-[18px] h-[18px] rounded-full bg-white/25 text-[10px] font-bold flex items-center justify-center">
                     {advancedCount}
                   </span>
                 )}
@@ -198,131 +218,159 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
               {hasAnyFilter && (
                 <button
                   onClick={() => onChange({ ...defaultFilters })}
-                  className="text-[12px] text-red-500 hover:text-red-600 flex items-center gap-1 ml-1"
+                  className="text-[12px] text-red-500 hover:text-red-600 flex items-center gap-1 ml-1 font-medium"
                 >
-                  <X size={12} /> Effacer
+                  <X size={14} /> Effacer tout
                 </button>
               )}
             </div>
 
             {/* Expanded filter options (inline) */}
-            {openGroup && openGroup !== 'advanced' && (
-              <div className="flex flex-wrap gap-1.5 sm:gap-2 bg-elevated rounded-2xl border border-border p-2.5 sm:p-3">
-                {openGroup === 'category' && categories.map(c => (
-                  <Pill
-                    key={c.name}
-                    active={filters.categories.includes(c.name)}
-                    onClick={() => set({ categories: toggle(filters.categories, c.name) })}
-                    color={c.color}
-                  >
-                    <span>{c.icon}</span> {c.name}
-                  </Pill>
-                ))}
+            <AnimatePresence mode="wait">
+              {openGroup && openGroup !== 'advanced' && (
+                <motion.div
+                  key={openGroup}
+                  initial={{ opacity: 0, y: -8, height: 0 }}
+                  animate={{ opacity: 1, y: 0, height: 'auto' }}
+                  exit={{ opacity: 0, y: -8, height: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden"
+                >
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2 bg-elevated rounded-2xl border border-border/60 p-3 sm:p-4 shadow-sm">
+                    {openGroup === 'category' && categories.map(c => (
+                      <Pill
+                        key={c.name}
+                        active={filters.categories.includes(c.name)}
+                        onClick={() => set({ categories: toggle(filters.categories, c.name) })}
+                        color={c.color}
+                      >
+                        <span className="text-[14px]">{c.icon}</span> {c.name}
+                      </Pill>
+                    ))}
 
-                {openGroup === 'age' && AGE_OPTIONS.map(({ value, label }) => (
-                  <Pill key={value} active={filters.ages.includes(value)} onClick={() => set({ ages: toggle(filters.ages, value) })}>
-                    {label}
-                  </Pill>
-                ))}
+                    {openGroup === 'age' && AGE_OPTIONS.map(({ value, label, emoji }) => (
+                      <Pill key={value} active={filters.ages.includes(value)} onClick={() => set({ ages: toggle(filters.ages, value) })}>
+                        <span className="text-[14px]">{emoji}</span> {label}
+                      </Pill>
+                    ))}
 
-                {openGroup === 'price' && PRICE_OPTIONS.map(({ value, label }) => (
-                  <Pill key={value} active={filters.prices.includes(value)} onClick={() => set({ prices: toggle(filters.prices, value) })}>
-                    {label}
-                  </Pill>
-                ))}
+                    {openGroup === 'price' && PRICE_OPTIONS.map(({ value, label, emoji }) => (
+                      <Pill key={value} active={filters.prices.includes(value)} onClick={() => set({ prices: toggle(filters.prices, value) })}>
+                        <span className="text-[14px]">{emoji}</span> {label}
+                      </Pill>
+                    ))}
 
-                {openGroup === 'quand' && (
-                  <>
-                    <Pill
-                      active={filters.dateFilter === 'today'}
-                      onClick={() => set({ dateFilter: filters.dateFilter === 'today' ? null : 'today' })}
-                    >
-                      <Calendar size={12} /> Aujourd&apos;hui
-                    </Pill>
-                    <Pill
-                      active={filters.dateFilter === 'weekend'}
-                      onClick={() => set({ dateFilter: filters.dateFilter === 'weekend' ? null : 'weekend' })}
-                    >
-                      <Calendar size={12} /> Ce weekend
-                    </Pill>
-                    <label className="relative flex items-center gap-1.5 text-[11px] sm:text-[12px] px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border bg-canvas border-border text-text-secondary hover:border-accent/30 transition-all duration-200 cursor-pointer whitespace-nowrap">
-                      <Calendar size={12} />
-                      {filters.dateFilter && filters.dateFilter !== 'today' && filters.dateFilter !== 'weekend' ? filters.dateFilter : 'Date'}
-                      <input
-                        type="date"
-                        value={filters.dateFilter && filters.dateFilter !== 'today' && filters.dateFilter !== 'weekend' ? filters.dateFilter : ''}
-                        onChange={(e) => set({ dateFilter: e.target.value || null })}
-                        className="absolute inset-0 opacity-0 cursor-pointer"
-                      />
-                    </label>
-                  </>
-                )}
+                    {openGroup === 'quand' && (
+                      <>
+                        <Pill
+                          active={filters.dateFilter === 'today'}
+                          onClick={() => set({ dateFilter: filters.dateFilter === 'today' ? null : 'today' })}
+                        >
+                          <span className="text-[14px]">📅</span> Aujourd&apos;hui
+                        </Pill>
+                        <Pill
+                          active={filters.dateFilter === 'weekend'}
+                          onClick={() => set({ dateFilter: filters.dateFilter === 'weekend' ? null : 'weekend' })}
+                        >
+                          <span className="text-[14px]">🌤️</span> Ce weekend
+                        </Pill>
+                        <label className="relative flex items-center gap-2 text-[12px] sm:text-[13px] px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl border bg-white border-border/80 text-text-secondary hover:border-accent/30 hover:shadow-sm transition-all duration-200 cursor-pointer whitespace-nowrap font-medium">
+                          <span className="text-[14px]">🗓️</span>
+                          {filters.dateFilter && filters.dateFilter !== 'today' && filters.dateFilter !== 'weekend' ? filters.dateFilter : 'Choisir une date'}
+                          <input
+                            type="date"
+                            value={filters.dateFilter && filters.dateFilter !== 'today' && filters.dateFilter !== 'weekend' ? filters.dateFilter : ''}
+                            onChange={(e) => set({ dateFilter: e.target.value || null })}
+                            className="absolute inset-0 opacity-0 cursor-pointer"
+                          />
+                        </label>
+                      </>
+                    )}
 
-                {openGroup === 'encadre' && [
-                  { value: 'activite-encadree' as EncadreOption, label: 'Activité encadrée' },
-                  { value: 'garde-ponctuelle' as EncadreOption, label: 'Garde ponctuelle' },
-                  { value: 'atelier-animateur' as EncadreOption, label: 'Atelier avec animateur' },
-                ].map(({ value, label }) => (
-                  <Pill key={value} active={filters.encadre.includes(value)} onClick={() => set({ encadre: toggle(filters.encadre, value) })}>
-                    {label}
-                  </Pill>
-                ))}
-              </div>
-            )}
-
-            {/* Level 2 — Advanced filters */}
-            {openGroup === 'advanced' && (
-              <div className="bg-elevated rounded-2xl border border-border p-3 sm:p-4 space-y-3">
-                {/* Accessibilité */}
-                <div>
-                  <p className="text-[11px] font-semibold text-text-muted uppercase tracking-[0.1em] mb-2">Accessibilité</p>
-                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                    <Pill active={filters.accessibility.includes('pmr')} onClick={() => set({ accessibility: toggle(filters.accessibility, 'pmr' as AccessibilityOption) })}>
-                      ♿ PMR
-                    </Pill>
-                    <Pill active={filters.accessibility.includes('poussette')} onClick={() => set({ accessibility: toggle(filters.accessibility, 'poussette' as AccessibilityOption) })}>
-                      🍼 Poussette
-                    </Pill>
+                    {openGroup === 'encadre' && ENCADRE_OPTIONS.map(({ value, label, emoji }) => (
+                      <Pill key={value} active={filters.encadre.includes(value)} onClick={() => set({ encadre: toggle(filters.encadre, value) })}>
+                        <span className="text-[14px]">{emoji}</span> {label}
+                      </Pill>
+                    ))}
                   </div>
-                </div>
+                </motion.div>
+              )}
 
-                {/* Confort */}
-                <div>
-                  <p className="text-[11px] font-semibold text-text-muted uppercase tracking-[0.1em] mb-2">Confort</p>
-                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                    <Pill active={filters.comfort.includes('toilettes')} onClick={() => set({ comfort: toggle(filters.comfort, 'toilettes' as ComfortOption) })}>
-                      🚻 Toilettes
-                    </Pill>
-                    <Pill active={filters.comfort.includes('cafe')} onClick={() => set({ comfort: toggle(filters.comfort, 'cafe' as ComfortOption) })}>
-                      ☕ Café
-                    </Pill>
-                  </div>
-                </div>
+              {/* Level 2 — Advanced filters */}
+              {openGroup === 'advanced' && (
+                <motion.div
+                  key="advanced"
+                  initial={{ opacity: 0, y: -8, height: 0 }}
+                  animate={{ opacity: 1, y: 0, height: 'auto' }}
+                  exit={{ opacity: 0, y: -8, height: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden"
+                >
+                  <div className="bg-elevated rounded-2xl border border-border/60 p-4 sm:p-5 shadow-sm space-y-4">
+                    {/* Accessibilité */}
+                    <div>
+                      <div className="flex items-center gap-2 mb-2.5">
+                        <Accessibility size={14} className="text-accent" />
+                        <p className="text-[12px] font-semibold text-text-primary">Accessibilité</p>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                        <Pill active={filters.accessibility.includes('pmr')} onClick={() => set({ accessibility: toggle(filters.accessibility, 'pmr' as AccessibilityOption) })}>
+                          ♿ PMR
+                        </Pill>
+                        <Pill active={filters.accessibility.includes('poussette')} onClick={() => set({ accessibility: toggle(filters.accessibility, 'poussette' as AccessibilityOption) })}>
+                          🍼 Poussette
+                        </Pill>
+                      </div>
+                    </div>
 
-                {/* Accès */}
-                <div>
-                  <p className="text-[11px] font-semibold text-text-muted uppercase tracking-[0.1em] mb-2">Accès</p>
-                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                    <Pill active={filters.access.includes('parking')} onClick={() => set({ access: toggle(filters.access, 'parking' as AccessOption) })}>
-                      🅿️ Parking
-                    </Pill>
-                    <Pill active={filters.access.includes('transports')} onClick={() => set({ access: toggle(filters.access, 'transports' as AccessOption) })}>
-                      🚌 Transports publics
-                    </Pill>
-                  </div>
-                </div>
+                    {/* Confort */}
+                    <div>
+                      <div className="flex items-center gap-2 mb-2.5">
+                        <Sofa size={14} className="text-accent" />
+                        <p className="text-[12px] font-semibold text-text-primary">Confort</p>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                        <Pill active={filters.comfort.includes('toilettes')} onClick={() => set({ comfort: toggle(filters.comfort, 'toilettes' as ComfortOption) })}>
+                          🚻 Toilettes
+                        </Pill>
+                        <Pill active={filters.comfort.includes('cafe')} onClick={() => set({ comfort: toggle(filters.comfort, 'cafe' as ComfortOption) })}>
+                          ☕ Café sur place
+                        </Pill>
+                      </div>
+                    </div>
 
-                {/* Animaux */}
-                <div>
-                  <p className="text-[11px] font-semibold text-text-muted uppercase tracking-[0.1em] mb-2">Animaux</p>
-                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                    <Pill active={filters.animals} onClick={() => set({ animals: !filters.animals })}>
-                      🐾 Animaux autorisés
-                    </Pill>
+                    {/* Accès */}
+                    <div>
+                      <div className="flex items-center gap-2 mb-2.5">
+                        <Car size={14} className="text-accent" />
+                        <p className="text-[12px] font-semibold text-text-primary">Accès</p>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                        <Pill active={filters.access.includes('parking')} onClick={() => set({ access: toggle(filters.access, 'parking' as AccessOption) })}>
+                          🅿️ Parking
+                        </Pill>
+                        <Pill active={filters.access.includes('transports')} onClick={() => set({ access: toggle(filters.access, 'transports' as AccessOption) })}>
+                          🚌 Transports publics
+                        </Pill>
+                      </div>
+                    </div>
+
+                    {/* Animaux */}
+                    <div>
+                      <div className="flex items-center gap-2 mb-2.5">
+                        <PawPrint size={14} className="text-accent" />
+                        <p className="text-[12px] font-semibold text-text-primary">Animaux</p>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                        <Pill active={filters.animals} onClick={() => set({ animals: !filters.animals })}>
+                          🐾 Animaux autorisés
+                        </Pill>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </motion.div>
       )}
