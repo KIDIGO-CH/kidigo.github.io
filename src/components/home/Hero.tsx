@@ -34,7 +34,7 @@ export function Hero() {
   }
 
   return (
-    <section className="relative min-h-[100dvh] overflow-hidden bg-canvas">
+    <section className="relative overflow-hidden bg-canvas">
 
       {/* Background subtle shapes */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -48,14 +48,16 @@ export function Hero() {
         />
       </div>
 
-      <div className="relative z-10 max-w-[1400px] mx-auto px-5 sm:px-6 md:px-10 min-h-[100dvh] grid grid-cols-1 lg:grid-cols-[58fr_42fr] gap-12 items-center pt-24 pb-16 sm:pt-32 lg:pt-32 lg:pb-0">
+      <div className="relative z-10 max-w-[1400px] mx-auto px-5 sm:px-6 md:px-10 pt-24 pb-12 sm:pt-32 lg:pt-32 lg:pb-16">
+
+        <div className="grid grid-cols-1 lg:grid-cols-[58fr_42fr] gap-8 lg:gap-12 items-start">
 
         {/* Left — Content */}
         <div className="flex flex-col">
 
-          {/* Badge + Weather */}
+          {/* Badge */}
           <motion.div
-            className="mb-5 sm:mb-8 flex flex-wrap items-center gap-2 sm:gap-3"
+            className="mb-5 sm:mb-8"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.1 }}
@@ -65,7 +67,6 @@ export function Hero() {
               <span className="hidden sm:inline">La plateforme n°1 des familles actives en Suisse romande</span>
               <span className="sm:hidden">N°1 des familles actives en Suisse romande</span>
             </span>
-            <WeatherWidget />
           </motion.div>
 
           {/* Headline */}
@@ -168,30 +169,38 @@ export function Hero() {
           </motion.div>
         </div>
 
-        {/* Right — Visual bento */}
+        {/* Right — Visual bento (desktop) */}
         <motion.div
           className="hidden lg:grid grid-cols-2 grid-rows-3 gap-3 h-[580px]"
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ type: 'spring', stiffness: 80, damping: 22, delay: 0.2 }}
         >
-          {/* Large card top-left */}
-          <div className="row-span-2 rounded-3xl overflow-hidden relative shadow-card">
-            <img src="https://picsum.photos/seed/hero-1/400/500" alt="" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-            <div className="absolute bottom-4 left-4 right-4">
-              <span className="inline-block bg-accent text-white text-[11px] font-medium px-3 py-1 rounded-full mb-2">Art créatif</span>
-              <p className="text-white font-display font-bold text-[15px] leading-snug">Atelier Aquarelle</p>
-              <p className="text-white/80 text-[12px]">Genève · 28 CHF</p>
+          {/* Large card — Partager un lieu */}
+          <a
+            href="/partager"
+            className="row-span-2 rounded-3xl bg-gradient-to-br from-accent/5 via-accent-subtle to-accent/10 border border-accent/20 flex flex-col justify-center items-center p-8 shadow-card hover:shadow-card-hover hover:scale-[1.01] transition-all duration-300 group cursor-pointer relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-40 h-40 rounded-full opacity-20" style={{ background: 'radial-gradient(circle, #FF6B52 0%, transparent 70%)' }} />
+            <div className="w-16 h-16 rounded-2xl bg-accent/15 flex items-center justify-center mb-4 group-hover:bg-accent/25 group-hover:scale-110 transition-all duration-300">
+              <Plus size={28} className="text-accent" />
             </div>
-          </div>
+            <p className="font-display font-bold text-[20px] text-text-primary leading-tight text-center mb-2">Partager un lieu</p>
+            <p className="text-[13px] text-text-secondary text-center max-w-[200px] leading-relaxed">
+              Vous connaissez un endroit kids friendly ? Partagez-le avec la communauté !
+            </p>
+            <span className="mt-4 text-[12px] font-medium text-accent flex items-center gap-1 group-hover:gap-2 transition-all">
+              Suggérer →
+            </span>
+          </a>
 
-          {/* Top right */}
+          {/* Top right — Activity image */}
           <div className="rounded-3xl overflow-hidden relative shadow-card">
             <img src="https://picsum.photos/seed/hero-2/400/280" alt="" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
             <div className="absolute bottom-3 left-3 right-3">
-              <p className="text-white font-display font-bold text-[13px]">Tennis Junior</p>
+              <span className="inline-block bg-accent text-white text-[10px] font-medium px-2.5 py-0.5 rounded-full mb-1.5">Sport</span>
+              <p className="text-white font-display font-bold text-[14px] leading-snug">Tennis Junior</p>
               <p className="text-white/80 text-[11px]">Lausanne · 35 CHF</p>
             </div>
           </div>
@@ -199,25 +208,71 @@ export function Hero() {
           {/* Middle right — Weather */}
           <WeatherWidget />
 
-          {/* Bottom left — Partager un lieu CTA */}
-          <a
-            href="/partager"
-            className="rounded-3xl bg-gradient-to-br from-accent-subtle to-accent/10 border border-accent/20 flex flex-col justify-center items-center p-4 shadow-card hover:shadow-card-hover hover:scale-[1.02] transition-all duration-200 group cursor-pointer"
-          >
-            <div className="w-11 h-11 rounded-full bg-accent/15 flex items-center justify-center mb-2 group-hover:bg-accent/25 transition-colors">
-              <Plus size={20} className="text-accent" />
+          {/* Bottom left — Activity image */}
+          <div className="rounded-3xl overflow-hidden relative shadow-card">
+            <img src="https://picsum.photos/seed/hero-1/400/280" alt="" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+            <div className="absolute bottom-3 left-3 right-3">
+              <span className="inline-block bg-accent text-white text-[10px] font-medium px-2.5 py-0.5 rounded-full mb-1.5">Art créatif</span>
+              <p className="text-white font-display font-bold text-[14px] leading-snug">Atelier Aquarelle</p>
+              <p className="text-white/80 text-[11px]">Genève · 28 CHF</p>
             </div>
-            <p className="font-display font-bold text-[13px] text-text-primary leading-tight text-center">Partager un lieu</p>
-            <p className="text-[11px] text-text-secondary text-center mt-0.5">Suggérez une activité kids friendly</p>
-          </a>
+          </div>
 
           {/* Bottom right — Coup de coeur */}
           <a href="/activite/atelier-peinture-aquarelle-geneve" className="rounded-3xl bg-gradient-to-br from-red-50 to-accent-subtle border border-accent/15 flex flex-col justify-center items-center p-4 shadow-card hover:shadow-card-hover hover:scale-[1.02] transition-all duration-200">
+            <Heart size={20} className="text-accent fill-accent mb-2" />
+            <p className="font-display font-bold text-[14px] text-text-primary leading-tight text-center">Coup de coeur</p>
+            <p className="text-[12px] text-accent font-medium mt-1 text-center">Atelier Aquarelle</p>
+            <p className="text-[11px] text-text-muted">Genève · 28 CHF</p>
+          </a>
+        </motion.div>
+        </div>
+
+        {/* Mobile bento cards */}
+        <motion.div
+          className="lg:hidden mt-8 grid grid-cols-2 gap-3"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          {/* Partager un lieu */}
+          <a
+            href="/partager"
+            className="col-span-2 rounded-2xl bg-gradient-to-r from-accent/5 via-accent-subtle to-accent/10 border border-accent/20 flex items-center gap-4 p-4 shadow-card active:scale-[0.98] transition-all group"
+          >
+            <div className="w-12 h-12 rounded-xl bg-accent/15 flex items-center justify-center flex-shrink-0 group-hover:bg-accent/25 transition-colors">
+              <Plus size={22} className="text-accent" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-display font-bold text-[14px] text-text-primary leading-tight">Partager un lieu</p>
+              <p className="text-[12px] text-text-secondary mt-0.5">Suggérez une activité kids friendly</p>
+            </div>
+            <span className="text-accent text-[18px] flex-shrink-0">→</span>
+          </a>
+
+          {/* Weather */}
+          <div className="col-span-2 min-h-[160px]">
+            <WeatherWidget />
+          </div>
+
+          {/* Coup de coeur */}
+          <a href="/activite/atelier-peinture-aquarelle-geneve" className="rounded-2xl bg-gradient-to-br from-red-50 to-accent-subtle border border-accent/15 flex flex-col justify-center items-center p-4 shadow-card active:scale-[0.98] transition-all">
             <Heart size={18} className="text-accent fill-accent mb-1.5" />
             <p className="font-display font-bold text-[13px] text-text-primary leading-tight text-center">Coup de coeur</p>
             <p className="text-[11px] text-accent font-medium mt-1 text-center">Atelier Aquarelle</p>
             <p className="text-[10px] text-text-muted">Genève · 28 CHF</p>
           </a>
+
+          {/* Activity card */}
+          <div className="rounded-2xl overflow-hidden relative shadow-card aspect-[4/3]">
+            <img src="https://picsum.photos/seed/hero-2/400/280" alt="" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+            <div className="absolute bottom-3 left-3 right-3">
+              <p className="text-white font-display font-bold text-[13px] leading-snug">Tennis Junior</p>
+              <p className="text-white/80 text-[10px]">Lausanne · 35 CHF</p>
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>
