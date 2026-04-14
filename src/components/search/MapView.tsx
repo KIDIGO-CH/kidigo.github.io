@@ -13,9 +13,9 @@ function createPriceIcon(price: number, isCoupDeCoeur: boolean) {
   return L.divIcon({
     className: '',
     html: `<div style="
-      background: ${isCoupDeCoeur ? '#16A34A' : '#fff'};
-      color: ${isCoupDeCoeur ? '#fff' : '#111814'};
-      border: 2px solid ${isCoupDeCoeur ? '#16A34A' : '#d1d5db'};
+      background: ${isCoupDeCoeur ? '#FF6B52' : '#fff'};
+      color: ${isCoupDeCoeur ? '#fff' : '#1A1A18'};
+      border: 2px solid ${isCoupDeCoeur ? '#FF6B52' : '#d1d5db'};
       border-radius: 9999px;
       padding: 4px 10px;
       font-size: 13px;
@@ -86,10 +86,10 @@ export function MapView({ activities }: MapViewProps) {
                     className="w-full h-[130px] object-cover"
                   />
                   <div className="p-3">
-                    <span className="text-[10px] font-medium text-[#16A34A] uppercase tracking-wide">
+                    <span className="text-[10px] font-medium text-[#FF6B52] uppercase tracking-wide">
                       {activity.category}
                     </span>
-                    <h3 className="font-bold text-[14px] text-[#111814] leading-snug mt-1 mb-1.5">
+                    <h3 className="font-bold text-[14px] text-[#1A1A18] leading-snug mt-1 mb-1.5">
                       {activity.name}
                     </h3>
                     <div className="flex items-center gap-3 text-[11px] text-[#6B7280] mb-2">
@@ -105,10 +105,10 @@ export function MapView({ activities }: MapViewProps) {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1">
                         <Star size={11} className="text-amber-400 fill-amber-400" />
-                        <span className="text-[12px] font-semibold text-[#111814]">{activity.rating}</span>
+                        <span className="text-[12px] font-semibold text-[#1A1A18]">{activity.rating}</span>
                         <span className="text-[11px] text-[#6B7280]">({activity.reviewCount})</span>
                       </div>
-                      <span className="text-[14px] font-bold text-[#111814]">{activity.price} CHF</span>
+                      <span className="text-[14px] font-bold text-[#1A1A18]">{activity.price} CHF</span>
                     </div>
                   </div>
                 </div>

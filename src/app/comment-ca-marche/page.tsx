@@ -11,8 +11,8 @@ const STEPS = [
     icon: Search,
     title: 'Cherchez',
     description: 'Entrez votre ville, l\'âge de votre enfant et le type d\'activité. Notre moteur de recherche vous propose les meilleures options en quelques secondes.',
-    color: '#16A34A',
-    bg: '#DCFCE7',
+    color: '#FF6B52',
+    bg: '#FFF0ED',
   },
   {
     step: '02',

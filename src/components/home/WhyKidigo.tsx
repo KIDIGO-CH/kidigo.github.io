@@ -8,8 +8,8 @@ const REASONS = [
     icon: ShieldCheck,
     title: 'Organisateurs vérifiés',
     description: 'Chaque partenaire KIDIGO est contrôlé : diplômes, assurance, avis parents vérifiés. Votre confiance est notre priorité absolue.',
-    color: '#16A34A',
-    bg: '#DCFCE7',
+    color: '#FF6B52',
+    bg: '#FFF0ED',
   },
   {
     icon: Search,

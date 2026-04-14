@@ -499,7 +499,7 @@ export const activities: Activity[] = [
 ]
 
 export const categories: { name: Category; icon: string; count: number; color: string }[] = [
-  { name: 'Sport', icon: '⚽', count: 24, color: '#16A34A' },
+  { name: 'Sport', icon: '⚽', count: 24, color: '#FF6B52' },
   { name: 'Art créatif', icon: '🎨', count: 18, color: '#EA580C' },
   { name: 'Musique', icon: '🎵', count: 12, color: '#7C3AED' },
   { name: 'Danse', icon: '💃', count: 9, color: '#DB2777' },

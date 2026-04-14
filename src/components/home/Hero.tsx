@@ -32,11 +32,11 @@ export function Hero() {
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div
           className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full opacity-30"
-          style={{ background: 'radial-gradient(circle, #DCFCE7 0%, transparent 70%)' }}
+          style={{ background: 'radial-gradient(circle, #FFF0ED 0%, transparent 70%)' }}
         />
         <div
           className="absolute top-1/2 -left-20 w-[400px] h-[400px] rounded-full opacity-20"
-          style={{ background: 'radial-gradient(circle, #BBF7D0 0%, transparent 70%)' }}
+          style={{ background: 'radial-gradient(circle, #FFD9D0 0%, transparent 70%)' }}
         />
       </div>
 
