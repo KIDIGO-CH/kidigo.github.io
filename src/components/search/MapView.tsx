@@ -113,19 +113,6 @@ export function MapView({ activities }: MapViewProps) {
 
   return (
     <div className="relative w-full h-[calc(100dvh-200px)] rounded-3xl overflow-hidden border border-border shadow-card">
-      {/* Legend */}
-      <div className="absolute top-3 left-3 z-[1000] bg-white/95 backdrop-blur-sm rounded-xl shadow-card p-2.5 flex flex-wrap gap-2 max-w-[280px]">
-        {Array.from(new Set(activities.map(a => a.category))).map(cat => (
-          <span key={cat} className="flex items-center gap-1 text-[11px] text-text-secondary whitespace-nowrap">
-            <span
-              className="w-3 h-3 rounded-full inline-block flex-shrink-0"
-              style={{ backgroundColor: CATEGORY_COLORS[cat] }}
-            />
-            {cat}
-          </span>
-        ))}
-      </div>
-
       <MapContainer
         center={center}
         zoom={6}
