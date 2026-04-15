@@ -6,8 +6,8 @@ import { ShieldCheck, Search, Star, Users } from 'lucide-react'
 const REASONS = [
   {
     icon: Users,
-    title: 'Par les parents, pour les parents',
-    description: 'KIDIGO est une plateforme communautaire où chaque parent peut partager ses meilleurs bons plans. Les meilleures idées viennent de vous.',
+    title: 'Par les familles, pour les familles',
+    description: 'KIDIGO est une plateforme communautaire où chaque famille peut partager ses meilleurs bons plans. Les meilleures idées viennent de vous.',
     color: '#16A34A',
     bg: '#F0FDF4',
   },
@@ -51,7 +51,7 @@ export function WhyKidigo() {
             className="font-display font-black text-text-primary leading-tight mb-4"
             style={{ fontSize: 'clamp(1.8rem, 4vw, 3.2rem)' }}
           >
-            Pour répondre facilement et rapidement à la&nbsp;question
+            Pour répondre à l&rsquo;éternelle question&nbsp;:
           </h2>
           <p className="text-[18px] sm:text-[22px] text-accent font-display font-bold italic leading-snug">
             &laquo;&nbsp;Qu&rsquo;est-ce qu&rsquo;on fait aujourd&rsquo;hui avec les enfants&nbsp;?&nbsp;&raquo;

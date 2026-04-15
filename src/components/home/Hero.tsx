@@ -424,7 +424,7 @@ export function Hero() {
           transition={{ delay: 0.54 }}
         >
           {STAT_ITEMS.map((item) => (
-            <div key={item.label}>
+            <div key={item.label} className="text-center">
               <p className="font-display font-black text-[17px] sm:text-[22px] text-text-primary leading-none mb-0.5">{item.value}</p>
               <p className="text-[10px] sm:text-[11px] text-text-secondary">{item.label}</p>
             </div>
