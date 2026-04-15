@@ -84,60 +84,64 @@ function CommunityCard({ place, index }: { place: typeof COMMUNITY_PLACES[0]; in
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
 
           {/* Badge partagé par un parent */}
-          <div className="absolute top-3 left-3">
-            <span className="inline-flex items-center gap-1.5 bg-green-500 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full shadow-sm">
-              <Users size={11} />
-              Partagé par un parent
+          <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
+            <span className="inline-flex items-center gap-1 sm:gap-1.5 bg-green-500 text-white text-[9px] sm:text-[11px] font-semibold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full shadow-sm">
+              <Users size={9} className="sm:w-[11px] sm:h-[11px]" />
+              <span className="hidden sm:inline">Partagé par un parent</span>
+              <span className="sm:hidden">Communauté</span>
             </span>
           </div>
 
           {/* Favorite */}
-          <button className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm">
-            <Heart size={14} className="text-text-secondary" />
+          <button className="absolute top-2 right-2 sm:top-3 sm:right-3 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm">
+            <Heart size={12} className="sm:w-[14px] sm:h-[14px] text-text-secondary" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-4 flex-1 flex flex-col">
+        <div className="p-3 sm:p-4 flex-1 flex flex-col">
           {/* Category */}
-          <span className="text-[11px] font-medium text-accent tracking-wide uppercase mb-1.5">
+          <span className="text-[10px] sm:text-[11px] font-medium text-accent tracking-wide uppercase mb-1 sm:mb-1.5 truncate">
             {place.category}
           </span>
 
           {/* Name */}
-          <h3 className="font-display font-bold text-[15px] text-text-primary leading-snug mb-2 group-hover:text-accent transition-colors">
+          <h3 className="font-display font-bold text-[13px] sm:text-[15px] text-text-primary leading-snug mb-1.5 sm:mb-2 group-hover:text-accent transition-colors line-clamp-2">
             {place.name}
           </h3>
 
           {/* Location */}
-          <div className="flex items-center gap-1 text-text-secondary mb-3">
-            <MapPin size={11} />
-            <span className="text-[12px]">{place.city} · {place.canton}</span>
-            <span className="mx-1 text-border">·</span>
-            <span className="text-[12px]">{place.ageRange}</span>
+          <div className="flex items-center gap-1 text-text-secondary mb-2 sm:mb-3">
+            <MapPin size={10} className="flex-shrink-0 sm:w-[11px] sm:h-[11px]" />
+            <span className="text-[11px] sm:text-[12px] truncate">{place.city} · {place.canton}</span>
           </div>
 
-          {/* Description (parent quote) */}
-          <p className="text-[13px] text-text-secondary leading-relaxed mb-4 flex-1 line-clamp-2">
+          {/* Description (parent quote) — hidden on mobile */}
+          <p className="hidden sm:block text-[13px] text-text-secondary leading-relaxed mb-4 flex-1 line-clamp-2">
             &laquo; {place.description} &raquo;
           </p>
 
           {/* Tags */}
-          <div className="flex flex-wrap gap-1.5 mb-4">
+          <div className="flex flex-wrap gap-1 sm:gap-1.5 mb-3 sm:mb-4">
+            {place.tags.slice(0, 2).map(tag => (
+              <span key={tag} className="sm:hidden text-[9px] font-medium text-text-secondary bg-canvas rounded-full px-1.5 py-0.5">
+                {tag}
+              </span>
+            ))}
             {place.tags.map(tag => (
-              <span key={tag} className="text-[10px] font-medium text-text-secondary bg-canvas rounded-full px-2 py-0.5">
+              <span key={tag} className="hidden sm:inline text-[10px] font-medium text-text-secondary bg-canvas rounded-full px-2 py-0.5">
                 {tag}
               </span>
             ))}
           </div>
 
           {/* Parent info + price */}
-          <div className="flex items-center justify-between pt-3 border-t border-border">
-            <div className="flex items-center gap-2">
-              <img src={place.parentAvatar} alt={place.parentName} className="w-6 h-6 rounded-full object-cover" />
-              <span className="text-[12px] text-text-secondary">{place.parentName}</span>
+          <div className="flex items-center justify-between pt-2 sm:pt-3 border-t border-border mt-auto">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <img src={place.parentAvatar} alt={place.parentName} className="w-5 h-5 sm:w-6 sm:h-6 rounded-full object-cover" />
+              <span className="text-[11px] sm:text-[12px] text-text-secondary">{place.parentName}</span>
             </div>
-            <span className="text-[13px] font-bold text-text-primary font-display">{place.price}</span>
+            <span className="text-[12px] sm:text-[13px] font-bold text-text-primary font-display">{place.price}</span>
           </div>
         </div>
       </div>

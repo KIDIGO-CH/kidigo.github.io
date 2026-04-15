@@ -275,9 +275,9 @@ export function Hero() {
             <FilterBar filters={filters} onChange={setFilters} open={true} />
           </motion.div>
 
-          {/* Community message */}
+          {/* Community message — desktop only */}
           <motion.p
-            className="text-[13px] sm:text-[14px] text-text-secondary italic leading-relaxed mb-6 sm:mb-8 max-w-[540px]"
+            className="hidden lg:block text-[14px] text-text-secondary italic leading-relaxed mb-8 max-w-[540px]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.46 }}
@@ -416,6 +416,11 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
+          {/* Community message — mobile */}
+          <p className="col-span-2 text-[12px] text-text-secondary italic leading-relaxed">
+            Seul un parent peut comprendre un parent. Rejoignez Kidigo pour renforcer la communauté et offrir à nos enfants des moments inoubliables loin des écrans.
+          </p>
+
           {/* Partager un lieu */}
           <a
             href="/partager"

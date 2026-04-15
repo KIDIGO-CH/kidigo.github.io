@@ -161,34 +161,53 @@ export function WeatherWidget() {
   }
 
   return (
-    <div className="rounded-3xl bg-gradient-to-br from-sky-50 via-blue-50/80 to-sky-50 border border-sky-100 flex flex-col shadow-card relative h-full overflow-hidden">
+    <div className="rounded-3xl relative flex flex-col shadow-card h-full overflow-hidden border border-white/40"
+      style={{
+        background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.12) 0%, rgba(147, 197, 253, 0.10) 40%, rgba(255, 255, 255, 0.35) 100%)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+      }}
+    >
+      {/* Glass highlight effect */}
+      <div className="absolute inset-0 pointer-events-none rounded-3xl"
+        style={{
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.5) 0%, transparent 50%, rgba(255,255,255,0.1) 100%)',
+        }}
+      />
+
       {loading ? (
-        <div className="flex-1 flex items-center justify-center">
+        <div className="flex-1 flex items-center justify-center relative z-10">
           <div className="animate-pulse text-3xl">🌤️</div>
         </div>
       ) : weather ? (
         <>
           {/* Top section */}
-          <div className="flex-1 p-4 sm:p-5 pb-0 sm:pb-0 flex flex-col min-h-0">
+          <div className="flex-1 p-4 sm:p-5 pb-0 sm:pb-0 flex flex-col min-h-0 relative z-10">
             {/* Header: day + city picker */}
             <div className="flex items-center justify-between mb-2">
-              <p className="text-[11px] font-semibold text-sky-500 uppercase tracking-wide">{weather.dayName} {weather.dateStr}</p>
+              <p className="text-[11px] font-semibold text-sky-600/80 uppercase tracking-wide">{weather.dayName} {weather.dateStr}</p>
               <div className="relative" ref={pickerRef}>
                 <button
                   onClick={() => setShowPicker(!showPicker)}
-                  className="flex items-center gap-1 text-[11px] text-sky-600 hover:text-sky-700 font-medium"
+                  className="flex items-center gap-1 text-[11px] text-sky-700/70 hover:text-sky-800 font-medium backdrop-blur-sm bg-white/30 rounded-full px-2 py-0.5 border border-white/40 transition-colors"
                 >
                   <MapPin size={10} />
                   <span className="max-w-[90px] truncate">{city || 'Localiser'}</span>
                   <ChevronDown size={10} />
                 </button>
                 {showPicker && (
-                  <div className="absolute top-full right-0 mt-1 bg-white rounded-xl border border-border shadow-card-hover z-50 py-1 min-w-[160px] max-h-[200px] overflow-y-auto">
+                  <div className="absolute top-full right-0 mt-1 rounded-xl border border-white/50 shadow-card-hover z-50 py-1 min-w-[160px] max-h-[200px] overflow-y-auto"
+                    style={{
+                      background: 'rgba(255,255,255,0.85)',
+                      backdropFilter: 'blur(16px)',
+                      WebkitBackdropFilter: 'blur(16px)',
+                    }}
+                  >
                     {CITIES.map(c => (
                       <button
                         key={c.name}
                         onClick={() => selectCity(c)}
-                        className={`w-full text-left px-3 py-1.5 text-[12px] hover:bg-sky-50 transition-colors ${
+                        className={`w-full text-left px-3 py-1.5 text-[12px] hover:bg-sky-100/50 transition-colors ${
                           city === c.name ? 'text-sky-600 font-medium' : 'text-text-primary'
                         }`}
                       >
@@ -203,23 +222,23 @@ export function WeatherWidget() {
 
             {/* Current weather */}
             <div className="flex items-center gap-3 mb-1">
-              <span className="text-[36px] leading-none">{weather.icon}</span>
+              <span className="text-[36px] leading-none drop-shadow-sm">{weather.icon}</span>
               <div>
-                <p className="font-display font-bold text-[22px] text-text-primary leading-none">{weather.temperature}°C</p>
-                <p className="text-[11px] text-text-secondary mt-0.5">{weather.description}</p>
+                <p className="font-display font-bold text-[24px] text-text-primary leading-none drop-shadow-sm">{weather.temperature}°C</p>
+                <p className="text-[11px] text-text-secondary/80 mt-0.5 font-medium">{weather.description}</p>
               </div>
             </div>
 
             {/* Min / Max */}
-            <div className="flex items-center gap-3">
-              <span className="text-[11px] text-sky-600 font-medium">↓ {weather.tempMin}°</span>
-              <span className="text-[11px] text-red-400 font-medium">↑ {weather.tempMax}°</span>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-sky-600/80 font-semibold bg-white/30 rounded-full px-2 py-0.5">↓ {weather.tempMin}°</span>
+              <span className="text-[11px] text-rose-500/80 font-semibold bg-white/30 rounded-full px-2 py-0.5">↑ {weather.tempMax}°</span>
             </div>
           </div>
 
-          {/* Hourly forecast — pinned to bottom with own scroll */}
+          {/* Hourly forecast — glass bar */}
           {weather.hourly.length > 0 && (
-            <div className="border-t border-sky-100/80 mt-2 min-w-0">
+            <div className="border-t border-white/30 mt-2 min-w-0 relative z-10" style={{ background: 'rgba(255,255,255,0.15)' }}>
               <div
                 className="flex overflow-x-auto px-3 py-2.5 gap-1 scrollbar-hide"
                 style={{ WebkitOverflowScrolling: 'touch' }}
@@ -227,10 +246,10 @@ export function WeatherWidget() {
                 {weather.hourly.map(h => (
                   <div
                     key={h.hour}
-                    className={`flex flex-col items-center flex-shrink-0 w-[38px] py-1.5 rounded-lg transition-colors ${
+                    className={`flex flex-col items-center flex-shrink-0 w-[38px] py-1.5 rounded-xl transition-colors ${
                       h.isCurrent
-                        ? 'bg-sky-100 ring-1 ring-sky-300'
-                        : ''
+                        ? 'bg-white/50 shadow-sm ring-1 ring-sky-300/50'
+                        : 'hover:bg-white/20'
                     }`}
                   >
                     <span className={`text-[9px] leading-none ${h.isCurrent ? 'text-sky-700 font-semibold' : 'text-text-muted'}`}>
