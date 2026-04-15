@@ -509,9 +509,6 @@ export function FilterBar({ filters, onChange, open, resultCount }: FilterBarPro
 
               <FilterChip icon={<ShieldCheck size={13} />} label="Encadré" activeCount={filters.encadre.length} isOpen={openGroup === 'encadre'} onToggle={() => toggleGroup('encadre')} />
 
-              {/* Separator */}
-              <div className="w-px h-5 bg-border/50 mx-0.5 hidden sm:block" />
-
               {/* Advanced toggle */}
               <button
                 onClick={() => toggleGroup('advanced')}
