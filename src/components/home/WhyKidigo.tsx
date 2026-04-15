@@ -1,13 +1,20 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ShieldCheck, Search, Star } from 'lucide-react'
+import { ShieldCheck, Search, Star, Users } from 'lucide-react'
 
 const REASONS = [
   {
+    icon: Users,
+    title: 'Par les parents, pour les parents',
+    description: 'KIDIGO est une plateforme communautaire où chaque parent peut partager ses meilleurs bons plans. Les meilleures idées viennent de vous.',
+    color: '#16A34A',
+    bg: '#F0FDF4',
+  },
+  {
     icon: ShieldCheck,
     title: 'Organisateurs vérifiés',
-    description: 'Chaque partenaire KIDIGO est contrôlé : diplômes, assurance, avis parents vérifiés. Votre confiance est notre priorité absolue.',
+    description: 'Chaque partenaire KIDIGO est contrôlé : diplômes, assurance, avis parents vérifiés. Votre confiance est notre priorité.',
     color: '#FF6B52',
     bg: '#FFF0ED',
   },
@@ -21,7 +28,7 @@ const REASONS = [
   {
     icon: Star,
     title: 'Avis authentiques',
-    description: 'Des milliers d\'avis de parents comme vous, vérifiés et transparents. Choisissez en toute confiance grâce à des retours réels.',
+    description: 'Des avis de parents comme vous, vérifiés et transparents. Choisissez en toute confiance grâce à des retours réels.',
     color: '#D97706',
     bg: '#FEF3C7',
   },
@@ -44,14 +51,14 @@ export function WhyKidigo() {
             className="font-display font-black text-text-primary leading-tight mb-4"
             style={{ fontSize: 'clamp(1.8rem, 4vw, 3.2rem)' }}
           >
-            Simple, fiable et conçu pour les familles
+            Une communauté de parents, un outil pensé pour vous
           </h2>
           <p className="text-[16px] text-text-secondary leading-relaxed">
-            KIDIGO n'est pas qu'un annuaire. C'est une plateforme qui met la qualité et la sécurité au cœur de chaque expérience.
+            KIDIGO n'est pas qu'un annuaire. C'est une plateforme communautaire faite par des parents, pour les parents — où chacun partage, découvre et recommande.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {REASONS.map((reason, i) => (
             <motion.div
               key={reason.title}

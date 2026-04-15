@@ -320,30 +320,45 @@ export function Hero() {
             </div>
           </a>
 
-          {/* Bottom right — Coup de coeur (rotating) */}
-          <a href={`/activite/${coupDeCoeur.slug}`} className="rounded-3xl bg-gradient-to-br from-red-50 to-accent-subtle border border-accent/15 flex flex-col justify-center items-center p-4 shadow-card hover:shadow-card-hover hover:scale-[1.02] transition-all duration-200 overflow-hidden relative">
-            <Heart size={20} className="text-accent fill-accent mb-2" />
-            <p className="font-display font-bold text-[14px] text-text-primary leading-tight text-center">Coup de coeur</p>
+          {/* Bottom right — Coup de coeur (rotating with dynamic bg) */}
+          <a href={`/activite/${coupDeCoeur.slug}`} className="rounded-3xl overflow-hidden relative shadow-card hover:shadow-card-hover hover:scale-[1.02] transition-all duration-200 group cursor-pointer">
             <AnimatePresence mode="wait">
               <motion.div
-                key={coupDeCoeur.id}
-                className="flex flex-col items-center"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.35 }}
+                key={`coeur-desktop-${coupDeCoeur.id}`}
+                className="absolute inset-0"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
               >
-                <p className="text-[12px] text-accent font-medium mt-1 text-center leading-tight">{coupDeCoeur.name}</p>
-                <p className="text-[11px] text-text-muted">{coupDeCoeur.city} · {coupDeCoeur.price === 0 ? 'Gratuit' : `${coupDeCoeur.price} CHF`}</p>
+                <img src={coupDeCoeur.image} alt={coupDeCoeur.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               </motion.div>
             </AnimatePresence>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/5" />
+            <div className="absolute inset-0 flex flex-col justify-center items-center z-10 p-4">
+              <Heart size={20} className="text-white fill-white mb-2" />
+              <p className="font-display font-bold text-[14px] text-white leading-tight text-center">Coup de coeur</p>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={coupDeCoeur.id}
+                  className="flex flex-col items-center"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.35 }}
+                >
+                  <p className="text-[12px] text-white/90 font-medium mt-1 text-center leading-tight">{coupDeCoeur.name}</p>
+                  <p className="text-[11px] text-white/70">{coupDeCoeur.city} · {coupDeCoeur.price === 0 ? 'Gratuit' : `${coupDeCoeur.price} CHF`}</p>
+                </motion.div>
+              </AnimatePresence>
+            </div>
           </a>
         </motion.div>
         </div>
 
         {/* Mobile bento cards */}
         <motion.div
-          className="lg:hidden mt-8 grid grid-cols-2 gap-3"
+          className="lg:hidden mt-6 grid grid-cols-2 gap-2"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
@@ -351,40 +366,54 @@ export function Hero() {
           {/* Partager un lieu */}
           <a
             href="/partager"
-            className="col-span-2 rounded-2xl bg-gradient-to-r from-accent/5 via-accent-subtle to-accent/10 border border-accent/20 flex items-center gap-4 p-4 shadow-card active:scale-[0.98] transition-all group"
+            className="col-span-2 rounded-2xl bg-gradient-to-r from-accent/5 via-accent-subtle to-accent/10 border border-accent/20 flex items-center gap-3 p-3 shadow-card active:scale-[0.98] transition-all group"
           >
-            <div className="w-12 h-12 rounded-xl bg-accent/15 flex items-center justify-center flex-shrink-0 group-hover:bg-accent/25 transition-colors">
-              <Plus size={22} className="text-accent" />
+            <div className="w-10 h-10 rounded-lg bg-accent/15 flex items-center justify-center flex-shrink-0 group-hover:bg-accent/25 transition-colors">
+              <Plus size={18} className="text-accent" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-display font-bold text-[14px] text-text-primary leading-tight">Partager un lieu</p>
-              <p className="text-[12px] text-text-secondary mt-0.5">Suggérez une activité kids friendly</p>
+              <p className="font-display font-bold text-[13px] text-text-primary leading-tight">Partager un lieu</p>
+              <p className="text-[11px] text-text-secondary mt-0.5">Suggérez une activité kids friendly</p>
             </div>
-            <span className="text-accent text-[18px] flex-shrink-0">→</span>
+            <span className="text-accent text-[16px] flex-shrink-0">→</span>
           </a>
 
           {/* Weather */}
-          <div className="col-span-2 min-h-[160px]">
+          <div className="col-span-2 min-h-[150px]">
             <WeatherWidget />
           </div>
 
-          {/* Coup de coeur (rotating) */}
-          <a href={`/activite/${coupDeCoeur.slug}`} className="rounded-2xl bg-gradient-to-br from-red-50 to-accent-subtle border border-accent/15 flex flex-col justify-center items-center p-4 shadow-card active:scale-[0.98] transition-all overflow-hidden">
-            <Heart size={18} className="text-accent fill-accent mb-1.5" />
-            <p className="font-display font-bold text-[13px] text-text-primary leading-tight text-center">Coup de coeur</p>
+          {/* Coup de coeur (rotating with dynamic bg) */}
+          <a href={`/activite/${coupDeCoeur.slug}`} className="rounded-2xl overflow-hidden relative shadow-card active:scale-[0.98] transition-all aspect-[4/3]">
             <AnimatePresence mode="wait">
               <motion.div
-                key={coupDeCoeur.id}
-                className="flex flex-col items-center"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.35 }}
+                key={`coeur-bg-${coupDeCoeur.id}`}
+                className="absolute inset-0"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
               >
-                <p className="text-[11px] text-accent font-medium mt-1 text-center leading-tight">{coupDeCoeur.name}</p>
-                <p className="text-[10px] text-text-muted">{coupDeCoeur.city} · {coupDeCoeur.price === 0 ? 'Gratuit' : `${coupDeCoeur.price} CHF`}</p>
+                <img src={coupDeCoeur.image} alt={coupDeCoeur.name} className="w-full h-full object-cover" />
               </motion.div>
             </AnimatePresence>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/5" />
+            <div className="absolute inset-0 flex flex-col justify-center items-center z-10 p-3">
+              <Heart size={16} className="text-white fill-white mb-1" />
+              <p className="font-display font-bold text-[12px] text-white leading-tight text-center">Coup de coeur</p>
+              <AnimatePresence mode="wait">
+                <motion.p
+                  key={coupDeCoeur.id}
+                  className="text-[10px] text-white/80 font-medium mt-0.5 text-center leading-tight"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {coupDeCoeur.name}
+                </motion.p>
+              </AnimatePresence>
+            </div>
           </a>
 
           {/* Activity card (rotating) */}
@@ -402,8 +431,8 @@ export function Hero() {
               </motion.div>
             </AnimatePresence>
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-            <div className="absolute bottom-3 left-3 right-3 z-10">
-              <p className="text-white font-display font-bold text-[13px] leading-snug">{card1.name}</p>
+            <div className="absolute bottom-2.5 left-2.5 right-2.5 z-10">
+              <p className="text-white font-display font-bold text-[12px] leading-snug">{card1.name}</p>
               <p className="text-white/80 text-[10px]">{card1.city} · {card1.price === 0 ? 'Gratuit' : `${card1.price} CHF`}</p>
             </div>
           </a>
