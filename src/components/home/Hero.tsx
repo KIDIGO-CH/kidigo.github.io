@@ -86,9 +86,10 @@ export function Hero() {
     return () => clearInterval(interval)
   }, [nearbyActivities])
 
-  // Current pair of activities for the two bento slots
+  // Current trio of activities for the bento slots
   const card1 = nearbyActivities[cardIndex] || allActivities[0]
   const card2 = nearbyActivities[(cardIndex + 1) % nearbyActivities.length] || allActivities[1]
+  const card3 = nearbyActivities[(cardIndex + 2) % nearbyActivities.length] || allActivities[2]
   // Coup de coeur = top rated nearby, rotating
   const topRated = [...nearbyActivities].sort((a, b) => b.rating - a.rating)
   const [coeurIndex, setCoeurIndex] = useState(0)
@@ -338,14 +339,11 @@ export function Hero() {
             </div>
           </a>
 
-          {/* Middle right — Weather */}
-          <WeatherWidget />
-
-          {/* Bottom left — Activity card 2 (rotating) */}
+          {/* Middle right — Activity card 2 (rotating) */}
           <a href={`/activite/${card2.slug}`} className="rounded-3xl overflow-hidden relative shadow-card group cursor-pointer">
             <AnimatePresence mode="wait">
               <motion.div
-                key={card2.id}
+                key={`bento-card2-${card2.id}`}
                 className="absolute inset-0"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -360,6 +358,28 @@ export function Hero() {
               <span className="inline-block bg-accent text-white text-[10px] font-medium px-2.5 py-0.5 rounded-full mb-1.5">{card2.category}</span>
               <p className="text-white font-display font-bold text-[14px] leading-snug">{card2.name}</p>
               <p className="text-white/80 text-[11px]">{card2.city} · {card2.price === 0 ? 'Gratuit' : `${card2.price} CHF`}</p>
+            </div>
+          </a>
+
+          {/* Bottom left — Activity card 3 (rotating) */}
+          <a href={`/activite/${card3.slug}`} className="rounded-3xl overflow-hidden relative shadow-card group cursor-pointer">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`bento-card3-${card3.id}`}
+                className="absolute inset-0"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <img src={card3.image} alt={card3.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              </motion.div>
+            </AnimatePresence>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+            <div className="absolute bottom-3 left-3 right-3 z-10">
+              <span className="inline-block bg-accent text-white text-[10px] font-medium px-2.5 py-0.5 rounded-full mb-1.5">{card3.category}</span>
+              <p className="text-white font-display font-bold text-[14px] leading-snug">{card3.name}</p>
+              <p className="text-white/80 text-[11px]">{card3.city} · {card3.price === 0 ? 'Gratuit' : `${card3.price} CHF`}</p>
             </div>
           </a>
 
