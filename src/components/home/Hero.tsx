@@ -89,7 +89,6 @@ export function Hero() {
   // Current trio of activities for the bento slots
   const card1 = nearbyActivities[cardIndex] || allActivities[0]
   const card2 = nearbyActivities[(cardIndex + 1) % nearbyActivities.length] || allActivities[1]
-  const card3 = nearbyActivities[(cardIndex + 2) % nearbyActivities.length] || allActivities[2]
   // Coup de coeur = top rated nearby, rotating
   const topRated = [...nearbyActivities].sort((a, b) => b.rating - a.rating)
   const [coeurIndex, setCoeurIndex] = useState(0)
@@ -267,73 +266,21 @@ export function Hero() {
             </div>
           </a>
 
-          {/* Bottom left — Activity card 3 (rotating) */}
-          <a href={`/activite/${card3.slug}`} className="rounded-3xl overflow-hidden relative shadow-card group cursor-pointer">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`bento-card3-${card3.id}`}
-                className="absolute inset-0"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <img src={card3.image} alt={card3.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              </motion.div>
-            </AnimatePresence>
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
-            <div className="absolute bottom-3 left-3 right-3 z-10">
-              <span className="inline-block bg-accent text-white text-[10px] font-medium px-2.5 py-0.5 rounded-full mb-1.5">{card3.category}</span>
-              <p className="text-white font-display font-bold text-[14px] leading-snug">{card3.name}</p>
-              <p className="text-white/80 text-[11px]">{card3.city} · {card3.price === 0 ? 'Gratuit' : `${card3.price} CHF`}</p>
-            </div>
-          </a>
-
-          {/* Bottom right — Coup de coeur (rotating with dynamic bg) */}
-          <a href={`/activite/${coupDeCoeur.slug}`} className="rounded-3xl overflow-hidden relative shadow-card hover:shadow-card-hover hover:scale-[1.02] transition-all duration-200 group cursor-pointer">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`coeur-desktop-${coupDeCoeur.id}`}
-                className="absolute inset-0"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <img src={coupDeCoeur.image} alt={coupDeCoeur.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              </motion.div>
-            </AnimatePresence>
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/5" />
-            <div className="absolute inset-0 flex flex-col justify-center items-center z-10 p-4">
-              <Heart size={20} className="text-white fill-white mb-2" />
-              <p className="font-display font-bold text-[14px] text-white leading-tight text-center">Coup de coeur</p>
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={coupDeCoeur.id}
-                  className="flex flex-col items-center"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.35 }}
-                >
-                  <p className="text-[12px] text-white/90 font-medium mt-1 text-center leading-tight">{coupDeCoeur.name}</p>
-                  <p className="text-[11px] text-white/70">{coupDeCoeur.city} · {coupDeCoeur.price === 0 ? 'Gratuit' : `${coupDeCoeur.price} CHF`}</p>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-          </a>
+          {/* Bottom — Weather widget (spans both columns) */}
+          <div className="col-span-2 rounded-3xl overflow-visible">
+            <WeatherWidget />
+          </div>
         </motion.div>
         </div>
 
-        {/* Search box + Weather — full width below grid */}
+        {/* Search box — full width below grid */}
         <motion.div
-          className="flex gap-4 items-start mb-2 lg:mt-8"
+          className="mb-2 lg:mt-8"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.34 }}
         >
-          {/* Search box */}
-          <div className="bg-elevated rounded-3xl p-2 shadow-card-hover border border-border flex-1 min-w-0">
+          <div className="bg-elevated rounded-3xl p-2 shadow-card-hover border border-border">
             {/* Query input */}
             <div className="relative flex items-start gap-3 bg-canvas rounded-2xl px-4 py-3.5 mb-2 min-h-[56px]">
               <Search size={16} className="text-text-muted flex-shrink-0 mt-0.5" />
@@ -400,10 +347,6 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Weather — desktop only */}
-          <div className="hidden lg:block w-[380px] flex-shrink-0">
-            <WeatherWidget />
-          </div>
         </motion.div>
 
         {/* Filters */}

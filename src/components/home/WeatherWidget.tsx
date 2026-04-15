@@ -180,91 +180,97 @@ export function WeatherWidget() {
           <div className="animate-pulse text-3xl">🌤️</div>
         </div>
       ) : weather ? (
-        <>
-          {/* Top section */}
-          <div className="flex-1 p-4 sm:p-5 pb-0 sm:pb-0 flex flex-col min-h-0 relative z-10">
-            {/* Header: day + city picker */}
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-[11px] font-semibold text-sky-600/80 uppercase tracking-wide">{weather.dayName} {weather.dateStr}</p>
-              <div className="relative" ref={pickerRef}>
-                <button
-                  onClick={() => setShowPicker(!showPicker)}
-                  className="flex items-center gap-1 text-[11px] text-sky-700/70 hover:text-sky-800 font-medium backdrop-blur-sm bg-white/30 rounded-full px-2 py-0.5 border border-white/40 transition-colors"
-                >
-                  <MapPin size={10} />
-                  <span className="max-w-[90px] truncate">{city || 'Localiser'}</span>
-                  <ChevronDown size={10} />
-                </button>
-                {showPicker && (
-                  <div className="absolute top-full right-0 mt-1 rounded-xl border border-white/50 shadow-card-hover z-50 py-1 min-w-[160px] max-h-[200px] overflow-y-auto"
-                    style={{
-                      background: 'rgba(255,255,255,0.85)',
-                      backdropFilter: 'blur(16px)',
-                      WebkitBackdropFilter: 'blur(16px)',
-                    }}
+        <div className="flex-1 flex flex-col relative z-10 min-h-0">
+          {/* Main: stacked on mobile, side-by-side on desktop */}
+          <div className="flex-1 flex flex-col lg:flex-row min-h-0">
+            {/* Weather info */}
+            <div className="p-4 sm:p-5 pb-2 sm:pb-2 lg:p-4 lg:flex-shrink-0 lg:flex lg:flex-col lg:justify-center">
+              {/* Header: day + city picker */}
+              <div className="flex items-center justify-between mb-2 lg:mb-1.5">
+                <p className="text-[11px] font-semibold text-sky-600/80 uppercase tracking-wide">{weather.dayName} {weather.dateStr}</p>
+                <div className="relative" ref={pickerRef}>
+                  <button
+                    onClick={() => setShowPicker(!showPicker)}
+                    className="flex items-center gap-1 text-[11px] text-sky-700/70 hover:text-sky-800 font-medium backdrop-blur-sm bg-white/30 rounded-full px-2 py-0.5 border border-white/40 transition-colors"
                   >
-                    {CITIES.map(c => (
-                      <button
-                        key={c.name}
-                        onClick={() => selectCity(c)}
-                        className={`w-full text-left px-3 py-1.5 text-[12px] hover:bg-sky-100/50 transition-colors ${
-                          city === c.name ? 'text-sky-600 font-medium' : 'text-text-primary'
-                        }`}
-                      >
-                        {c.geo && <MapPin size={10} className="inline mr-1" />}
-                        {c.name}
-                      </button>
-                    ))}
-                  </div>
-                )}
+                    <MapPin size={10} />
+                    <span className="max-w-[90px] truncate">{city || 'Localiser'}</span>
+                    <ChevronDown size={10} />
+                  </button>
+                  {showPicker && (
+                    <div className="absolute top-full right-0 mt-1 rounded-xl border border-white/50 shadow-card-hover z-50 py-1 min-w-[160px] max-h-[200px] overflow-y-auto"
+                      style={{
+                        background: 'rgba(255,255,255,0.85)',
+                        backdropFilter: 'blur(16px)',
+                        WebkitBackdropFilter: 'blur(16px)',
+                      }}
+                    >
+                      {CITIES.map(c => (
+                        <button
+                          key={c.name}
+                          onClick={() => selectCity(c)}
+                          className={`w-full text-left px-3 py-1.5 text-[12px] hover:bg-sky-100/50 transition-colors ${
+                            city === c.name ? 'text-sky-600 font-medium' : 'text-text-primary'
+                          }`}
+                        >
+                          {c.geo && <MapPin size={10} className="inline mr-1" />}
+                          {c.name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Current weather */}
+              <div className="flex items-center gap-3 lg:gap-2 mb-1">
+                <span className="text-[36px] lg:text-[30px] leading-none drop-shadow-sm">{weather.icon}</span>
+                <div>
+                  <p className="font-display font-bold text-[24px] lg:text-[20px] text-text-primary leading-none drop-shadow-sm">{weather.temperature}°C</p>
+                  <p className="text-[11px] text-text-secondary/80 mt-0.5 font-medium">{weather.description}</p>
+                </div>
+              </div>
+
+              {/* Min / Max */}
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-sky-600/80 font-semibold bg-white/30 rounded-full px-2 py-0.5">↓ {weather.tempMin}°</span>
+                <span className="text-[11px] text-rose-500/80 font-semibold bg-white/30 rounded-full px-2 py-0.5">↑ {weather.tempMax}°</span>
               </div>
             </div>
 
-            {/* Current weather */}
-            <div className="flex items-center gap-3 mb-1">
-              <span className="text-[36px] leading-none drop-shadow-sm">{weather.icon}</span>
-              <div>
-                <p className="font-display font-bold text-[24px] text-text-primary leading-none drop-shadow-sm">{weather.temperature}°C</p>
-                <p className="text-[11px] text-text-secondary/80 mt-0.5 font-medium">{weather.description}</p>
+            {/* Hourly forecast */}
+            {weather.hourly.length > 0 && (
+              <div
+                className="border-t lg:border-t-0 lg:border-l border-white/30 mt-2 lg:mt-0 min-w-0 lg:flex-1 lg:flex lg:items-center"
+                style={{ background: 'rgba(255,255,255,0.15)' }}
+              >
+                <div
+                  className="flex overflow-x-auto px-3 pr-5 py-2.5 gap-1.5 scrollbar-hide lg:flex-1 lg:justify-around lg:px-2 lg:gap-0"
+                  style={{ WebkitOverflowScrolling: 'touch' }}
+                >
+                  {weather.hourly.map(h => (
+                    <div
+                      key={h.hour}
+                      className={`flex flex-col items-center flex-shrink-0 w-[38px] lg:w-auto lg:flex-1 py-1.5 rounded-xl transition-colors ${
+                        h.isCurrent
+                          ? 'bg-white/50 shadow-sm ring-1 ring-sky-300/50'
+                          : 'hover:bg-white/20'
+                      }`}
+                    >
+                      <span className={`text-[9px] lg:text-[10px] leading-none ${h.isCurrent ? 'text-sky-700 font-semibold' : 'text-text-muted'}`}>
+                        {h.hour.replace(':00', 'h')}
+                      </span>
+                      <span className="text-sm leading-none my-0.5">{h.icon}</span>
+                      <span className={`text-[10px] lg:text-[11px] leading-none font-medium ${h.isCurrent ? 'text-sky-700' : 'text-text-primary'}`}>{h.temp}°</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-
-            {/* Min / Max */}
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] text-sky-600/80 font-semibold bg-white/30 rounded-full px-2 py-0.5">↓ {weather.tempMin}°</span>
-              <span className="text-[11px] text-rose-500/80 font-semibold bg-white/30 rounded-full px-2 py-0.5">↑ {weather.tempMax}°</span>
-            </div>
+            )}
           </div>
 
-          {/* Hourly forecast — glass bar */}
-          {weather.hourly.length > 0 && (
-            <div className="border-t border-white/30 mt-2 min-w-0 relative z-10" style={{ background: 'rgba(255,255,255,0.15)' }}>
-              <div
-                className="flex overflow-x-auto px-3 pr-5 py-2.5 gap-1.5 scrollbar-hide"
-                style={{ WebkitOverflowScrolling: 'touch' }}
-              >
-                {weather.hourly.map(h => (
-                  <div
-                    key={h.hour}
-                    className={`flex flex-col items-center flex-shrink-0 w-[38px] py-1.5 rounded-xl transition-colors ${
-                      h.isCurrent
-                        ? 'bg-white/50 shadow-sm ring-1 ring-sky-300/50'
-                        : 'hover:bg-white/20'
-                    }`}
-                  >
-                    <span className={`text-[9px] leading-none ${h.isCurrent ? 'text-sky-700 font-semibold' : 'text-text-muted'}`}>
-                      {h.hour.replace(':00', 'h')}
-                    </span>
-                    <span className="text-sm leading-none my-0.5">{h.icon}</span>
-                    <span className={`text-[10px] leading-none font-medium ${h.isCurrent ? 'text-sky-700' : 'text-text-primary'}`}>{h.temp}°</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Conseil Kidigo */}
-          <div className="relative z-10 mx-3 mb-3 mt-2 flex items-center gap-2 bg-white/25 rounded-xl px-3 py-2 border border-white/30">
+          {/* Conseil Kidigo — mobile card */}
+          <div className="lg:hidden mx-3 mb-3 mt-2 flex items-center gap-2 bg-white/25 rounded-xl px-3 py-2 border border-white/30">
             <CloudSun size={14} className="text-sky-600 flex-shrink-0" />
             <p className="text-[11px] text-text-secondary leading-snug">
               <span className="font-semibold text-sky-700">Conseil Kidigo : </span>
@@ -275,7 +281,20 @@ export function WeatherWidget() {
                 : 'Parfait pour les activités en intérieur !'}
             </p>
           </div>
-        </>
+
+          {/* Conseil Kidigo — desktop bar */}
+          <div className="hidden lg:flex items-center gap-2 border-t border-white/30 px-4 py-2" style={{ background: 'rgba(255,255,255,0.10)' }}>
+            <CloudSun size={14} className="text-sky-600 flex-shrink-0" />
+            <p className="text-[11px] text-text-secondary leading-snug">
+              <span className="font-semibold text-sky-700">Conseil Kidigo : </span>
+              {weather.temperature >= 20
+                ? 'Idéal pour les activités en plein air !'
+                : weather.temperature >= 10
+                ? 'Pensez à prévoir une petite veste pour les enfants.'
+                : 'Parfait pour les activités en intérieur !'}
+            </p>
+          </div>
+        </div>
       ) : null}
     </div>
   )
