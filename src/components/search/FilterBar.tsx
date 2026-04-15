@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   X, MapPin, ChevronDown, SlidersHorizontal,
   LayoutGrid, Baby, Coins, Clock, ShieldCheck,
-  Accessibility, Sofa, Car, PawPrint, Check,
+  Accessibility, Sofa, Car, PawPrint,
 } from 'lucide-react'
 import { categories } from '@/lib/data'
 import type { Category } from '@/lib/types'
@@ -87,21 +87,13 @@ function Pill({ active, onClick, children, color }: { active: boolean; onClick: 
   return (
     <button
       onClick={onClick}
-      className={`group/pill text-[12px] sm:text-[13px] pl-2.5 pr-3 sm:pl-3 sm:pr-3.5 py-2 sm:py-2.5 rounded-2xl border-2 transition-all duration-200 flex items-center gap-2 whitespace-nowrap font-medium ${
+      className={`text-[12px] sm:text-[13px] px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-full transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap font-medium ${
         active
           ? 'shadow-sm'
-          : 'bg-white border-transparent text-text-secondary hover:bg-canvas'
+          : 'bg-canvas text-text-secondary hover:bg-border/20'
       }`}
-      style={active ? { backgroundColor: `${c}10`, color: c, borderColor: `${c}30` } : undefined}
+      style={active ? { backgroundColor: `${c}15`, color: c } : undefined}
     >
-      <span
-        className={`w-[18px] h-[18px] rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
-          active ? '' : 'bg-border/40 group-hover/pill:bg-border/60'
-        }`}
-        style={active ? { backgroundColor: c } : undefined}
-      >
-        {active && <Check size={10} className="text-white" strokeWidth={3} />}
-      </span>
       {children}
     </button>
   )
@@ -254,19 +246,19 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
                         onClick={() => set({ categories: toggle(filters.categories, c.name) })}
                         color={c.color}
                       >
-                        <span className="text-[15px] -ml-0.5">{c.icon}</span> {c.name}
+                        <span className="text-[15px]">{c.icon}</span> {c.name}
                       </Pill>
                     ))}
 
                     {openGroup === 'age' && AGE_OPTIONS.map(({ value, label, emoji }) => (
                       <Pill key={value} active={filters.ages.includes(value)} onClick={() => set({ ages: toggle(filters.ages, value) })}>
-                        <span className="text-[15px] -ml-0.5">{emoji}</span> {label}
+                        <span className="text-[15px]">{emoji}</span> {label}
                       </Pill>
                     ))}
 
                     {openGroup === 'price' && PRICE_OPTIONS.map(({ value, label, emoji }) => (
                       <Pill key={value} active={filters.prices.includes(value)} onClick={() => set({ prices: toggle(filters.prices, value) })}>
-                        <span className="text-[15px] -ml-0.5">{emoji}</span> {label}
+                        <span className="text-[15px]">{emoji}</span> {label}
                       </Pill>
                     ))}
 
@@ -276,17 +268,16 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
                           active={filters.dateFilter === 'today'}
                           onClick={() => set({ dateFilter: filters.dateFilter === 'today' ? null : 'today' })}
                         >
-                          <span className="text-[15px] -ml-0.5">📅</span> Aujourd&apos;hui
+                          <span className="text-[15px]">📅</span> Aujourd&apos;hui
                         </Pill>
                         <Pill
                           active={filters.dateFilter === 'weekend'}
                           onClick={() => set({ dateFilter: filters.dateFilter === 'weekend' ? null : 'weekend' })}
                         >
-                          <span className="text-[15px] -ml-0.5">🌤️</span> Ce weekend
+                          <span className="text-[15px]">🌤️</span> Ce weekend
                         </Pill>
-                        <label className="group/pill text-[12px] sm:text-[13px] pl-2.5 pr-3 sm:pl-3 sm:pr-3.5 py-2 sm:py-2.5 rounded-2xl border-2 border-transparent bg-white text-text-secondary hover:bg-canvas transition-all duration-200 flex items-center gap-2 whitespace-nowrap font-medium cursor-pointer relative">
-                          <span className="w-[18px] h-[18px] rounded-full flex items-center justify-center flex-shrink-0 bg-border/40 group-hover/pill:bg-border/60 transition-all" />
-                          <span className="text-[15px] -ml-0.5">🗓️</span>
+                        <label className="text-[12px] sm:text-[13px] px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-full bg-canvas text-text-secondary hover:bg-border/20 transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap font-medium cursor-pointer relative">
+                          <span className="text-[15px]">🗓️</span>
                           {filters.dateFilter && filters.dateFilter !== 'today' && filters.dateFilter !== 'weekend' ? filters.dateFilter : 'Choisir une date'}
                           <input
                             type="date"
@@ -300,7 +291,7 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
 
                     {openGroup === 'encadre' && ENCADRE_OPTIONS.map(({ value, label, emoji }) => (
                       <Pill key={value} active={filters.encadre.includes(value)} onClick={() => set({ encadre: toggle(filters.encadre, value) })}>
-                        <span className="text-[15px] -ml-0.5">{emoji}</span> {label}
+                        <span className="text-[15px]">{emoji}</span> {label}
                       </Pill>
                     ))}
                   </div>
