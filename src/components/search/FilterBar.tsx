@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   X, MapPin, ChevronDown, ChevronRight, SlidersHorizontal,
@@ -193,6 +194,9 @@ export function FilterBar({ filters, onChange, open, resultCount }: FilterBarPro
   const [openGroup, setOpenGroup] = useState<FilterGroupKey | null>(null)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [mobileSection, setMobileSection] = useState<FilterGroupKey | null>(null)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => { setMounted(true) }, [])
 
   const set = (partial: Partial<Filters>) => onChange({ ...filters, ...partial })
 
@@ -287,200 +291,203 @@ export function FilterBar({ filters, onChange, open, resultCount }: FilterBarPro
             </button>
           </div>
 
-          {/* Mobile bottom sheet */}
-          <AnimatePresence>
-            {mobileOpen && (
-              <motion.div
-                className="fixed inset-0 z-[100] sm:hidden"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                {/* Backdrop */}
-                <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
-
-                {/* Sheet */}
+          {/* Mobile bottom sheet — rendered via portal to escape sticky container */}
+          {mounted && createPortal(
+            <AnimatePresence>
+              {mobileOpen && (
                 <motion.div
-                  className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl flex flex-col"
-                  style={{ maxHeight: '92dvh' }}
-                  initial={{ y: '100%' }}
-                  animate={{ y: 0 }}
-                  exit={{ y: '100%' }}
-                  transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+                  className="fixed inset-0 z-[100] sm:hidden"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  {/* Handle */}
-                  <div className="flex justify-center pt-3 pb-1">
-                    <div className="w-10 h-1 rounded-full bg-border" />
-                  </div>
+                  {/* Backdrop */}
+                  <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
 
-                  {/* Header */}
-                  <div className="flex items-center justify-between px-5 pb-4 pt-1">
-                    <h2 className="text-[20px] font-display font-bold text-text-primary">Filtrer et trier</h2>
-                    <button
-                      onClick={() => setMobileOpen(false)}
-                      className="w-9 h-9 rounded-full border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors"
-                    >
-                      <X size={18} />
-                    </button>
-                  </div>
-
-                  {/* Active filter tags */}
-                  {activeTags.length > 0 && (
-                    <div className="px-5 pb-3">
-                      <div className="flex flex-wrap gap-2">
-                        {activeTags.map((tag, i) => (
-                          <ActiveTag key={i} label={tag.label} onRemove={tag.onRemove} />
-                        ))}
-                      </div>
+                  {/* Sheet */}
+                  <motion.div
+                    className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl flex flex-col"
+                    style={{ maxHeight: '92dvh' }}
+                    initial={{ y: '100%' }}
+                    animate={{ y: 0 }}
+                    exit={{ y: '100%' }}
+                    transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+                  >
+                    {/* Handle */}
+                    <div className="flex justify-center pt-3 pb-1">
+                      <div className="w-10 h-1 rounded-full bg-border" />
                     </div>
-                  )}
 
-                  {/* Divider */}
-                  <div className="h-px bg-accent/20 mx-5" />
-
-                  {/* Scrollable accordion sections */}
-                  <div className="flex-1 overflow-y-auto px-5 overscroll-contain">
-
-                    <AccordionRow label="Catégorie" count={filters.categories.length} isOpen={mobileSection === 'category'} onToggle={() => toggleMobileSection('category')}>
-                      <div className="flex flex-wrap gap-2">
-                        {categories.map(c => (
-                          <Pill key={c.name} active={filters.categories.includes(c.name)} onClick={() => set({ categories: toggle(filters.categories, c.name) })} color={c.color}>
-                            <span className="text-[15px]">{c.icon}</span> {c.name}
-                          </Pill>
-                        ))}
-                      </div>
-                    </AccordionRow>
-
-                    <AccordionRow label="Âge" count={filters.ages.length} isOpen={mobileSection === 'age'} onToggle={() => toggleMobileSection('age')}>
-                      <div className="flex flex-wrap gap-2">
-                        {AGE_OPTIONS.map(({ value, label, emoji }) => (
-                          <Pill key={value} active={filters.ages.includes(value)} onClick={() => set({ ages: toggle(filters.ages, value) })}>
-                            <span className="text-[15px]">{emoji}</span> {label}
-                          </Pill>
-                        ))}
-                      </div>
-                    </AccordionRow>
-
-                    <AccordionRow label="Prix" count={filters.prices.length} isOpen={mobileSection === 'price'} onToggle={() => toggleMobileSection('price')}>
-                      <div className="flex flex-wrap gap-2">
-                        {PRICE_OPTIONS.map(({ value, label, emoji }) => (
-                          <Pill key={value} active={filters.prices.includes(value)} onClick={() => set({ prices: toggle(filters.prices, value) })}>
-                            <span className="text-[15px]">{emoji}</span> {label}
-                          </Pill>
-                        ))}
-                      </div>
-                    </AccordionRow>
-
-                    <AccordionRow label="Quand" count={filters.dateFilter ? 1 : 0} isOpen={mobileSection === 'quand'} onToggle={() => toggleMobileSection('quand')}>
-                      <div className="flex flex-wrap gap-2">
-                        <Pill active={filters.dateFilter === 'today'} onClick={() => set({ dateFilter: filters.dateFilter === 'today' ? null : 'today' })}>
-                          <span className="text-[15px]">📅</span> Aujourd&apos;hui
-                        </Pill>
-                        <Pill active={filters.dateFilter === 'weekend'} onClick={() => set({ dateFilter: filters.dateFilter === 'weekend' ? null : 'weekend' })}>
-                          <span className="text-[15px]">🌤️</span> Ce weekend
-                        </Pill>
-                        <label className="text-[12px] px-3 py-2 rounded-full bg-canvas text-text-secondary hover:bg-border/20 transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap font-medium cursor-pointer relative">
-                          <span className="text-[15px]">🗓️</span>
-                          {filters.dateFilter && filters.dateFilter !== 'today' && filters.dateFilter !== 'weekend' ? filters.dateFilter : 'Choisir une date'}
-                          <input
-                            type="date"
-                            value={filters.dateFilter && filters.dateFilter !== 'today' && filters.dateFilter !== 'weekend' ? filters.dateFilter : ''}
-                            onChange={(e) => set({ dateFilter: e.target.value || null })}
-                            className="absolute inset-0 opacity-0 cursor-pointer"
-                          />
-                        </label>
-                      </div>
-                    </AccordionRow>
-
-                    <AccordionRow label="Autour de moi" count={filters.nearbyKm !== null ? 1 : 0} isOpen={mobileSection === 'nearby'} onToggle={() => toggleMobileSection('nearby')}>
+                    {/* Header */}
+                    <div className="flex items-center justify-between px-5 pb-4 pt-1">
+                      <h2 className="text-[20px] font-display font-bold text-text-primary">Filtrer et trier</h2>
                       <button
-                        onClick={handleNearby}
-                        className={`text-[13px] px-4 py-2.5 rounded-full transition-all duration-200 flex items-center gap-2 font-medium ${
-                          filters.nearbyKm !== null
-                            ? 'bg-accent/10 text-accent shadow-sm'
-                            : 'bg-canvas text-text-secondary hover:bg-border/20'
-                        }`}
+                        onClick={() => setMobileOpen(false)}
+                        className="w-9 h-9 rounded-full border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors"
                       >
-                        <MapPin size={14} />
-                        {locatingNearby ? 'Localisation…' : filters.nearbyKm !== null ? `≤ ${filters.nearbyKm} km` : 'Activer la géolocalisation'}
+                        <X size={18} />
                       </button>
-                    </AccordionRow>
+                    </div>
 
-                    <AccordionRow label="Encadrement" count={filters.encadre.length} isOpen={mobileSection === 'encadre'} onToggle={() => toggleMobileSection('encadre')}>
-                      <div className="flex flex-wrap gap-2">
-                        {ENCADRE_OPTIONS.map(({ value, label, emoji }) => (
-                          <Pill key={value} active={filters.encadre.includes(value)} onClick={() => set({ encadre: toggle(filters.encadre, value) })}>
-                            <span className="text-[15px]">{emoji}</span> {label}
+                    {/* Active filter tags */}
+                    {activeTags.length > 0 && (
+                      <div className="px-5 pb-3">
+                        <div className="flex flex-wrap gap-2">
+                          {activeTags.map((tag, i) => (
+                            <ActiveTag key={i} label={tag.label} onRemove={tag.onRemove} />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Divider */}
+                    <div className="h-px bg-accent/20 mx-5" />
+
+                    {/* Scrollable accordion sections */}
+                    <div className="flex-1 overflow-y-auto px-5 overscroll-contain">
+
+                      <AccordionRow label="Catégorie" count={filters.categories.length} isOpen={mobileSection === 'category'} onToggle={() => toggleMobileSection('category')}>
+                        <div className="flex flex-wrap gap-2">
+                          {categories.map(c => (
+                            <Pill key={c.name} active={filters.categories.includes(c.name)} onClick={() => set({ categories: toggle(filters.categories, c.name) })} color={c.color}>
+                              <span className="text-[15px]">{c.icon}</span> {c.name}
+                            </Pill>
+                          ))}
+                        </div>
+                      </AccordionRow>
+
+                      <AccordionRow label="Âge" count={filters.ages.length} isOpen={mobileSection === 'age'} onToggle={() => toggleMobileSection('age')}>
+                        <div className="flex flex-wrap gap-2">
+                          {AGE_OPTIONS.map(({ value, label, emoji }) => (
+                            <Pill key={value} active={filters.ages.includes(value)} onClick={() => set({ ages: toggle(filters.ages, value) })}>
+                              <span className="text-[15px]">{emoji}</span> {label}
+                            </Pill>
+                          ))}
+                        </div>
+                      </AccordionRow>
+
+                      <AccordionRow label="Prix" count={filters.prices.length} isOpen={mobileSection === 'price'} onToggle={() => toggleMobileSection('price')}>
+                        <div className="flex flex-wrap gap-2">
+                          {PRICE_OPTIONS.map(({ value, label, emoji }) => (
+                            <Pill key={value} active={filters.prices.includes(value)} onClick={() => set({ prices: toggle(filters.prices, value) })}>
+                              <span className="text-[15px]">{emoji}</span> {label}
+                            </Pill>
+                          ))}
+                        </div>
+                      </AccordionRow>
+
+                      <AccordionRow label="Quand" count={filters.dateFilter ? 1 : 0} isOpen={mobileSection === 'quand'} onToggle={() => toggleMobileSection('quand')}>
+                        <div className="flex flex-wrap gap-2">
+                          <Pill active={filters.dateFilter === 'today'} onClick={() => set({ dateFilter: filters.dateFilter === 'today' ? null : 'today' })}>
+                            <span className="text-[15px]">📅</span> Aujourd&apos;hui
                           </Pill>
-                        ))}
-                      </div>
-                    </AccordionRow>
+                          <Pill active={filters.dateFilter === 'weekend'} onClick={() => set({ dateFilter: filters.dateFilter === 'weekend' ? null : 'weekend' })}>
+                            <span className="text-[15px]">🌤️</span> Ce weekend
+                          </Pill>
+                          <label className="text-[12px] px-3 py-2 rounded-full bg-canvas text-text-secondary hover:bg-border/20 transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap font-medium cursor-pointer relative">
+                            <span className="text-[15px]">🗓️</span>
+                            {filters.dateFilter && filters.dateFilter !== 'today' && filters.dateFilter !== 'weekend' ? filters.dateFilter : 'Choisir une date'}
+                            <input
+                              type="date"
+                              value={filters.dateFilter && filters.dateFilter !== 'today' && filters.dateFilter !== 'weekend' ? filters.dateFilter : ''}
+                              onChange={(e) => set({ dateFilter: e.target.value || null })}
+                              className="absolute inset-0 opacity-0 cursor-pointer"
+                            />
+                          </label>
+                        </div>
+                      </AccordionRow>
 
-                    <AccordionRow label="Accessibilité" count={filters.accessibility.length} isOpen={mobileSection === 'accessibility'} onToggle={() => toggleMobileSection('accessibility')}>
-                      <div className="flex flex-wrap gap-2">
-                        <Pill active={filters.accessibility.includes('pmr')} onClick={() => set({ accessibility: toggle(filters.accessibility, 'pmr' as AccessibilityOption) })}>
-                          ♿ PMR
-                        </Pill>
-                        <Pill active={filters.accessibility.includes('poussette')} onClick={() => set({ accessibility: toggle(filters.accessibility, 'poussette' as AccessibilityOption) })}>
-                          🍼 Poussette
-                        </Pill>
-                      </div>
-                    </AccordionRow>
+                      <AccordionRow label="Autour de moi" count={filters.nearbyKm !== null ? 1 : 0} isOpen={mobileSection === 'nearby'} onToggle={() => toggleMobileSection('nearby')}>
+                        <button
+                          onClick={handleNearby}
+                          className={`text-[13px] px-4 py-2.5 rounded-full transition-all duration-200 flex items-center gap-2 font-medium ${
+                            filters.nearbyKm !== null
+                              ? 'bg-accent/10 text-accent shadow-sm'
+                              : 'bg-canvas text-text-secondary hover:bg-border/20'
+                          }`}
+                        >
+                          <MapPin size={14} />
+                          {locatingNearby ? 'Localisation…' : filters.nearbyKm !== null ? `≤ ${filters.nearbyKm} km` : 'Activer la géolocalisation'}
+                        </button>
+                      </AccordionRow>
 
-                    <AccordionRow label="Confort" count={filters.comfort.length} isOpen={mobileSection === 'comfort'} onToggle={() => toggleMobileSection('comfort')}>
-                      <div className="flex flex-wrap gap-2">
-                        <Pill active={filters.comfort.includes('toilettes')} onClick={() => set({ comfort: toggle(filters.comfort, 'toilettes' as ComfortOption) })}>
-                          🚻 Toilettes
-                        </Pill>
-                        <Pill active={filters.comfort.includes('cafe')} onClick={() => set({ comfort: toggle(filters.comfort, 'cafe' as ComfortOption) })}>
-                          ☕ Café sur place
-                        </Pill>
-                      </div>
-                    </AccordionRow>
+                      <AccordionRow label="Encadrement" count={filters.encadre.length} isOpen={mobileSection === 'encadre'} onToggle={() => toggleMobileSection('encadre')}>
+                        <div className="flex flex-wrap gap-2">
+                          {ENCADRE_OPTIONS.map(({ value, label, emoji }) => (
+                            <Pill key={value} active={filters.encadre.includes(value)} onClick={() => set({ encadre: toggle(filters.encadre, value) })}>
+                              <span className="text-[15px]">{emoji}</span> {label}
+                            </Pill>
+                          ))}
+                        </div>
+                      </AccordionRow>
 
-                    <AccordionRow label="Accès" count={filters.access.length} isOpen={mobileSection === 'access'} onToggle={() => toggleMobileSection('access')}>
-                      <div className="flex flex-wrap gap-2">
-                        <Pill active={filters.access.includes('parking')} onClick={() => set({ access: toggle(filters.access, 'parking' as AccessOption) })}>
-                          🅿️ Parking
-                        </Pill>
-                        <Pill active={filters.access.includes('transports')} onClick={() => set({ access: toggle(filters.access, 'transports' as AccessOption) })}>
-                          🚌 Transports publics
-                        </Pill>
-                      </div>
-                    </AccordionRow>
+                      <AccordionRow label="Accessibilité" count={filters.accessibility.length} isOpen={mobileSection === 'accessibility'} onToggle={() => toggleMobileSection('accessibility')}>
+                        <div className="flex flex-wrap gap-2">
+                          <Pill active={filters.accessibility.includes('pmr')} onClick={() => set({ accessibility: toggle(filters.accessibility, 'pmr' as AccessibilityOption) })}>
+                            ♿ PMR
+                          </Pill>
+                          <Pill active={filters.accessibility.includes('poussette')} onClick={() => set({ accessibility: toggle(filters.accessibility, 'poussette' as AccessibilityOption) })}>
+                            🍼 Poussette
+                          </Pill>
+                        </div>
+                      </AccordionRow>
 
-                    <AccordionRow label="Animaux" count={filters.animals ? 1 : 0} isOpen={mobileSection === 'animals'} onToggle={() => toggleMobileSection('animals')}>
-                      <div className="flex flex-wrap gap-2">
-                        <Pill active={filters.animals} onClick={() => set({ animals: !filters.animals })}>
-                          🐾 Animaux autorisés
-                        </Pill>
-                      </div>
-                    </AccordionRow>
+                      <AccordionRow label="Confort" count={filters.comfort.length} isOpen={mobileSection === 'comfort'} onToggle={() => toggleMobileSection('comfort')}>
+                        <div className="flex flex-wrap gap-2">
+                          <Pill active={filters.comfort.includes('toilettes')} onClick={() => set({ comfort: toggle(filters.comfort, 'toilettes' as ComfortOption) })}>
+                            🚻 Toilettes
+                          </Pill>
+                          <Pill active={filters.comfort.includes('cafe')} onClick={() => set({ comfort: toggle(filters.comfort, 'cafe' as ComfortOption) })}>
+                            ☕ Café sur place
+                          </Pill>
+                        </div>
+                      </AccordionRow>
 
-                    {/* Bottom spacer for sticky bar */}
-                    <div className="h-4" />
-                  </div>
+                      <AccordionRow label="Accès" count={filters.access.length} isOpen={mobileSection === 'access'} onToggle={() => toggleMobileSection('access')}>
+                        <div className="flex flex-wrap gap-2">
+                          <Pill active={filters.access.includes('parking')} onClick={() => set({ access: toggle(filters.access, 'parking' as AccessOption) })}>
+                            🅿️ Parking
+                          </Pill>
+                          <Pill active={filters.access.includes('transports')} onClick={() => set({ access: toggle(filters.access, 'transports' as AccessOption) })}>
+                            🚌 Transports publics
+                          </Pill>
+                        </div>
+                      </AccordionRow>
 
-                  {/* Sticky bottom bar */}
-                  <div className="border-t border-border px-5 py-4 flex gap-3 bg-white">
-                    <button
-                      onClick={() => { onChange({ ...defaultFilters }); setMobileOpen(false) }}
-                      className="flex-1 h-12 rounded-full border border-border text-[15px] font-semibold text-text-primary hover:bg-canvas transition-colors"
-                    >
-                      Supprimer
-                    </button>
-                    <button
-                      onClick={() => setMobileOpen(false)}
-                      className="flex-1 h-12 rounded-full bg-text-primary text-white text-[15px] font-semibold hover:bg-text-primary/90 transition-colors"
-                    >
-                      Voir{resultCount !== undefined ? ` (${resultCount})` : ''}
-                    </button>
-                  </div>
+                      <AccordionRow label="Animaux" count={filters.animals ? 1 : 0} isOpen={mobileSection === 'animals'} onToggle={() => toggleMobileSection('animals')}>
+                        <div className="flex flex-wrap gap-2">
+                          <Pill active={filters.animals} onClick={() => set({ animals: !filters.animals })}>
+                            🐾 Animaux autorisés
+                          </Pill>
+                        </div>
+                      </AccordionRow>
+
+                      {/* Bottom spacer for sticky bar */}
+                      <div className="h-4" />
+                    </div>
+
+                    {/* Sticky bottom bar */}
+                    <div className="border-t border-border px-5 py-4 flex gap-3 bg-white">
+                      <button
+                        onClick={() => { onChange({ ...defaultFilters }); setMobileOpen(false) }}
+                        className="flex-1 h-12 rounded-full border border-border text-[15px] font-semibold text-text-primary hover:bg-canvas transition-colors"
+                      >
+                        Supprimer
+                      </button>
+                      <button
+                        onClick={() => setMobileOpen(false)}
+                        className="flex-1 h-12 rounded-full bg-text-primary text-white text-[15px] font-semibold hover:bg-text-primary/90 transition-colors"
+                      >
+                        Voir{resultCount !== undefined ? ` (${resultCount})` : ''}
+                      </button>
+                    </div>
+                  </motion.div>
                 </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              )}
+            </AnimatePresence>,
+            document.body
+          )}
 
           {/* ═══════════════════════════════════════════════════════════
               DESKTOP — Horizontal chip layout (unchanged)
