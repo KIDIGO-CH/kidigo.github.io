@@ -128,7 +128,7 @@ function RechercheContent() {
           </div>
 
           {/* Filters — always visible */}
-          <FilterBar filters={filters} onChange={setFilters} open={true} />
+          <FilterBar filters={filters} onChange={setFilters} open={true} resultCount={filtered.length} />
         </div>
       </div>
 
