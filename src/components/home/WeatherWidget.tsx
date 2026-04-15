@@ -17,6 +17,7 @@ type WeatherData = {
   tempMin: number
   tempMax: number
   dayName: string
+  dateStr: string
   hourly: HourForecast[]
 }
 
@@ -95,6 +96,7 @@ async function fetchWeather(lat: number, lng: number): Promise<WeatherData | nul
       tempMin: data.daily ? Math.round(data.daily.temperature_2m_min[0]) : Math.round(cw.temperature) - 3,
       tempMax: data.daily ? Math.round(data.daily.temperature_2m_max[0]) : Math.round(cw.temperature) + 3,
       dayName: DAY_NAMES[now.getDay()],
+      dateStr: now.toLocaleDateString('fr-CH', { day: 'numeric', month: 'long' }),
       hourly,
     }
   } catch {
@@ -170,7 +172,7 @@ export function WeatherWidget() {
           <div className="flex-1 p-4 sm:p-5 pb-0 sm:pb-0 flex flex-col min-h-0">
             {/* Header: day + city picker */}
             <div className="flex items-center justify-between mb-2">
-              <p className="text-[11px] font-semibold text-sky-500 uppercase tracking-wide">{weather.dayName}</p>
+              <p className="text-[11px] font-semibold text-sky-500 uppercase tracking-wide">{weather.dayName} {weather.dateStr}</p>
               <div className="relative" ref={pickerRef}>
                 <button
                   onClick={() => setShowPicker(!showPicker)}
