@@ -27,6 +27,7 @@ const PLACEHOLDER_PHRASES = [
   "Anniversaire enfant 5 ans Lausanne",
   "Balade en famille autour du lac",
   "Atelier créatif pour enfant de 4 ans",
+  "J'ai besoin de 2h tranquille",
 ]
 
 function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
