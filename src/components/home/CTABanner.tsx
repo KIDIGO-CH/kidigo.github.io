@@ -41,15 +41,7 @@ export function CTABanner() {
                   size="lg"
                   className="bg-white/15 text-white hover:bg-white/25 border-0 shadow-none"
                 >
-                  Partager une activité
-                </Button>
-              </Link>
-              <Link href="/organisateurs">
-                <Button
-                  size="lg"
-                  className="bg-white/15 text-white hover:bg-white/25 border-0 shadow-none"
-                >
-                  Je suis organisateur
+                  Partager un lieu
                 </Button>
               </Link>
             </div>
