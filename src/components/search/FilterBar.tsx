@@ -4,8 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  X, ChevronDown, ChevronRight, SlidersHorizontal,
-  LayoutGrid, Baby, Coins, Clock, ShieldCheck,
+  X, ChevronDown, ChevronRight,
   Accessibility, Sofa, Car, PawPrint,
 } from 'lucide-react'
 import { categories } from '@/lib/data'
@@ -264,7 +263,7 @@ export function FilterBar({ filters, onChange, open, resultCount }: FilterBarPro
                   : 'bg-white/80 backdrop-blur-sm border-border/60 text-text-primary'
               }`}
             >
-              <SlidersHorizontal size={14} />
+              <span className="text-[14px]">⚙️</span>
               Filtrer et trier
               {totalActive > 0 && (
                 <span className="w-[20px] h-[20px] rounded-full bg-white/25 text-[11px] font-bold flex items-center justify-center">
@@ -465,12 +464,12 @@ export function FilterBar({ filters, onChange, open, resultCount }: FilterBarPro
 
             {/* Level 1 — Filter chips */}
             <div className="flex flex-wrap gap-2 items-center">
-              <FilterChip icon={<LayoutGrid size={13} />} label="Catégorie" activeCount={filters.categories.length} isOpen={openGroup === 'category'} onToggle={() => toggleGroup('category')} />
-              <FilterChip icon={<Baby size={13} />} label="Âge" activeCount={filters.ages.length} isOpen={openGroup === 'age'} onToggle={() => toggleGroup('age')} />
-              <FilterChip icon={<Coins size={13} />} label="Prix" activeCount={filters.prices.length} isOpen={openGroup === 'price'} onToggle={() => toggleGroup('price')} />
-              <FilterChip icon={<Clock size={13} />} label="Quand" activeCount={filters.dateFilter ? 1 : 0} isOpen={openGroup === 'quand'} onToggle={() => toggleGroup('quand')} />
+              <FilterChip icon={<span className="text-[14px]">🏷️</span>} label="Catégorie" activeCount={filters.categories.length} isOpen={openGroup === 'category'} onToggle={() => toggleGroup('category')} />
+              <FilterChip icon={<span className="text-[14px]">👶</span>} label="Âge" activeCount={filters.ages.length} isOpen={openGroup === 'age'} onToggle={() => toggleGroup('age')} />
+              <FilterChip icon={<span className="text-[14px]">💰</span>} label="Prix" activeCount={filters.prices.length} isOpen={openGroup === 'price'} onToggle={() => toggleGroup('price')} />
+              <FilterChip icon={<span className="text-[14px]">📅</span>} label="Quand" activeCount={filters.dateFilter ? 1 : 0} isOpen={openGroup === 'quand'} onToggle={() => toggleGroup('quand')} />
 
-              <FilterChip icon={<ShieldCheck size={13} />} label="Encadré" activeCount={filters.encadre.length} isOpen={openGroup === 'encadre'} onToggle={() => toggleGroup('encadre')} />
+              <FilterChip icon={<span className="text-[14px]">🛡️</span>} label="Encadré" activeCount={filters.encadre.length} isOpen={openGroup === 'encadre'} onToggle={() => toggleGroup('encadre')} />
 
               {/* Advanced toggle */}
               <button
@@ -481,7 +480,7 @@ export function FilterBar({ filters, onChange, open, resultCount }: FilterBarPro
                     : 'bg-white/80 backdrop-blur-sm border-border/60 text-text-primary hover:border-accent/40 hover:bg-white'
                 }`}
               >
-                <SlidersHorizontal size={13} />
+                <span className="text-[14px]">⚙️</span>
                 + Filtres
                 {advancedCount > 0 && (
                   <span className="w-[18px] h-[18px] rounded-full bg-white/25 text-[10px] font-bold flex items-center justify-center">
