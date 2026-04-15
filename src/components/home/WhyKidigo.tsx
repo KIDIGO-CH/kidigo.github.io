@@ -51,10 +51,10 @@ export function WhyKidigo() {
             className="font-display font-black text-text-primary leading-tight mb-4"
             style={{ fontSize: 'clamp(1.8rem, 4vw, 3.2rem)' }}
           >
-            Une communauté de parents, un outil pensé pour vous
+            Pour répondre facilement et rapidement à la&nbsp;question
           </h2>
-          <p className="text-[16px] text-text-secondary leading-relaxed">
-            KIDIGO n'est pas qu'un annuaire. C'est une plateforme communautaire faite par des parents, pour les parents — où chacun partage, découvre et recommande.
+          <p className="text-[18px] sm:text-[22px] text-accent font-display font-bold italic leading-snug">
+            &laquo;&nbsp;Qu&rsquo;est-ce qu&rsquo;on fait aujourd&rsquo;hui avec les enfants&nbsp;?&nbsp;&raquo;
           </p>
         </motion.div>
 

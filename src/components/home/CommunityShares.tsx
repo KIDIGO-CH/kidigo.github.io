@@ -107,7 +107,7 @@ function CommunityCard({ place, index }: { place: typeof COMMUNITY_PLACES[0]; in
 
           {/* Badge partagé par un parent */}
           <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
-            <span className="inline-flex items-center gap-1 sm:gap-1.5 bg-blue-500 text-white text-[9px] sm:text-[11px] font-semibold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full shadow-sm">
+            <span className="inline-flex items-center gap-1 sm:gap-1.5 bg-[#1E3A8A] text-white text-[9px] sm:text-[11px] font-semibold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full shadow-sm">
               <Users size={9} className="sm:w-[11px] sm:h-[11px]" />
               <span className="hidden sm:inline">Partagé par un parent</span>
               <span className="sm:hidden">Communauté</span>
@@ -123,12 +123,12 @@ function CommunityCard({ place, index }: { place: typeof COMMUNITY_PLACES[0]; in
         {/* Content */}
         <div className="p-3 sm:p-4 flex-1 flex flex-col">
           {/* Category */}
-          <span className="text-[10px] sm:text-[11px] font-medium text-blue-500 tracking-wide uppercase mb-1 sm:mb-1.5 truncate">
+          <span className="text-[10px] sm:text-[11px] font-medium text-[#1E3A8A] tracking-wide uppercase mb-1 sm:mb-1.5 truncate">
             {place.category}
           </span>
 
           {/* Name */}
-          <h3 className="font-display font-bold text-[13px] sm:text-[15px] text-text-primary leading-snug mb-1.5 sm:mb-2 group-hover:text-blue-500 transition-colors line-clamp-2">
+          <h3 className="font-display font-bold text-[13px] sm:text-[15px] text-text-primary leading-snug mb-1.5 sm:mb-2 group-hover:text-[#1E3A8A] transition-colors line-clamp-2">
             {place.name}
           </h3>
 
@@ -186,7 +186,7 @@ export function CommunityShares() {
           transition={{ type: 'spring', stiffness: 100, damping: 20 }}
         >
           <div>
-            <p className="text-[12px] font-medium text-blue-600 uppercase tracking-[0.15em] mb-3">Partages de la communauté</p>
+            <p className="text-[12px] font-medium text-[#1E3A8A] uppercase tracking-[0.15em] mb-3">Partages de la communauté</p>
             <h2
               className="font-display font-black text-text-primary leading-tight"
               style={{ fontSize: 'clamp(1.6rem, 3.5vw, 2.8rem)' }}
@@ -199,7 +199,7 @@ export function CommunityShares() {
           </div>
           <Link
             href="/partager"
-            className="hidden md:flex items-center gap-2 text-[13px] font-medium text-blue-600 hover:gap-3 transition-all duration-200"
+            className="hidden md:flex items-center gap-2 text-[13px] font-medium text-[#1E3A8A] hover:gap-3 transition-all duration-200"
           >
             Partager un lieu <ArrowRight size={14} />
           </Link>
@@ -214,7 +214,7 @@ export function CommunityShares() {
         <div className="mt-8 flex justify-center md:hidden">
           <Link
             href="/partager"
-            className="flex items-center gap-2 text-[13px] font-medium text-blue-600 border border-blue-300 px-5 py-2.5 rounded-full hover:bg-blue-50 transition-all duration-200"
+            className="flex items-center gap-2 text-[13px] font-medium text-[#1E3A8A] border border-[#1E3A8A]/30 px-5 py-2.5 rounded-full hover:bg-blue-50 transition-all duration-200"
           >
             Partager un lieu <ArrowRight size={14} />
           </Link>
