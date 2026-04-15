@@ -64,6 +64,38 @@ function RechercheContent() {
       const match = locations.find(l => (l.type === 'canton' ? l.locality : `${l.npa} ${l.locality}`) === lieu)
       if (match) setLocationFilter(match)
     }
+
+    // Restore filters from URL
+    const restored: Partial<Filters> = {}
+    const cat = searchParams.get('cat')
+    if (cat) restored.categories = cat.split(',') as Filters['categories']
+    const age = searchParams.get('age')
+    if (age) restored.ages = age.split(',') as Filters['ages']
+    const prix = searchParams.get('prix')
+    if (prix) restored.prices = prix.split(',') as Filters['prices']
+    const date = searchParams.get('date')
+    if (date) restored.dateFilter = date
+    const nearby = searchParams.get('nearby')
+    if (nearby) {
+      const [km, lat, lng] = nearby.split(',').map(Number)
+      restored.nearbyKm = km
+      restored.userLat = lat
+      restored.userLng = lng
+    }
+    const encadre = searchParams.get('encadre')
+    if (encadre) restored.encadre = encadre.split(',') as Filters['encadre']
+    const access = searchParams.get('access')
+    if (access) restored.accessibility = access.split(',') as Filters['accessibility']
+    const confort = searchParams.get('confort')
+    if (confort) restored.comfort = confort.split(',') as Filters['comfort']
+    const acces = searchParams.get('acces')
+    if (acces) restored.access = acces.split(',') as Filters['access']
+    const animaux = searchParams.get('animaux')
+    if (animaux) restored.animals = true
+
+    if (Object.keys(restored).length > 0) {
+      setFilters(f => ({ ...f, ...restored }))
+    }
   }, [searchParams])
 
   const handleLocationChange = (label: string, loc: Location | null) => {

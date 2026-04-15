@@ -123,6 +123,18 @@ export function Hero() {
     const params = new URLSearchParams()
     if (query) params.set('q', query)
     if (locationLabel) params.set('lieu', locationLabel)
+    if (filters.categories.length > 0) params.set('cat', filters.categories.join(','))
+    if (filters.ages.length > 0) params.set('age', filters.ages.join(','))
+    if (filters.prices.length > 0) params.set('prix', filters.prices.join(','))
+    if (filters.dateFilter) params.set('date', filters.dateFilter)
+    if (filters.nearbyKm !== null && filters.userLat !== null && filters.userLng !== null) {
+      params.set('nearby', `${filters.nearbyKm},${filters.userLat},${filters.userLng}`)
+    }
+    if (filters.encadre.length > 0) params.set('encadre', filters.encadre.join(','))
+    if (filters.accessibility.length > 0) params.set('access', filters.accessibility.join(','))
+    if (filters.comfort.length > 0) params.set('confort', filters.comfort.join(','))
+    if (filters.access.length > 0) params.set('acces', filters.access.join(','))
+    if (filters.animals) params.set('animaux', '1')
     router.push(`/recherche?${params.toString()}`)
   }
 
