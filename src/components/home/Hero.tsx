@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, Sparkles, Plus, Heart } from 'lucide-react'
+import { Search, Sparkles, Plus, Heart, Navigation } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { LocationSearch } from '@/components/ui/LocationSearch'
 import { WeatherWidget } from '@/components/home/WeatherWidget'
@@ -53,6 +53,7 @@ export function Hero() {
   const [filters, setFilters] = useState<Filters>({ ...defaultFilters })
   const [phraseIndex, setPhraseIndex] = useState(0)
   const [isFocused, setIsFocused] = useState(false)
+  const [locatingNearby, setLocatingNearby] = useState(false)
   const [nearbyActivities, setNearbyActivities] = useState<Activity[]>(() =>
     sortByProximity(allActivities, DEFAULT_LAT, DEFAULT_LNG)
   )
@@ -101,6 +102,22 @@ export function Hero() {
   }, [topRated.length])
 
   const coupDeCoeur = topRated[coeurIndex] || allActivities[0]
+
+  const handleNearby = () => {
+    if (filters.nearbyKm !== null) {
+      setFilters(f => ({ ...f, nearbyKm: null, userLat: null, userLng: null }))
+      return
+    }
+    setLocatingNearby(true)
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setFilters(f => ({ ...f, nearbyKm: 20, userLat: pos.coords.latitude, userLng: pos.coords.longitude }))
+        setLocatingNearby(false)
+      },
+      () => setLocatingNearby(false),
+      { enableHighAccuracy: true, timeout: 8000 }
+    )
+  }
 
   const handleSearch = () => {
     const params = new URLSearchParams()
@@ -207,19 +224,33 @@ export function Hero() {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-2">
-              {/* Location search */}
+            {/* Location + Autour de moi */}
+            <div className="flex items-center gap-2 mb-2">
               <LocationSearch
                 value={locationLabel}
                 onChange={(label) => setLocationLabel(label)}
-                className="flex-1"
+                className="flex-1 min-w-0"
+                compact
               />
-
-              {/* Submit */}
-              <Button onClick={handleSearch} size="lg" className="sm:px-8 rounded-2xl">
-                Rechercher
-              </Button>
+              <button
+                type="button"
+                onClick={handleNearby}
+                className={`flex-shrink-0 h-[42px] px-3 rounded-2xl border transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap font-medium text-[13px] ${
+                  filters.nearbyKm !== null
+                    ? 'bg-accent text-white border-accent shadow-md shadow-accent/20'
+                    : 'bg-canvas border-border text-text-primary hover:border-accent/40'
+                }`}
+              >
+                <Navigation size={13} className={locatingNearby ? 'animate-pulse' : ''} />
+                <span className="hidden sm:inline">{locatingNearby ? 'Localisation…' : filters.nearbyKm !== null ? `≤ ${filters.nearbyKm} km` : 'Autour de moi'}</span>
+                <span className="sm:hidden">{locatingNearby ? '…' : filters.nearbyKm !== null ? `${filters.nearbyKm} km` : 'Près de moi'}</span>
+              </button>
             </div>
+
+            {/* Submit */}
+            <Button onClick={handleSearch} size="lg" className="w-full sm:px-8 rounded-2xl">
+              Rechercher
+            </Button>
           </motion.div>
 
           {/* Filters */}
