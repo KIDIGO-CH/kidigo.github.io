@@ -409,16 +409,16 @@ export function Hero() {
           {/* Partager un lieu */}
           <a
             href="/partager"
-            className="col-span-2 rounded-2xl bg-gradient-to-r from-accent/5 via-accent-subtle to-accent/10 border border-accent/20 flex items-center gap-3 p-3 shadow-card active:scale-[0.98] transition-all group"
+            className="col-span-2 rounded-2xl bg-accent flex items-center gap-3 p-4 shadow-md active:scale-[0.98] transition-all group"
           >
-            <div className="w-10 h-10 rounded-lg bg-accent/15 flex items-center justify-center flex-shrink-0 group-hover:bg-accent/25 transition-colors">
-              <Plus size={18} className="text-accent" />
+            <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
+              <Plus size={20} className="text-white" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-display font-bold text-[13px] text-text-primary leading-tight">Partager un lieu</p>
-              <p className="text-[11px] text-text-secondary mt-0.5">Suggérez une activité kids friendly</p>
+              <p className="font-display font-bold text-[14px] text-white leading-tight">Partager un lieu</p>
+              <p className="text-[11px] text-white/70 mt-0.5">Partagez vos bons plans avec la communauté</p>
             </div>
-            <span className="text-accent text-[16px] flex-shrink-0">→</span>
+            <span className="text-white text-[18px] flex-shrink-0 group-active:translate-x-0.5 transition-transform">→</span>
           </a>
 
           {/* Weather */}
