@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { MapPin, ChevronDown } from 'lucide-react'
+import { MapPin, ChevronDown, CloudSun } from 'lucide-react'
 
 type HourForecast = {
   hour: string
@@ -262,6 +262,19 @@ export function WeatherWidget() {
               </div>
             </div>
           )}
+
+          {/* Conseil Kidigo */}
+          <div className="relative z-10 mx-3 mb-3 mt-2 flex items-center gap-2 bg-white/25 rounded-xl px-3 py-2 border border-white/30">
+            <CloudSun size={14} className="text-sky-600 flex-shrink-0" />
+            <p className="text-[11px] text-text-secondary leading-snug">
+              <span className="font-semibold text-sky-700">Conseil Kidigo : </span>
+              {weather.temperature >= 20
+                ? 'Idéal pour les activités en plein air !'
+                : weather.temperature >= 10
+                ? 'Pensez à prévoir une petite veste pour les enfants.'
+                : 'Parfait pour les activités en intérieur !'}
+            </p>
+          </div>
         </>
       ) : null}
     </div>
