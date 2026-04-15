@@ -307,9 +307,9 @@ export function Hero() {
             <div className="w-16 h-16 rounded-2xl bg-accent/15 flex items-center justify-center mb-4 group-hover:bg-accent/25 group-hover:scale-110 transition-all duration-300">
               <Plus size={28} className="text-accent" />
             </div>
-            <p className="font-display font-bold text-[20px] text-text-primary leading-tight text-center mb-2">Partager un lieu et soyez récompensé</p>
+            <p className="font-display font-bold text-[20px] text-text-primary leading-tight text-center mb-2">Partager un lieu</p>
             <p className="text-[13px] text-text-secondary text-center max-w-[200px] leading-relaxed">
-              Vous connaissez un endroit kids friendly ? Partagez-le avec la communauté !
+              Partagez vos bons plans kids friendly et soyez récompensé !
             </p>
             <span className="mt-4 text-[12px] font-medium text-accent flex items-center gap-1 group-hover:gap-2 transition-all">
               Suggérer →
@@ -415,8 +415,8 @@ export function Hero() {
               <Plus size={20} className="text-white" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-display font-bold text-[14px] text-white leading-tight">Partager un lieu et soyez récompensé</p>
-              <p className="text-[11px] text-white/70 mt-0.5">Partagez vos bons plans avec la communauté</p>
+              <p className="font-display font-bold text-[14px] text-white leading-tight">Partager un lieu</p>
+              <p className="text-[11px] text-white/70 mt-0.5">Partagez vos bons plans et soyez récompensé</p>
             </div>
             <span className="text-white text-[18px] flex-shrink-0 group-active:translate-x-0.5 transition-transform">→</span>
           </a>

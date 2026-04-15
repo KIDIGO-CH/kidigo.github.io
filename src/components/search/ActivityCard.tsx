@@ -48,7 +48,7 @@ export function ActivityCard({ activity, index = 0 }: ActivityCardProps) {
             {/* Top badges */}
             <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
               {activity.isCoupDeCoeur && (
-                <Badge variant="accent" size="sm">❤️ Coup de cœur</Badge>
+                <Badge variant="accent" size="sm">Coup de c&#339;ur ❤️</Badge>
               )}
               {activity.isNew && (
                 <Badge variant="accent" size="sm">Nouveau</Badge>
