@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
 import { categories } from '@/lib/data'
 
-const MOBILE_INITIAL_COUNT = 4
+const MOBILE_INITIAL_COUNT = 6
 
 export function CategoryGrid() {
   const router = useRouter()

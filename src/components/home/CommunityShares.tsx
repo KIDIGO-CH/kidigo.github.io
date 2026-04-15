@@ -4,6 +4,29 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { MapPin, ArrowRight, Users, Heart } from 'lucide-react'
 
+const CANTON_COLORS: Record<string, string> = {
+  FR: '#3B82F6', // blue-500
+  VD: '#6366F1', // indigo-500
+  GE: '#8B5CF6', // violet-500
+  NE: '#0EA5E9', // sky-500
+  VS: '#14B8A6', // teal-500
+  BE: '#F59E0B', // amber-500
+  JU: '#EC4899', // pink-500
+}
+
+function getCantonColor(canton: string) {
+  return CANTON_COLORS[canton] || '#3B82F6'
+}
+
+function getInitials(name: string) {
+  return name
+    .split(' ')
+    .map(w => w[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
+}
+
 const COMMUNITY_PLACES = [
   {
     id: 'com-1',
@@ -14,7 +37,6 @@ const COMMUNITY_PLACES = [
     image: 'https://picsum.photos/seed/com-cafe/800/600',
     description: 'Un café super accueillant avec un coin jeux immense. Les enfants adorent et les parents peuvent souffler tranquillement.',
     parentName: 'Marie L.',
-    parentAvatar: 'https://picsum.photos/seed/parent-marie/80/80',
     ageRange: 'Tous âges',
     price: 'Consommation',
     tags: ['Coin jeux', 'Chaises hautes', 'Brunch weekend'],
@@ -28,7 +50,6 @@ const COMMUNITY_PLACES = [
     image: 'https://picsum.photos/seed/com-foret/800/600',
     description: 'Un sentier magique avec des petites cabanes et des sculptures en bois. Parfait pour une balade de 45 minutes avec des petits.',
     parentName: 'Thomas R.',
-    parentAvatar: 'https://picsum.photos/seed/parent-thomas/80/80',
     ageRange: '2 – 8 ans',
     price: 'Gratuit',
     tags: ['Extérieur', 'Poussette OK', 'Gratuit'],
@@ -42,7 +63,6 @@ const COMMUNITY_PLACES = [
     image: 'https://picsum.photos/seed/com-parc/800/600',
     description: 'Grande place de jeux rénovée avec toboggans, balançoires et un bac à sable. Bancs ombragés pour les parents.',
     parentName: 'Sophie M.',
-    parentAvatar: 'https://picsum.photos/seed/parent-sophie/80/80',
     ageRange: '1 – 10 ans',
     price: 'Gratuit',
     tags: ['Ombragé', 'Toilettes', 'Parking'],
@@ -56,7 +76,6 @@ const COMMUNITY_PLACES = [
     image: 'https://picsum.photos/seed/com-ferme/800/600',
     description: 'On peut nourrir les chèvres et caresser les lapins. Mes enfants en parlent encore des semaines après !',
     parentName: 'Julie D.',
-    parentAvatar: 'https://picsum.photos/seed/parent-julie/80/80',
     ageRange: '2 – 12 ans',
     price: '5 CHF',
     tags: ['Animaux', 'Pique-nique', 'Accessible'],
@@ -64,6 +83,9 @@ const COMMUNITY_PLACES = [
 ]
 
 function CommunityCard({ place, index }: { place: typeof COMMUNITY_PLACES[0]; index: number }) {
+  const cantonColor = getCantonColor(place.canton)
+  const initials = getInitials(place.parentName)
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -85,7 +107,7 @@ function CommunityCard({ place, index }: { place: typeof COMMUNITY_PLACES[0]; in
 
           {/* Badge partagé par un parent */}
           <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
-            <span className="inline-flex items-center gap-1 sm:gap-1.5 bg-green-500 text-white text-[9px] sm:text-[11px] font-semibold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full shadow-sm">
+            <span className="inline-flex items-center gap-1 sm:gap-1.5 bg-blue-500 text-white text-[9px] sm:text-[11px] font-semibold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full shadow-sm">
               <Users size={9} className="sm:w-[11px] sm:h-[11px]" />
               <span className="hidden sm:inline">Partagé par un parent</span>
               <span className="sm:hidden">Communauté</span>
@@ -101,12 +123,12 @@ function CommunityCard({ place, index }: { place: typeof COMMUNITY_PLACES[0]; in
         {/* Content */}
         <div className="p-3 sm:p-4 flex-1 flex flex-col">
           {/* Category */}
-          <span className="text-[10px] sm:text-[11px] font-medium text-accent tracking-wide uppercase mb-1 sm:mb-1.5 truncate">
+          <span className="text-[10px] sm:text-[11px] font-medium text-blue-500 tracking-wide uppercase mb-1 sm:mb-1.5 truncate">
             {place.category}
           </span>
 
           {/* Name */}
-          <h3 className="font-display font-bold text-[13px] sm:text-[15px] text-text-primary leading-snug mb-1.5 sm:mb-2 group-hover:text-accent transition-colors line-clamp-2">
+          <h3 className="font-display font-bold text-[13px] sm:text-[15px] text-text-primary leading-snug mb-1.5 sm:mb-2 group-hover:text-blue-500 transition-colors line-clamp-2">
             {place.name}
           </h3>
 
@@ -135,11 +157,13 @@ function CommunityCard({ place, index }: { place: typeof COMMUNITY_PLACES[0]; in
             ))}
           </div>
 
-          {/* Parent info + price */}
+          {/* Parent initials avatar + price */}
           <div className="flex items-center justify-between pt-2 sm:pt-3 border-t border-border mt-auto">
-            <div className="flex items-center gap-1.5 sm:gap-2">
-              <img src={place.parentAvatar} alt={place.parentName} className="w-5 h-5 sm:w-6 sm:h-6 rounded-full object-cover" />
-              <span className="text-[11px] sm:text-[12px] text-text-secondary">{place.parentName}</span>
+            <div
+              className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center flex-shrink-0"
+              style={{ backgroundColor: cantonColor }}
+            >
+              <span className="text-[9px] sm:text-[10px] font-bold text-white leading-none">{initials}</span>
             </div>
             <span className="text-[12px] sm:text-[13px] font-bold text-text-primary font-display">{place.price}</span>
           </div>
@@ -162,7 +186,7 @@ export function CommunityShares() {
           transition={{ type: 'spring', stiffness: 100, damping: 20 }}
         >
           <div>
-            <p className="text-[12px] font-medium text-green-600 uppercase tracking-[0.15em] mb-3">Partages de la communauté</p>
+            <p className="text-[12px] font-medium text-blue-600 uppercase tracking-[0.15em] mb-3">Partages de la communauté</p>
             <h2
               className="font-display font-black text-text-primary leading-tight"
               style={{ fontSize: 'clamp(1.6rem, 3.5vw, 2.8rem)' }}
@@ -175,7 +199,7 @@ export function CommunityShares() {
           </div>
           <Link
             href="/partager"
-            className="hidden md:flex items-center gap-2 text-[13px] font-medium text-green-600 hover:gap-3 transition-all duration-200"
+            className="hidden md:flex items-center gap-2 text-[13px] font-medium text-blue-600 hover:gap-3 transition-all duration-200"
           >
             Partager un lieu <ArrowRight size={14} />
           </Link>
@@ -190,7 +214,7 @@ export function CommunityShares() {
         <div className="mt-8 flex justify-center md:hidden">
           <Link
             href="/partager"
-            className="flex items-center gap-2 text-[13px] font-medium text-green-600 border border-green-300 px-5 py-2.5 rounded-full hover:bg-green-50 transition-all duration-200"
+            className="flex items-center gap-2 text-[13px] font-medium text-blue-600 border border-blue-300 px-5 py-2.5 rounded-full hover:bg-blue-50 transition-all duration-200"
           >
             Partager un lieu <ArrowRight size={14} />
           </Link>
