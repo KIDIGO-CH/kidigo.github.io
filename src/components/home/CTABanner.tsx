@@ -39,9 +39,9 @@ export function CTABanner() {
               <Link href="/partager">
                 <Button
                   size="lg"
-                  className="bg-white/15 text-white hover:bg-white/25 border-0 shadow-none"
+                  className="bg-white text-accent hover:bg-white/90 border-0 shadow-md font-bold"
                 >
-                  Partager un lieu
+                  Partager un lieu <ArrowRight size={16} />
                 </Button>
               </Link>
             </div>
