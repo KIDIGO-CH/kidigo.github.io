@@ -329,7 +329,7 @@ export function FilterBar({ filters, onChange, open, resultCount }: FilterBarPro
                     {/* Scrollable accordion sections */}
                     <div className="flex-1 overflow-y-auto px-5 overscroll-contain">
 
-                      <AccordionRow label="Catégorie" count={filters.categories.length} isOpen={mobileSection === 'category'} onToggle={() => toggleMobileSection('category')}>
+                      <AccordionRow label="🏷️ Catégorie" count={filters.categories.length} isOpen={mobileSection === 'category'} onToggle={() => toggleMobileSection('category')}>
                         <div className="flex flex-wrap gap-2">
                           {categories.map(c => (
                             <Pill key={c.name} active={filters.categories.includes(c.name)} onClick={() => set({ categories: toggle(filters.categories, c.name) })} color={c.color}>
@@ -339,7 +339,7 @@ export function FilterBar({ filters, onChange, open, resultCount }: FilterBarPro
                         </div>
                       </AccordionRow>
 
-                      <AccordionRow label="Âge" count={filters.ages.length} isOpen={mobileSection === 'age'} onToggle={() => toggleMobileSection('age')}>
+                      <AccordionRow label="👶 Âge" count={filters.ages.length} isOpen={mobileSection === 'age'} onToggle={() => toggleMobileSection('age')}>
                         <div className="flex flex-wrap gap-2">
                           {AGE_OPTIONS.map(({ value, label, emoji }) => (
                             <Pill key={value} active={filters.ages.includes(value)} onClick={() => set({ ages: toggle(filters.ages, value) })}>
@@ -349,7 +349,7 @@ export function FilterBar({ filters, onChange, open, resultCount }: FilterBarPro
                         </div>
                       </AccordionRow>
 
-                      <AccordionRow label="Prix" count={filters.prices.length} isOpen={mobileSection === 'price'} onToggle={() => toggleMobileSection('price')}>
+                      <AccordionRow label="💰 Prix" count={filters.prices.length} isOpen={mobileSection === 'price'} onToggle={() => toggleMobileSection('price')}>
                         <div className="flex flex-wrap gap-2">
                           {PRICE_OPTIONS.map(({ value, label, emoji }) => (
                             <Pill key={value} active={filters.prices.includes(value)} onClick={() => set({ prices: toggle(filters.prices, value) })}>
@@ -359,7 +359,7 @@ export function FilterBar({ filters, onChange, open, resultCount }: FilterBarPro
                         </div>
                       </AccordionRow>
 
-                      <AccordionRow label="Quand" count={filters.dateFilter ? 1 : 0} isOpen={mobileSection === 'quand'} onToggle={() => toggleMobileSection('quand')}>
+                      <AccordionRow label="📅 Quand" count={filters.dateFilter ? 1 : 0} isOpen={mobileSection === 'quand'} onToggle={() => toggleMobileSection('quand')}>
                         <div className="flex flex-wrap gap-2">
                           <Pill active={filters.dateFilter === 'today'} onClick={() => set({ dateFilter: filters.dateFilter === 'today' ? null : 'today' })}>
                             <span className="text-[15px]">📅</span> Aujourd&apos;hui
@@ -380,7 +380,7 @@ export function FilterBar({ filters, onChange, open, resultCount }: FilterBarPro
                         </div>
                       </AccordionRow>
 
-                      <AccordionRow label="Encadrement" count={filters.encadre.length} isOpen={mobileSection === 'encadre'} onToggle={() => toggleMobileSection('encadre')}>
+                      <AccordionRow label="🛡️ Encadrement" count={filters.encadre.length} isOpen={mobileSection === 'encadre'} onToggle={() => toggleMobileSection('encadre')}>
                         <div className="flex flex-wrap gap-2">
                           {ENCADRE_OPTIONS.map(({ value, label, emoji }) => (
                             <Pill key={value} active={filters.encadre.includes(value)} onClick={() => set({ encadre: toggle(filters.encadre, value) })}>
@@ -390,7 +390,7 @@ export function FilterBar({ filters, onChange, open, resultCount }: FilterBarPro
                         </div>
                       </AccordionRow>
 
-                      <AccordionRow label="Accessibilité" count={filters.accessibility.length} isOpen={mobileSection === 'accessibility'} onToggle={() => toggleMobileSection('accessibility')}>
+                      <AccordionRow label="♿ Accessibilité" count={filters.accessibility.length} isOpen={mobileSection === 'accessibility'} onToggle={() => toggleMobileSection('accessibility')}>
                         <div className="flex flex-wrap gap-2">
                           <Pill active={filters.accessibility.includes('pmr')} onClick={() => set({ accessibility: toggle(filters.accessibility, 'pmr' as AccessibilityOption) })}>
                             ♿ PMR
@@ -401,7 +401,7 @@ export function FilterBar({ filters, onChange, open, resultCount }: FilterBarPro
                         </div>
                       </AccordionRow>
 
-                      <AccordionRow label="Confort" count={filters.comfort.length} isOpen={mobileSection === 'comfort'} onToggle={() => toggleMobileSection('comfort')}>
+                      <AccordionRow label="☕ Confort" count={filters.comfort.length} isOpen={mobileSection === 'comfort'} onToggle={() => toggleMobileSection('comfort')}>
                         <div className="flex flex-wrap gap-2">
                           <Pill active={filters.comfort.includes('toilettes')} onClick={() => set({ comfort: toggle(filters.comfort, 'toilettes' as ComfortOption) })}>
                             🚻 Toilettes
@@ -412,7 +412,7 @@ export function FilterBar({ filters, onChange, open, resultCount }: FilterBarPro
                         </div>
                       </AccordionRow>
 
-                      <AccordionRow label="Accès" count={filters.access.length} isOpen={mobileSection === 'access'} onToggle={() => toggleMobileSection('access')}>
+                      <AccordionRow label="🚗 Accès" count={filters.access.length} isOpen={mobileSection === 'access'} onToggle={() => toggleMobileSection('access')}>
                         <div className="flex flex-wrap gap-2">
                           <Pill active={filters.access.includes('parking')} onClick={() => set({ access: toggle(filters.access, 'parking' as AccessOption) })}>
                             🅿️ Parking
@@ -423,7 +423,7 @@ export function FilterBar({ filters, onChange, open, resultCount }: FilterBarPro
                         </div>
                       </AccordionRow>
 
-                      <AccordionRow label="Animaux" count={filters.animals ? 1 : 0} isOpen={mobileSection === 'animals'} onToggle={() => toggleMobileSection('animals')}>
+                      <AccordionRow label="🐾 Animaux" count={filters.animals ? 1 : 0} isOpen={mobileSection === 'animals'} onToggle={() => toggleMobileSection('animals')}>
                         <div className="flex flex-wrap gap-2">
                           <Pill active={filters.animals} onClick={() => set({ animals: !filters.animals })}>
                             🐾 Animaux autorisés
