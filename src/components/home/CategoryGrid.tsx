@@ -27,29 +27,28 @@ export function CategoryGrid() {
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
+        <div className="flex flex-wrap gap-2 sm:gap-2.5">
           {categories.map((cat, i) => (
             <motion.button
               key={cat.name}
               onClick={() => router.push(`/recherche?categorie=${encodeURIComponent(cat.name)}`)}
-              className="group bg-elevated rounded-3xl p-5 text-left border border-border hover:border-accent/30 hover:shadow-card-hover transition-all duration-300 hover:-translate-y-0.5"
-              initial={{ opacity: 0, y: 16 }}
+              className="group flex items-center gap-2 bg-elevated rounded-full pl-1.5 pr-3.5 py-1.5 border border-border hover:border-accent/30 hover:shadow-card-hover transition-all duration-200"
+              initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-30px' }}
-              transition={{ type: 'spring', stiffness: 100, damping: 20, delay: i * 0.04 }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 100, damping: 20, delay: i * 0.03 }}
+              whileTap={{ scale: 0.97 }}
             >
               <div
-                className="w-10 h-10 rounded-2xl flex items-center justify-center text-xl mb-4"
-                style={{ backgroundColor: `${cat.color}18` }}
+                className="w-8 h-8 rounded-full flex items-center justify-center text-[16px] flex-shrink-0"
+                style={{ backgroundColor: `${cat.color}15` }}
               >
                 {cat.icon}
               </div>
-              <p className="font-display font-bold text-[14px] text-text-primary leading-tight mb-1 group-hover:text-accent transition-colors duration-200">
+              <span className="font-display font-semibold text-[13px] text-text-primary group-hover:text-accent transition-colors whitespace-nowrap">
                 {cat.name}
-              </p>
-              <p className="text-[12px] text-text-muted">{cat.count} activités</p>
+              </span>
+              <span className="text-[11px] text-text-muted">{cat.count}</span>
             </motion.button>
           ))}
         </div>
