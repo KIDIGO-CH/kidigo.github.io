@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Hero } from '@/components/home/Hero'
 import { CategoryGrid } from '@/components/home/CategoryGrid'
 import { FeaturedActivities } from '@/components/home/FeaturedActivities'
+import { CommunityShares } from '@/components/home/CommunityShares'
 import { WhyKidigo } from '@/components/home/WhyKidigo'
 import { Testimonials } from '@/components/home/Testimonials'
 import { CTABanner } from '@/components/home/CTABanner'
@@ -17,6 +18,7 @@ export default function HomePage() {
       <Hero />
       <CategoryGrid />
       <FeaturedActivities />
+      <CommunityShares />
       <WhyKidigo />
       <Testimonials />
       <CTABanner />
