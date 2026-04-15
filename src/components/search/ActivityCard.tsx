@@ -19,13 +19,14 @@ export function ActivityCard({ activity, index = 0 }: ActivityCardProps) {
 
   return (
     <motion.div
+      className="h-full"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
       transition={{ type: 'spring', stiffness: 100, damping: 20, delay: index * 0.05 }}
     >
-      <Link href={`/activite/${activity.slug}`} className="group block">
-        <div className="bg-elevated rounded-3xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1">
+      <Link href={`/activite/${activity.slug}`} className="group block h-full">
+        <div className="bg-elevated rounded-3xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
 
           {/* Image */}
           <div className="relative overflow-hidden aspect-[4/3]">
@@ -84,7 +85,7 @@ export function ActivityCard({ activity, index = 0 }: ActivityCardProps) {
           </div>
 
           {/* Content */}
-          <div className="p-3 sm:p-4">
+          <div className="p-3 sm:p-4 flex-1 flex flex-col">
             {/* Category + age */}
             <div className="flex items-center justify-between mb-1.5 sm:mb-2">
               <span className="text-[10px] sm:text-[11px] font-medium text-accent tracking-wide uppercase truncate">
@@ -117,7 +118,7 @@ export function ActivityCard({ activity, index = 0 }: ActivityCardProps) {
             <StarRating rating={activity.rating} reviewCount={activity.reviewCount} className="mb-2 sm:mb-3" />
 
             {/* Price + slots */}
-            <div className="flex items-center justify-between pt-2 sm:pt-3 border-t border-border">
+            <div className="flex items-center justify-between pt-2 sm:pt-3 border-t border-border mt-auto">
               <div>
                 <span className="text-[14px] sm:text-[16px] font-bold text-text-primary font-display">{activity.price} CHF</span>
                 <span className="hidden sm:inline text-[11px] text-text-secondary ml-1">/ séance</span>

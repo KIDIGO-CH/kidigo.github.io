@@ -240,7 +240,7 @@ export function WeatherWidget() {
           {weather.hourly.length > 0 && (
             <div className="border-t border-white/30 mt-2 min-w-0 relative z-10" style={{ background: 'rgba(255,255,255,0.15)' }}>
               <div
-                className="flex overflow-x-auto px-3 py-2.5 gap-1 scrollbar-hide"
+                className="flex overflow-x-auto px-3 pr-5 py-2.5 gap-1.5 scrollbar-hide"
                 style={{ WebkitOverflowScrolling: 'touch' }}
               >
                 {weather.hourly.map(h => (

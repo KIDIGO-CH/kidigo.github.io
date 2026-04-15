@@ -327,7 +327,7 @@ export function Hero() {
 
         {/* Search box + Weather — full width below grid */}
         <motion.div
-          className="flex gap-4 items-stretch mb-4 lg:mt-8"
+          className="flex gap-4 items-start mb-2 lg:mt-8"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.34 }}
@@ -401,14 +401,14 @@ export function Hero() {
           </div>
 
           {/* Weather — desktop only */}
-          <div className="hidden lg:block w-[340px] flex-shrink-0">
+          <div className="hidden lg:block w-[380px] flex-shrink-0">
             <WeatherWidget />
           </div>
         </motion.div>
 
         {/* Filters */}
         <motion.div
-          className="mb-6 sm:mb-10"
+          className="mb-4 sm:mb-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.40 }}
