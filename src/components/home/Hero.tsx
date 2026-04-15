@@ -196,113 +196,6 @@ export function Hero() {
           >
             100% activités pour enfants, près de chez vous, filtrées en quelques secondes.
           </motion.p>
-
-          {/* Search box + Weather (desktop) */}
-          <motion.div
-            className="flex gap-4 items-stretch mb-4"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.34 }}
-          >
-            {/* Search box */}
-            <div className="bg-elevated rounded-3xl p-2 shadow-card-hover border border-border flex-1 min-w-0">
-              {/* Query input — full width with animated placeholder */}
-              <div className="relative flex items-start gap-3 bg-canvas rounded-2xl px-4 py-3.5 mb-2 min-h-[56px]">
-                <Search size={16} className="text-text-muted flex-shrink-0 mt-0.5" />
-                <div className="flex-1 relative min-h-[36px]">
-                  <input
-                    type="text"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                    className="w-full bg-transparent text-[14px] text-text-primary outline-none relative z-10"
-                  />
-                  {/* Animated rotating placeholder */}
-                  {!query && (
-                    <div className="absolute inset-0 flex items-start pointer-events-none">
-                      <AnimatePresence mode="wait">
-                        <motion.span
-                          key={phraseIndex}
-                          className="text-[14px] text-text-muted leading-[1.4]"
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: isFocused ? 0.5 : 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          transition={{ duration: 0.3 }}
-                        >
-                          {PLACEHOLDER_PHRASES[phraseIndex]}
-                        </motion.span>
-                      </AnimatePresence>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Location + Autour de moi + Submit — single row on desktop */}
-              <div className="flex items-center gap-2">
-                <LocationSearch
-                  value={locationLabel}
-                  onChange={(label) => setLocationLabel(label)}
-                  className="flex-1 min-w-0"
-                  compact
-                />
-                <button
-                  type="button"
-                  onClick={handleNearby}
-                  className={`flex-shrink-0 h-[42px] px-3 rounded-2xl border transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap font-medium text-[13px] ${
-                    filters.nearbyKm !== null
-                      ? 'bg-accent text-white border-accent shadow-md shadow-accent/20'
-                      : 'bg-canvas border-border text-text-primary hover:border-accent/40'
-                  }`}
-                >
-                  <Navigation size={13} className={locatingNearby ? 'animate-pulse' : ''} />
-                  <span className="hidden sm:inline">{locatingNearby ? 'Localisation…' : filters.nearbyKm !== null ? `≤ ${filters.nearbyKm} km` : 'Autour de moi'}</span>
-                  <span className="sm:hidden">{locatingNearby ? '…' : filters.nearbyKm !== null ? `${filters.nearbyKm} km` : 'Près de moi'}</span>
-                </button>
-                <Button onClick={handleSearch} size="lg" className="hidden lg:flex flex-shrink-0 px-8 rounded-2xl">
-                  Rechercher
-                </Button>
-              </div>
-
-              {/* Submit — mobile only (full width) */}
-              <div className="lg:hidden mt-2">
-                <Button onClick={handleSearch} size="lg" className="w-full rounded-2xl">
-                  Rechercher
-                </Button>
-              </div>
-            </div>
-
-            {/* Weather — desktop only, next to search */}
-            <div className="hidden lg:block w-[340px] flex-shrink-0">
-              <WeatherWidget />
-            </div>
-          </motion.div>
-
-          {/* Filters */}
-          <motion.div
-            className="mb-6 sm:mb-10"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.40 }}
-          >
-            <FilterBar filters={filters} onChange={setFilters} open={true} />
-          </motion.div>
-
-          {/* Stats */}
-          <motion.div
-            className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-8 pt-6 sm:pt-8 border-t border-border"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.54 }}
-          >
-            {STAT_ITEMS.map((item) => (
-              <div key={item.label}>
-                <p className="font-display font-black text-[17px] sm:text-[22px] text-text-primary leading-none mb-0.5">{item.value}</p>
-                <p className="text-[10px] sm:text-[11px] text-text-secondary">{item.label}</p>
-              </div>
-            ))}
-          </motion.div>
         </div>
 
         {/* Right — Visual bento (desktop) */}
@@ -431,6 +324,112 @@ export function Hero() {
           </a>
         </motion.div>
         </div>
+
+        {/* Search box + Weather — full width below grid */}
+        <motion.div
+          className="flex gap-4 items-stretch mb-4 lg:mt-8"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.34 }}
+        >
+          {/* Search box */}
+          <div className="bg-elevated rounded-3xl p-2 shadow-card-hover border border-border flex-1 min-w-0">
+            {/* Query input */}
+            <div className="relative flex items-start gap-3 bg-canvas rounded-2xl px-4 py-3.5 mb-2 min-h-[56px]">
+              <Search size={16} className="text-text-muted flex-shrink-0 mt-0.5" />
+              <div className="flex-1 relative min-h-[36px]">
+                <input
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                  className="w-full bg-transparent text-[14px] text-text-primary outline-none relative z-10"
+                />
+                {!query && (
+                  <div className="absolute inset-0 flex items-start pointer-events-none">
+                    <AnimatePresence mode="wait">
+                      <motion.span
+                        key={phraseIndex}
+                        className="text-[14px] text-text-muted leading-[1.4]"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: isFocused ? 0.5 : 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        {PLACEHOLDER_PHRASES[phraseIndex]}
+                      </motion.span>
+                    </AnimatePresence>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Location + Autour de moi + Submit */}
+            <div className="flex items-center gap-2">
+              <LocationSearch
+                value={locationLabel}
+                onChange={(label) => setLocationLabel(label)}
+                className="flex-1 min-w-0"
+                compact
+              />
+              <button
+                type="button"
+                onClick={handleNearby}
+                className={`flex-shrink-0 h-[42px] px-3 rounded-2xl border transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap font-medium text-[13px] ${
+                  filters.nearbyKm !== null
+                    ? 'bg-accent text-white border-accent shadow-md shadow-accent/20'
+                    : 'bg-canvas border-border text-text-primary hover:border-accent/40'
+                }`}
+              >
+                <Navigation size={13} className={locatingNearby ? 'animate-pulse' : ''} />
+                <span className="hidden sm:inline">{locatingNearby ? 'Localisation…' : filters.nearbyKm !== null ? `≤ ${filters.nearbyKm} km` : 'Autour de moi'}</span>
+                <span className="sm:hidden">{locatingNearby ? '…' : filters.nearbyKm !== null ? `${filters.nearbyKm} km` : 'Près de moi'}</span>
+              </button>
+              <Button onClick={handleSearch} size="lg" className="hidden lg:flex flex-shrink-0 px-8 rounded-2xl">
+                Rechercher
+              </Button>
+            </div>
+
+            {/* Submit — mobile only */}
+            <div className="lg:hidden mt-2">
+              <Button onClick={handleSearch} size="lg" className="w-full rounded-2xl">
+                Rechercher
+              </Button>
+            </div>
+          </div>
+
+          {/* Weather — desktop only */}
+          <div className="hidden lg:block w-[340px] flex-shrink-0">
+            <WeatherWidget />
+          </div>
+        </motion.div>
+
+        {/* Filters */}
+        <motion.div
+          className="mb-6 sm:mb-10"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.40 }}
+        >
+          <FilterBar filters={filters} onChange={setFilters} open={true} />
+        </motion.div>
+
+        {/* Stats */}
+        <motion.div
+          className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-8 pt-6 sm:pt-8 border-t border-border"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.54 }}
+        >
+          {STAT_ITEMS.map((item) => (
+            <div key={item.label}>
+              <p className="font-display font-black text-[17px] sm:text-[22px] text-text-primary leading-none mb-0.5">{item.value}</p>
+              <p className="text-[10px] sm:text-[11px] text-text-secondary">{item.label}</p>
+            </div>
+          ))}
+        </motion.div>
 
         {/* Mobile bento cards */}
         <motion.div
