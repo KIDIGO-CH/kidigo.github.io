@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { Hero } from '@/components/home/Hero'
-import { WeatherSection } from '@/components/home/WeatherSection'
 import { CategoryGrid } from '@/components/home/CategoryGrid'
 import { FeaturedActivities } from '@/components/home/FeaturedActivities'
 import { CommunityShares } from '@/components/home/CommunityShares'
@@ -17,7 +16,6 @@ export default function HomePage() {
   return (
     <>
       <Hero />
-      <WeatherSection />
       <CategoryGrid />
       <FeaturedActivities />
       <CommunityShares />
