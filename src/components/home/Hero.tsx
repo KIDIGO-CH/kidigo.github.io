@@ -275,6 +275,16 @@ export function Hero() {
             <FilterBar filters={filters} onChange={setFilters} open={true} />
           </motion.div>
 
+          {/* Community message */}
+          <motion.p
+            className="text-[13px] sm:text-[14px] text-text-secondary italic leading-relaxed mb-6 sm:mb-8 max-w-[540px]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.46 }}
+          >
+            Seul un parent peut comprendre un parent. Rejoignez Kidigo pour renforcer la communauté et offrir à nos enfants des moments inoubliables loin des écrans.
+          </motion.p>
+
           {/* Stats */}
           <motion.div
             className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-8 pt-6 sm:pt-8 border-t border-border"

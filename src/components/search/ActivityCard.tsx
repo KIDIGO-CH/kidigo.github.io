@@ -84,47 +84,47 @@ export function ActivityCard({ activity, index = 0 }: ActivityCardProps) {
           </div>
 
           {/* Content */}
-          <div className="p-4">
+          <div className="p-3 sm:p-4">
             {/* Category + age */}
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-medium text-accent tracking-wide uppercase">
+            <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+              <span className="text-[10px] sm:text-[11px] font-medium text-accent tracking-wide uppercase truncate">
                 {activity.category}
               </span>
-              <div className="flex items-center gap-1 text-text-secondary">
-                <Users size={11} />
-                <span className="text-[11px]">{activity.ageLabel}</span>
+              <div className="flex items-center gap-1 text-text-secondary flex-shrink-0 ml-1">
+                <Users size={10} className="sm:w-[11px] sm:h-[11px]" />
+                <span className="text-[10px] sm:text-[11px]">{activity.ageLabel}</span>
               </div>
             </div>
 
             {/* Name */}
-            <h3 className="font-display font-bold text-[15px] text-text-primary leading-snug mb-2 group-hover:text-accent transition-colors duration-200">
+            <h3 className="font-display font-bold text-[13px] sm:text-[15px] text-text-primary leading-snug mb-1.5 sm:mb-2 group-hover:text-accent transition-colors duration-200 line-clamp-2">
               {activity.name}
             </h3>
 
             {/* Location + duration */}
-            <div className="flex items-center gap-3 mb-3">
-              <div className="flex items-center gap-1 text-text-secondary">
-                <MapPin size={11} />
-                <span className="text-[12px]">{activity.city} · {activity.district}</span>
+            <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+              <div className="flex items-center gap-1 text-text-secondary min-w-0">
+                <MapPin size={10} className="flex-shrink-0 sm:w-[11px] sm:h-[11px]" />
+                <span className="text-[11px] sm:text-[12px] truncate">{activity.city}</span>
               </div>
-              <div className="flex items-center gap-1 text-text-secondary">
+              <div className="hidden sm:flex items-center gap-1 text-text-secondary">
                 <Clock size={11} />
                 <span className="text-[12px]">{activity.duration}</span>
               </div>
             </div>
 
             {/* Rating */}
-            <StarRating rating={activity.rating} reviewCount={activity.reviewCount} className="mb-3" />
+            <StarRating rating={activity.rating} reviewCount={activity.reviewCount} className="mb-2 sm:mb-3" />
 
             {/* Price + slots */}
-            <div className="flex items-center justify-between pt-3 border-t border-border">
+            <div className="flex items-center justify-between pt-2 sm:pt-3 border-t border-border">
               <div>
-                <span className="text-[16px] font-bold text-text-primary font-display">{activity.price} CHF</span>
-                <span className="text-[11px] text-text-secondary ml-1">/ séance</span>
+                <span className="text-[14px] sm:text-[16px] font-bold text-text-primary font-display">{activity.price} CHF</span>
+                <span className="hidden sm:inline text-[11px] text-text-secondary ml-1">/ séance</span>
               </div>
               {activity.availableSlots <= 5 && (
-                <span className="text-[11px] text-amber-600 font-medium bg-amber-50 px-2 py-0.5 rounded-full">
-                  {activity.availableSlots} place{activity.availableSlots > 1 ? 's' : ''} restante{activity.availableSlots > 1 ? 's' : ''}
+                <span className="text-[10px] sm:text-[11px] text-amber-600 font-medium bg-amber-50 px-1.5 sm:px-2 py-0.5 rounded-full">
+                  {activity.availableSlots} place{activity.availableSlots > 1 ? 's' : ''}
                 </span>
               )}
             </div>

@@ -1,11 +1,16 @@
 'use client'
 
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ChevronDown } from 'lucide-react'
 import { categories } from '@/lib/data'
+
+const MOBILE_INITIAL_COUNT = 4
 
 export function CategoryGrid() {
   const router = useRouter()
+  const [expanded, setExpanded] = useState(false)
 
   return (
     <section className="py-20 md:py-28 bg-canvas">
@@ -32,7 +37,9 @@ export function CategoryGrid() {
             <motion.button
               key={cat.name}
               onClick={() => router.push(`/recherche?categorie=${encodeURIComponent(cat.name)}`)}
-              className="group flex items-center gap-2 bg-elevated rounded-full pl-1.5 pr-3.5 py-1.5 border border-border hover:border-accent/30 hover:shadow-card-hover transition-all duration-200"
+              className={`group flex items-center gap-2 bg-elevated rounded-full pl-1.5 pr-3.5 py-1.5 border border-border hover:border-accent/30 hover:shadow-card-hover transition-all duration-200 ${
+                i >= MOBILE_INITIAL_COUNT && !expanded ? 'hidden sm:flex' : 'flex'
+              }`}
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-30px' }}
@@ -52,6 +59,20 @@ export function CategoryGrid() {
             </motion.button>
           ))}
         </div>
+
+        {/* Mobile expand/collapse toggle */}
+        {categories.length > MOBILE_INITIAL_COUNT && (
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="sm:hidden flex items-center gap-1.5 mx-auto mt-4 text-[13px] font-medium text-accent hover:text-accent-light transition-colors"
+          >
+            {expanded ? 'Voir moins' : `+${categories.length - MOBILE_INITIAL_COUNT} catégories`}
+            <ChevronDown
+              size={14}
+              className={`transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
+            />
+          </button>
+        )}
       </div>
     </section>
   )
