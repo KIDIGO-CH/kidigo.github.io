@@ -54,7 +54,7 @@ export function Footer() {
               <span className="font-display font-black text-[20px] text-white">KIDIGO</span>
             </div>
             <p className="text-[13px] leading-relaxed text-canvas/60 mb-6 max-w-[220px]">
-              Le réflexe des parents pour découvrir les meilleures activités pour leurs enfants.
+              Le réflexe pour émerveiller les enfants. Activités, sorties et bons plans près de chez vous.
             </p>
 
             {/* Newsletter */}
