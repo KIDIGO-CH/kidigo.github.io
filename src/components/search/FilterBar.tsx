@@ -3,9 +3,9 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  X, MapPin, Calendar, ChevronDown, SlidersHorizontal,
+  X, MapPin, ChevronDown, SlidersHorizontal,
   LayoutGrid, Baby, Coins, Clock, ShieldCheck,
-  Accessibility, Sofa, Car, PawPrint,
+  Accessibility, Sofa, Car, PawPrint, Check,
 } from 'lucide-react'
 import { categories } from '@/lib/data'
 import type { Category } from '@/lib/types'
@@ -81,25 +81,33 @@ function toggle<T>(arr: T[], item: T): T[] {
   return arr.includes(item) ? arr.filter(x => x !== item) : [...arr, item]
 }
 
-// ── Pill ──────────────────────────────────────────────────────────────
+// ── Option Pill (inside expanded panels) ─────────────────────────────
 function Pill({ active, onClick, children, color }: { active: boolean; onClick: () => void; children: React.ReactNode; color?: string }) {
-  const activeColor = color || '#FF6B52'
+  const c = color || '#FF6B52'
   return (
     <button
       onClick={onClick}
-      className={`text-[12px] sm:text-[13px] px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl border transition-all duration-200 flex items-center gap-1.5 sm:gap-2 whitespace-nowrap font-medium ${
+      className={`group/pill text-[12px] sm:text-[13px] pl-2.5 pr-3 sm:pl-3 sm:pr-3.5 py-2 sm:py-2.5 rounded-2xl border-2 transition-all duration-200 flex items-center gap-2 whitespace-nowrap font-medium ${
         active
-          ? 'border-transparent shadow-sm'
-          : 'bg-white border-border/80 text-text-secondary hover:border-accent/30 hover:shadow-sm'
+          ? 'shadow-sm'
+          : 'bg-white border-transparent text-text-secondary hover:bg-canvas'
       }`}
-      style={active ? { backgroundColor: `${activeColor}15`, color: activeColor, borderColor: `${activeColor}40` } : undefined}
+      style={active ? { backgroundColor: `${c}10`, color: c, borderColor: `${c}30` } : undefined}
     >
+      <span
+        className={`w-[18px] h-[18px] rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
+          active ? '' : 'bg-border/40 group-hover/pill:bg-border/60'
+        }`}
+        style={active ? { backgroundColor: c } : undefined}
+      >
+        {active && <Check size={10} className="text-white" strokeWidth={3} />}
+      </span>
       {children}
     </button>
   )
 }
 
-// ── Inline expandable filter group button ─────────────────────────────
+// ── Filter chip (top-level trigger) ──────────────────────────────────
 function FilterChip({ label, icon, activeCount, isOpen, onToggle }: {
   label: string
   icon: React.ReactNode
@@ -111,20 +119,20 @@ function FilterChip({ label, icon, activeCount, isOpen, onToggle }: {
   return (
     <button
       onClick={onToggle}
-      className={`text-[12px] sm:text-[13px] px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl border transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap font-medium ${
+      className={`text-[12px] sm:text-[13px] h-9 sm:h-10 px-3.5 sm:px-4 rounded-full border transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap font-medium ${
         isActive
-          ? 'bg-accent/10 text-accent border-accent/30 shadow-sm'
-          : 'bg-white border-border/80 text-text-secondary hover:border-accent/30 hover:shadow-sm'
+          ? 'bg-accent text-white border-accent shadow-md shadow-accent/20'
+          : 'bg-white/80 backdrop-blur-sm border-border/60 text-text-primary hover:border-accent/40 hover:bg-white'
       }`}
     >
       {icon}
       {label}
-      {activeCount > 0 && (
-        <span className="w-[18px] h-[18px] rounded-full bg-accent text-white text-[10px] font-bold flex items-center justify-center">
+      {activeCount > 0 && !isOpen && (
+        <span className="w-[18px] h-[18px] rounded-full bg-white/30 text-[10px] font-bold flex items-center justify-center">
           {activeCount}
         </span>
       )}
-      <ChevronDown size={12} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+      <ChevronDown size={11} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''} ${isActive ? 'opacity-80' : 'opacity-40'}`} />
     </button>
   )
 }
@@ -172,40 +180,43 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
         >
-          <div className="pt-3 sm:pt-4 pb-2 space-y-2.5 sm:space-y-3">
+          <div className="pt-3 sm:pt-4 pb-2 space-y-3">
 
-            {/* Level 1 — Visible filters */}
-            <div className="flex flex-wrap gap-1.5 sm:gap-2 items-center">
-              <FilterChip icon={<LayoutGrid size={14} />} label="Catégorie" activeCount={filters.categories.length} isOpen={openGroup === 'category'} onToggle={() => toggleGroup('category')} />
-              <FilterChip icon={<Baby size={14} />} label="Âge" activeCount={filters.ages.length} isOpen={openGroup === 'age'} onToggle={() => toggleGroup('age')} />
-              <FilterChip icon={<Coins size={14} />} label="Prix" activeCount={filters.prices.length} isOpen={openGroup === 'price'} onToggle={() => toggleGroup('price')} />
-              <FilterChip icon={<Clock size={14} />} label="Quand" activeCount={filters.dateFilter ? 1 : 0} isOpen={openGroup === 'quand'} onToggle={() => toggleGroup('quand')} />
+            {/* Level 1 — Filter chips */}
+            <div className="flex flex-wrap gap-2 items-center">
+              <FilterChip icon={<LayoutGrid size={13} />} label="Catégorie" activeCount={filters.categories.length} isOpen={openGroup === 'category'} onToggle={() => toggleGroup('category')} />
+              <FilterChip icon={<Baby size={13} />} label="Âge" activeCount={filters.ages.length} isOpen={openGroup === 'age'} onToggle={() => toggleGroup('age')} />
+              <FilterChip icon={<Coins size={13} />} label="Prix" activeCount={filters.prices.length} isOpen={openGroup === 'price'} onToggle={() => toggleGroup('price')} />
+              <FilterChip icon={<Clock size={13} />} label="Quand" activeCount={filters.dateFilter ? 1 : 0} isOpen={openGroup === 'quand'} onToggle={() => toggleGroup('quand')} />
 
               {/* Autour de moi */}
               <button
                 onClick={handleNearby}
-                className={`text-[12px] sm:text-[13px] px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl border transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap font-medium ${
+                className={`text-[12px] sm:text-[13px] h-9 sm:h-10 px-3.5 sm:px-4 rounded-full border transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap font-medium ${
                   filters.nearbyKm !== null
-                    ? 'bg-accent/10 text-accent border-accent/30 shadow-sm'
-                    : 'bg-white border-border/80 text-text-secondary hover:border-accent/30 hover:shadow-sm'
+                    ? 'bg-accent text-white border-accent shadow-md shadow-accent/20'
+                    : 'bg-white/80 backdrop-blur-sm border-border/60 text-text-primary hover:border-accent/40 hover:bg-white'
                 }`}
               >
-                <MapPin size={14} />
+                <MapPin size={13} />
                 {locatingNearby ? 'Localisation…' : filters.nearbyKm !== null ? `≤ ${filters.nearbyKm} km` : 'Autour de moi'}
               </button>
 
-              <FilterChip icon={<ShieldCheck size={14} />} label="Encadré" activeCount={filters.encadre.length} isOpen={openGroup === 'encadre'} onToggle={() => toggleGroup('encadre')} />
+              <FilterChip icon={<ShieldCheck size={13} />} label="Encadré" activeCount={filters.encadre.length} isOpen={openGroup === 'encadre'} onToggle={() => toggleGroup('encadre')} />
+
+              {/* Separator */}
+              <div className="w-px h-5 bg-border/50 mx-0.5 hidden sm:block" />
 
               {/* Advanced toggle */}
               <button
                 onClick={() => toggleGroup('advanced')}
-                className={`text-[12px] sm:text-[13px] px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl border transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap font-medium ${
+                className={`text-[12px] sm:text-[13px] h-9 sm:h-10 px-3.5 sm:px-4 rounded-full border transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap font-medium ${
                   openGroup === 'advanced' || advancedCount > 0
-                    ? 'bg-text-primary text-white border-text-primary shadow-sm'
-                    : 'bg-white border-border/80 text-text-secondary hover:border-accent/30 hover:shadow-sm'
+                    ? 'bg-text-primary text-white border-text-primary shadow-md'
+                    : 'bg-white/80 backdrop-blur-sm border-border/60 text-text-primary hover:border-accent/40 hover:bg-white'
                 }`}
               >
-                <SlidersHorizontal size={14} />
+                <SlidersHorizontal size={13} />
                 + Filtres
                 {advancedCount > 0 && (
                   <span className="w-[18px] h-[18px] rounded-full bg-white/25 text-[10px] font-bold flex items-center justify-center">
@@ -218,25 +229,24 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
               {hasAnyFilter && (
                 <button
                   onClick={() => onChange({ ...defaultFilters })}
-                  className="text-[12px] text-red-500 hover:text-red-600 flex items-center gap-1 ml-1 font-medium"
+                  className="text-[12px] text-text-muted hover:text-red-500 flex items-center gap-1 ml-0.5 transition-colors"
                 >
-                  <X size={14} /> Effacer tout
+                  <X size={13} /> Effacer
                 </button>
               )}
             </div>
 
-            {/* Expanded filter options (inline) */}
+            {/* Expanded filter options */}
             <AnimatePresence mode="wait">
               {openGroup && openGroup !== 'advanced' && (
                 <motion.div
                   key={openGroup}
-                  initial={{ opacity: 0, y: -8, height: 0 }}
-                  animate={{ opacity: 1, y: 0, height: 'auto' }}
-                  exit={{ opacity: 0, y: -8, height: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="overflow-hidden"
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.15, ease: 'easeOut' }}
                 >
-                  <div className="flex flex-wrap gap-1.5 sm:gap-2 bg-elevated rounded-2xl border border-border/60 p-3 sm:p-4 shadow-sm">
+                  <div className="flex flex-wrap gap-2 bg-white rounded-2xl border border-border/40 p-3 sm:p-4 shadow-lg shadow-black/[0.04]">
                     {openGroup === 'category' && categories.map(c => (
                       <Pill
                         key={c.name}
@@ -244,19 +254,19 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
                         onClick={() => set({ categories: toggle(filters.categories, c.name) })}
                         color={c.color}
                       >
-                        <span className="text-[14px]">{c.icon}</span> {c.name}
+                        <span className="text-[15px] -ml-0.5">{c.icon}</span> {c.name}
                       </Pill>
                     ))}
 
                     {openGroup === 'age' && AGE_OPTIONS.map(({ value, label, emoji }) => (
                       <Pill key={value} active={filters.ages.includes(value)} onClick={() => set({ ages: toggle(filters.ages, value) })}>
-                        <span className="text-[14px]">{emoji}</span> {label}
+                        <span className="text-[15px] -ml-0.5">{emoji}</span> {label}
                       </Pill>
                     ))}
 
                     {openGroup === 'price' && PRICE_OPTIONS.map(({ value, label, emoji }) => (
                       <Pill key={value} active={filters.prices.includes(value)} onClick={() => set({ prices: toggle(filters.prices, value) })}>
-                        <span className="text-[14px]">{emoji}</span> {label}
+                        <span className="text-[15px] -ml-0.5">{emoji}</span> {label}
                       </Pill>
                     ))}
 
@@ -266,16 +276,17 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
                           active={filters.dateFilter === 'today'}
                           onClick={() => set({ dateFilter: filters.dateFilter === 'today' ? null : 'today' })}
                         >
-                          <span className="text-[14px]">📅</span> Aujourd&apos;hui
+                          <span className="text-[15px] -ml-0.5">📅</span> Aujourd&apos;hui
                         </Pill>
                         <Pill
                           active={filters.dateFilter === 'weekend'}
                           onClick={() => set({ dateFilter: filters.dateFilter === 'weekend' ? null : 'weekend' })}
                         >
-                          <span className="text-[14px]">🌤️</span> Ce weekend
+                          <span className="text-[15px] -ml-0.5">🌤️</span> Ce weekend
                         </Pill>
-                        <label className="relative flex items-center gap-2 text-[12px] sm:text-[13px] px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl border bg-white border-border/80 text-text-secondary hover:border-accent/30 hover:shadow-sm transition-all duration-200 cursor-pointer whitespace-nowrap font-medium">
-                          <span className="text-[14px]">🗓️</span>
+                        <label className="group/pill text-[12px] sm:text-[13px] pl-2.5 pr-3 sm:pl-3 sm:pr-3.5 py-2 sm:py-2.5 rounded-2xl border-2 border-transparent bg-white text-text-secondary hover:bg-canvas transition-all duration-200 flex items-center gap-2 whitespace-nowrap font-medium cursor-pointer relative">
+                          <span className="w-[18px] h-[18px] rounded-full flex items-center justify-center flex-shrink-0 bg-border/40 group-hover/pill:bg-border/60 transition-all" />
+                          <span className="text-[15px] -ml-0.5">🗓️</span>
                           {filters.dateFilter && filters.dateFilter !== 'today' && filters.dateFilter !== 'weekend' ? filters.dateFilter : 'Choisir une date'}
                           <input
                             type="date"
@@ -289,7 +300,7 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
 
                     {openGroup === 'encadre' && ENCADRE_OPTIONS.map(({ value, label, emoji }) => (
                       <Pill key={value} active={filters.encadre.includes(value)} onClick={() => set({ encadre: toggle(filters.encadre, value) })}>
-                        <span className="text-[14px]">{emoji}</span> {label}
+                        <span className="text-[15px] -ml-0.5">{emoji}</span> {label}
                       </Pill>
                     ))}
                   </div>
@@ -300,71 +311,80 @@ export function FilterBar({ filters, onChange, open }: FilterBarProps) {
               {openGroup === 'advanced' && (
                 <motion.div
                   key="advanced"
-                  initial={{ opacity: 0, y: -8, height: 0 }}
-                  animate={{ opacity: 1, y: 0, height: 'auto' }}
-                  exit={{ opacity: 0, y: -8, height: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="overflow-hidden"
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.15, ease: 'easeOut' }}
                 >
-                  <div className="bg-elevated rounded-2xl border border-border/60 p-4 sm:p-5 shadow-sm space-y-4">
-                    {/* Accessibilité */}
-                    <div>
-                      <div className="flex items-center gap-2 mb-2.5">
-                        <Accessibility size={14} className="text-accent" />
-                        <p className="text-[12px] font-semibold text-text-primary">Accessibilité</p>
+                  <div className="bg-white rounded-2xl border border-border/40 p-4 sm:p-5 shadow-lg shadow-black/[0.04]">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                      {/* Accessibilité */}
+                      <div>
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="w-6 h-6 rounded-lg bg-accent/10 flex items-center justify-center">
+                            <Accessibility size={13} className="text-accent" />
+                          </div>
+                          <p className="text-[13px] font-semibold text-text-primary">Accessibilité</p>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          <Pill active={filters.accessibility.includes('pmr')} onClick={() => set({ accessibility: toggle(filters.accessibility, 'pmr' as AccessibilityOption) })}>
+                            ♿ PMR
+                          </Pill>
+                          <Pill active={filters.accessibility.includes('poussette')} onClick={() => set({ accessibility: toggle(filters.accessibility, 'poussette' as AccessibilityOption) })}>
+                            🍼 Poussette
+                          </Pill>
+                        </div>
                       </div>
-                      <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                        <Pill active={filters.accessibility.includes('pmr')} onClick={() => set({ accessibility: toggle(filters.accessibility, 'pmr' as AccessibilityOption) })}>
-                          ♿ PMR
-                        </Pill>
-                        <Pill active={filters.accessibility.includes('poussette')} onClick={() => set({ accessibility: toggle(filters.accessibility, 'poussette' as AccessibilityOption) })}>
-                          🍼 Poussette
-                        </Pill>
-                      </div>
-                    </div>
 
-                    {/* Confort */}
-                    <div>
-                      <div className="flex items-center gap-2 mb-2.5">
-                        <Sofa size={14} className="text-accent" />
-                        <p className="text-[12px] font-semibold text-text-primary">Confort</p>
+                      {/* Confort */}
+                      <div>
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="w-6 h-6 rounded-lg bg-accent/10 flex items-center justify-center">
+                            <Sofa size={13} className="text-accent" />
+                          </div>
+                          <p className="text-[13px] font-semibold text-text-primary">Confort</p>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          <Pill active={filters.comfort.includes('toilettes')} onClick={() => set({ comfort: toggle(filters.comfort, 'toilettes' as ComfortOption) })}>
+                            🚻 Toilettes
+                          </Pill>
+                          <Pill active={filters.comfort.includes('cafe')} onClick={() => set({ comfort: toggle(filters.comfort, 'cafe' as ComfortOption) })}>
+                            ☕ Café sur place
+                          </Pill>
+                        </div>
                       </div>
-                      <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                        <Pill active={filters.comfort.includes('toilettes')} onClick={() => set({ comfort: toggle(filters.comfort, 'toilettes' as ComfortOption) })}>
-                          🚻 Toilettes
-                        </Pill>
-                        <Pill active={filters.comfort.includes('cafe')} onClick={() => set({ comfort: toggle(filters.comfort, 'cafe' as ComfortOption) })}>
-                          ☕ Café sur place
-                        </Pill>
-                      </div>
-                    </div>
 
-                    {/* Accès */}
-                    <div>
-                      <div className="flex items-center gap-2 mb-2.5">
-                        <Car size={14} className="text-accent" />
-                        <p className="text-[12px] font-semibold text-text-primary">Accès</p>
+                      {/* Accès */}
+                      <div>
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="w-6 h-6 rounded-lg bg-accent/10 flex items-center justify-center">
+                            <Car size={13} className="text-accent" />
+                          </div>
+                          <p className="text-[13px] font-semibold text-text-primary">Accès</p>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          <Pill active={filters.access.includes('parking')} onClick={() => set({ access: toggle(filters.access, 'parking' as AccessOption) })}>
+                            🅿️ Parking
+                          </Pill>
+                          <Pill active={filters.access.includes('transports')} onClick={() => set({ access: toggle(filters.access, 'transports' as AccessOption) })}>
+                            🚌 Transports publics
+                          </Pill>
+                        </div>
                       </div>
-                      <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                        <Pill active={filters.access.includes('parking')} onClick={() => set({ access: toggle(filters.access, 'parking' as AccessOption) })}>
-                          🅿️ Parking
-                        </Pill>
-                        <Pill active={filters.access.includes('transports')} onClick={() => set({ access: toggle(filters.access, 'transports' as AccessOption) })}>
-                          🚌 Transports publics
-                        </Pill>
-                      </div>
-                    </div>
 
-                    {/* Animaux */}
-                    <div>
-                      <div className="flex items-center gap-2 mb-2.5">
-                        <PawPrint size={14} className="text-accent" />
-                        <p className="text-[12px] font-semibold text-text-primary">Animaux</p>
-                      </div>
-                      <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                        <Pill active={filters.animals} onClick={() => set({ animals: !filters.animals })}>
-                          🐾 Animaux autorisés
-                        </Pill>
+                      {/* Animaux */}
+                      <div>
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="w-6 h-6 rounded-lg bg-accent/10 flex items-center justify-center">
+                            <PawPrint size={13} className="text-accent" />
+                          </div>
+                          <p className="text-[13px] font-semibold text-text-primary">Animaux</p>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          <Pill active={filters.animals} onClick={() => set({ animals: !filters.animals })}>
+                            🐾 Animaux autorisés
+                          </Pill>
+                        </div>
                       </div>
                     </div>
                   </div>
