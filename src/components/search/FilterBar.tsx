@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  X, MapPin, ChevronDown, ChevronRight, SlidersHorizontal,
+  X, ChevronDown, ChevronRight, SlidersHorizontal,
   LayoutGrid, Baby, Coins, Clock, ShieldCheck,
   Accessibility, Sofa, Car, PawPrint,
 } from 'lucide-react'
@@ -187,10 +187,9 @@ function ActiveTag({ label, onRemove }: { label: string; onRemove: () => void })
 }
 
 // ── Main FilterBar ────────────────────────────────────────────────────
-type FilterGroupKey = 'category' | 'age' | 'price' | 'quand' | 'encadre' | 'advanced' | 'nearby' | 'accessibility' | 'comfort' | 'access' | 'animals'
+type FilterGroupKey = 'category' | 'age' | 'price' | 'quand' | 'encadre' | 'advanced' | 'accessibility' | 'comfort' | 'access' | 'animals'
 
 export function FilterBar({ filters, onChange, open, resultCount }: FilterBarProps) {
-  const [locatingNearby, setLocatingNearby] = useState(false)
   const [openGroup, setOpenGroup] = useState<FilterGroupKey | null>(null)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [mobileSection, setMobileSection] = useState<FilterGroupKey | null>(null)
@@ -210,22 +209,6 @@ export function FilterBar({ filters, onChange, open, resultCount }: FilterBarPro
       return () => { document.body.style.overflow = '' }
     }
   }, [mobileOpen])
-
-  const handleNearby = () => {
-    if (filters.nearbyKm !== null) {
-      set({ nearbyKm: null, userLat: null, userLng: null })
-      return
-    }
-    setLocatingNearby(true)
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        set({ nearbyKm: 20, userLat: pos.coords.latitude, userLng: pos.coords.longitude })
-        setLocatingNearby(false)
-      },
-      () => setLocatingNearby(false),
-      { enableHighAccuracy: true, timeout: 8000 }
-    )
-  }
 
   const advancedCount = filters.accessibility.length + filters.comfort.length + filters.access.length + (filters.animals ? 1 : 0)
 
@@ -398,20 +381,6 @@ export function FilterBar({ filters, onChange, open, resultCount }: FilterBarPro
                         </div>
                       </AccordionRow>
 
-                      <AccordionRow label="Autour de moi" count={filters.nearbyKm !== null ? 1 : 0} isOpen={mobileSection === 'nearby'} onToggle={() => toggleMobileSection('nearby')}>
-                        <button
-                          onClick={handleNearby}
-                          className={`text-[13px] px-4 py-2.5 rounded-full transition-all duration-200 flex items-center gap-2 font-medium ${
-                            filters.nearbyKm !== null
-                              ? 'bg-accent/10 text-accent shadow-sm'
-                              : 'bg-canvas text-text-secondary hover:bg-border/20'
-                          }`}
-                        >
-                          <MapPin size={14} />
-                          {locatingNearby ? 'Localisation…' : filters.nearbyKm !== null ? `≤ ${filters.nearbyKm} km` : 'Activer la géolocalisation'}
-                        </button>
-                      </AccordionRow>
-
                       <AccordionRow label="Encadrement" count={filters.encadre.length} isOpen={mobileSection === 'encadre'} onToggle={() => toggleMobileSection('encadre')}>
                         <div className="flex flex-wrap gap-2">
                           {ENCADRE_OPTIONS.map(({ value, label, emoji }) => (
@@ -500,19 +469,6 @@ export function FilterBar({ filters, onChange, open, resultCount }: FilterBarPro
               <FilterChip icon={<Baby size={13} />} label="Âge" activeCount={filters.ages.length} isOpen={openGroup === 'age'} onToggle={() => toggleGroup('age')} />
               <FilterChip icon={<Coins size={13} />} label="Prix" activeCount={filters.prices.length} isOpen={openGroup === 'price'} onToggle={() => toggleGroup('price')} />
               <FilterChip icon={<Clock size={13} />} label="Quand" activeCount={filters.dateFilter ? 1 : 0} isOpen={openGroup === 'quand'} onToggle={() => toggleGroup('quand')} />
-
-              {/* Autour de moi */}
-              <button
-                onClick={handleNearby}
-                className={`text-[12px] sm:text-[13px] h-9 sm:h-10 px-3.5 sm:px-4 rounded-full border transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap font-medium ${
-                  filters.nearbyKm !== null
-                    ? 'bg-accent text-white border-accent shadow-md shadow-accent/20'
-                    : 'bg-white/80 backdrop-blur-sm border-border/60 text-text-primary hover:border-accent/40 hover:bg-white'
-                }`}
-              >
-                <MapPin size={13} />
-                {locatingNearby ? 'Localisation…' : filters.nearbyKm !== null ? `≤ ${filters.nearbyKm} km` : 'Autour de moi'}
-              </button>
 
               <FilterChip icon={<ShieldCheck size={13} />} label="Encadré" activeCount={filters.encadre.length} isOpen={openGroup === 'encadre'} onToggle={() => toggleGroup('encadre')} />
 

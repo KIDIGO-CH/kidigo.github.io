@@ -4,7 +4,7 @@ import { Suspense, useState, useMemo, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, X, LayoutGrid, Map } from 'lucide-react'
+import { Search, X, LayoutGrid, Map, MapPin, Navigation } from 'lucide-react'
 import { ActivityCard } from '@/components/search/ActivityCard'
 import { FilterBar, applyFilters, countActiveFilters, defaultFilters, type Filters } from '@/components/search/FilterBar'
 import { LocationSearch } from '@/components/ui/LocationSearch'
@@ -36,6 +36,23 @@ function RechercheContent() {
   const [filters, setFilters] = useState<Filters>({ ...defaultFilters })
   const [sortBy, setSortBy] = useState<SortOption>('rating')
   const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid')
+  const [locatingNearby, setLocatingNearby] = useState(false)
+
+  const handleNearby = () => {
+    if (filters.nearbyKm !== null) {
+      setFilters(f => ({ ...f, nearbyKm: null, userLat: null, userLng: null }))
+      return
+    }
+    setLocatingNearby(true)
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setFilters(f => ({ ...f, nearbyKm: 20, userLat: pos.coords.latitude, userLng: pos.coords.longitude }))
+        setLocatingNearby(false)
+      },
+      () => setLocatingNearby(false),
+      { enableHighAccuracy: true, timeout: 8000 }
+    )
+  }
 
   // Read URL params on mount
   useEffect(() => {
@@ -99,32 +116,43 @@ function RechercheContent() {
       {/* Sticky search header */}
       <div className="sticky top-16 z-30 bg-elevated/95 backdrop-blur-md border-b border-border">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10 py-3 sm:py-4">
-          <div className="flex items-center gap-2 sm:gap-3">
+          {/* Row 1: Search input */}
+          <div className="flex items-center gap-2 sm:gap-3 bg-canvas rounded-2xl px-3 sm:px-4 py-2.5 border border-border">
+            <Search size={15} className="text-text-muted flex-shrink-0" />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Rechercher…"
+              className="flex-1 bg-transparent text-[14px] text-text-primary placeholder:text-text-muted outline-none min-w-0"
+            />
+            {query && (
+              <button onClick={() => setQuery('')}>
+                <X size={13} className="text-text-muted hover:text-text-primary" />
+              </button>
+            )}
+          </div>
 
-            {/* Search input */}
-            <div className="flex-1 flex items-center gap-2 sm:gap-3 bg-canvas rounded-2xl px-3 sm:px-4 py-2.5 border border-border">
-              <Search size={15} className="text-text-muted flex-shrink-0" />
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Rechercher…"
-                className="flex-1 bg-transparent text-[14px] text-text-primary placeholder:text-text-muted outline-none min-w-0"
-              />
-              {query && (
-                <button onClick={() => setQuery('')}>
-                  <X size={13} className="text-text-muted hover:text-text-primary" />
-                </button>
-              )}
-            </div>
-
-            {/* Location search */}
+          {/* Row 2: Location search + Autour de moi */}
+          <div className="flex items-center gap-2 mt-2">
             <LocationSearch
               value={locationLabel}
               onChange={handleLocationChange}
               compact
-              className="hidden sm:block sm:min-w-[220px]"
+              className="flex-1 min-w-0"
             />
+            <button
+              onClick={handleNearby}
+              className={`flex-shrink-0 h-[42px] px-3.5 rounded-2xl border transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap font-medium text-[13px] ${
+                filters.nearbyKm !== null
+                  ? 'bg-accent text-white border-accent shadow-md shadow-accent/20'
+                  : 'bg-canvas border-border text-text-primary hover:border-accent/40'
+              }`}
+            >
+              <Navigation size={13} className={locatingNearby ? 'animate-pulse' : ''} />
+              <span className="hidden sm:inline">{locatingNearby ? 'Localisation…' : filters.nearbyKm !== null ? `≤ ${filters.nearbyKm} km` : 'Autour de moi'}</span>
+              <span className="sm:hidden">{locatingNearby ? '…' : filters.nearbyKm !== null ? `${filters.nearbyKm} km` : 'Près de moi'}</span>
+            </button>
           </div>
 
           {/* Filters — always visible */}
