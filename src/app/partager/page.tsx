@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Upload, MapPin, Clock, Tag, Info, CheckCircle, Camera } from 'lucide-react'
+import { Upload, MapPin, Clock, Tag, Info, CheckCircle, Camera, Navigation } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { categories } from '@/lib/data'
 
@@ -10,6 +10,45 @@ export default function PartagerPage() {
   const [submitted, setSubmitted] = useState(false)
   const [photos, setPhotos] = useState<File[]>([])
   const [previews, setPreviews] = useState<string[]>([])
+  const [address, setAddress] = useState('')
+  const [npaCity, setNpaCity] = useState('')
+  const [locating, setLocating] = useState(false)
+  const [geoError, setGeoError] = useState('')
+  const handleGeolocate = () => {
+    if (!navigator.geolocation) {
+      setGeoError('La géolocalisation n\'est pas supportée par votre navigateur.')
+      return
+    }
+    setLocating(true)
+    setGeoError('')
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&format=json&addressdetails=1`,
+            { headers: { 'Accept-Language': 'fr' } }
+          )
+          const data = await res.json()
+          const a = data.address || {}
+          const road = a.road || a.pedestrian || a.path || ''
+          const number = a.house_number || ''
+          setAddress(number ? `${road} ${number}` : road)
+          const postcode = a.postcode || ''
+          const city = a.city || a.town || a.village || a.municipality || ''
+          setNpaCity(postcode && city ? `${postcode} ${city}` : city || postcode)
+        } catch {
+          setGeoError('Impossible de déterminer votre adresse.')
+        } finally {
+          setLocating(false)
+        }
+      },
+      () => {
+        setGeoError('Impossible d\'accéder à votre position. Vérifiez les permissions.')
+        setLocating(false)
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    )
+  }
 
   const handlePhotos = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || [])
@@ -128,24 +167,39 @@ export default function PartagerPage() {
           </div>
 
           {/* Adresse */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[13px] font-medium text-text-primary mb-2">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-[13px] font-medium text-text-primary">
                 <MapPin size={13} className="inline mr-1" />
                 Adresse *
               </label>
+              <button
+                type="button"
+                onClick={handleGeolocate}
+                disabled={locating}
+                className="flex items-center gap-1.5 text-[12px] font-medium text-accent hover:text-accent/80 transition-colors disabled:opacity-50"
+              >
+                <Navigation size={13} className={locating ? 'animate-pulse' : ''} />
+                {locating ? 'Localisation…' : 'Me géolocaliser'}
+              </button>
+            </div>
+            {geoError && (
+              <p className="text-[12px] text-red-500 mb-2">{geoError}</p>
+            )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <input
                 type="text"
                 required
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
                 placeholder="Rue et numéro"
                 className="w-full bg-elevated border border-border rounded-2xl px-4 py-3 text-[14px] text-text-primary placeholder:text-text-muted outline-none focus:border-accent transition-colors"
               />
-            </div>
-            <div>
-              <label className="block text-[13px] font-medium text-text-primary mb-2">NPA et localité *</label>
               <input
                 type="text"
                 required
+                value={npaCity}
+                onChange={(e) => setNpaCity(e.target.value)}
                 placeholder="1470 Estavayer-le-Lac"
                 className="w-full bg-elevated border border-border rounded-2xl px-4 py-3 text-[14px] text-text-primary placeholder:text-text-muted outline-none focus:border-accent transition-colors"
               />
