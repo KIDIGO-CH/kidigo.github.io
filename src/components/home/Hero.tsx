@@ -205,7 +205,7 @@ export function Hero() {
             transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.34 }}
           >
             {/* Search box */}
-            <div className="bg-elevated rounded-3xl p-2 shadow-card-hover border border-border flex-1 min-w-0 max-w-[640px]">
+            <div className="bg-elevated rounded-3xl p-2 shadow-card-hover border border-border flex-1 min-w-0">
               {/* Query input — full width with animated placeholder */}
               <div className="relative flex items-start gap-3 bg-canvas rounded-2xl px-4 py-3.5 mb-2 min-h-[56px]">
                 <Search size={16} className="text-text-muted flex-shrink-0 mt-0.5" />
@@ -239,8 +239,8 @@ export function Hero() {
                 </div>
               </div>
 
-              {/* Location + Autour de moi */}
-              <div className="flex items-center gap-2 mb-2">
+              {/* Location + Autour de moi + Submit — single row on desktop */}
+              <div className="flex items-center gap-2">
                 <LocationSearch
                   value={locationLabel}
                   onChange={(label) => setLocationLabel(label)}
@@ -260,16 +260,21 @@ export function Hero() {
                   <span className="hidden sm:inline">{locatingNearby ? 'Localisation…' : filters.nearbyKm !== null ? `≤ ${filters.nearbyKm} km` : 'Autour de moi'}</span>
                   <span className="sm:hidden">{locatingNearby ? '…' : filters.nearbyKm !== null ? `${filters.nearbyKm} km` : 'Près de moi'}</span>
                 </button>
+                <Button onClick={handleSearch} size="lg" className="hidden lg:flex flex-shrink-0 px-8 rounded-2xl">
+                  Rechercher
+                </Button>
               </div>
 
-              {/* Submit */}
-              <Button onClick={handleSearch} size="lg" className="w-full sm:px-8 rounded-2xl">
-                Rechercher
-              </Button>
+              {/* Submit — mobile only (full width) */}
+              <div className="lg:hidden mt-2">
+                <Button onClick={handleSearch} size="lg" className="w-full rounded-2xl">
+                  Rechercher
+                </Button>
+              </div>
             </div>
 
             {/* Weather — desktop only, next to search */}
-            <div className="hidden lg:block w-[240px] flex-shrink-0">
+            <div className="hidden lg:block w-[340px] flex-shrink-0">
               <WeatherWidget />
             </div>
           </motion.div>
