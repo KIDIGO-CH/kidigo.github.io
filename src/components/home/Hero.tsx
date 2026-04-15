@@ -358,7 +358,7 @@ export function Hero() {
 
         {/* Mobile bento cards */}
         <motion.div
-          className="lg:hidden mt-6 grid grid-cols-2 gap-2"
+          className="lg:hidden mt-6 grid grid-cols-2 gap-3"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
