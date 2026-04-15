@@ -4,6 +4,7 @@ import { GeistMono } from 'geist/font/mono'
 import './globals.css'
 import { Navigation } from '@/components/shared/Navigation'
 import { Footer } from '@/components/shared/Footer'
+import { CookieBanner } from '@/components/shared/CookieBanner'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://parlonsvisuel.github.io'),
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Navigation />
         <main>{children}</main>
         <Footer />
+        <CookieBanner />
       </body>
     </html>
   )
